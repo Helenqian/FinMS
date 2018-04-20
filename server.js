@@ -9,8 +9,6 @@ var cookieParser = require('cookie-parser');
 var flash = require('express-flash');
 var MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
-
-
 var secret = require('./config/secret');
 var User = require('./models/user');
 var Category = require('./models/category');
@@ -84,4 +82,3 @@ exp.listen(secret.port, function(err) {
 	if (err) throw err;
 	console.log("Server is Running on port " + secret.port);
 });
-
