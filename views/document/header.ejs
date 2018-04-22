@@ -83,7 +83,7 @@
               <a title="查看"  onclick="x_admin_show('编辑','order-view.html')" href="javascript:;">
                 <i class="layui-icon">&#xe63c;</i>
               </a>
-              <a title="删除" onclick="member_del(this,'<%= headers[i].code %>')" href="javascript:;">
+              <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
                 <i class="layui-icon">&#xe640;</i>
               </a>
             </td>
@@ -211,6 +211,7 @@
       // }
 
       /*用户-删除*/
+<<<<<<< HEAD
 
       /*function member_del(obj,headercode){
       var headercode = $('input[name=headercode]').val(),
@@ -249,6 +250,12 @@
     });
 
          $(obj).parents("tr").remove();
+=======
+      function member_del(obj,id){
+          layer.confirm('确认要删除吗？',function(index){
+              //发异步删除数据
+              $(obj).parents("tr").remove();
+>>>>>>> parent of 42fbcdd... commit
               layer.msg('已删除!',{icon:1,time:1000});
           });
         }
@@ -275,7 +282,11 @@
         });
       }
 
+<<<<<<< HEAD
 /*
+=======
+
+>>>>>>> parent of 42fbcdd... commit
       form.on('submit(add)', function(data){
             //console.log(data);
             var headercode = $('input[name=headercode]').val(),
