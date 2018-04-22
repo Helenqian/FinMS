@@ -2,36 +2,42 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var AccountDocumentSchema = new Schema({
-	
+
 	//凭证项目
 	DocumentItem: [{
 		//借方金额
-		debit: { type: String, default: '0.00'},
+		debit: { type: String, default: '0.00' },
 		//贷方金额
-		credit: { type: String, default: '0.00'},
+		credit: { type: String, default: '0.00' },
 		//摘要
-		header: {type: Schema.Types.ObjectId, ref: 'Header'},
+		header: { type: Schema.Types.ObjectId, ref: 'Header' },
 		//科目
-		account: {type: Schema.Types.ObjectId, ref: 'Account'}
+		account: { type: Schema.Types.ObjectId, ref: 'Account' }
 	}],
 
 	//凭证号
+<<<<<<< HEAD
 	num: { type: String, default: '', unique: true},
 	//录入日期
 	documentdate: { type: Date, default: Date.now},
 	//入账日期
 	postingdate: { type: Date, default: Date.now},
+=======
+	num: { type: String, default: '', unique: true },
+	//日期
+	date: { type: Date, default: Date.now },
+>>>>>>> f34aa2308d32f68923f7c54269fb7f8a74ba8cd4
 	//制单人
-	maker: {type: String, default: ''},
+	maker: { type: String, default: '' },
 	//借方合计
-	debitsum: { type: String, default: '0.00'},
+	debitsum: { type: String, default: '0.00' },
 	//贷方合计
-	creditsum: { type: String, default: '0.00'},
+	creditsum: { type: String, default: '0.00' },
 	//审核状态
-	checkstatus: { type: Boolean, default: false},
+	checkstatus: { type: Boolean, default: false },
 	//过账状态
-	poststatus: { type: Boolean, default: false}
-	
+	poststatus: { type: Boolean, default: false }
+
 });
 
 module.exports = mongoose.model('AccountDocument', AccountDocumentSchema);

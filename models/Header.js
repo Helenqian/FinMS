@@ -2,10 +2,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var HeaderSchema = new Schema({
-	code: { type: String, default: '', unique: true},
-	name: { type: String, default: ''},
+	code: { type: String, default: '', unique: true },
+	name: { type: String, default: '' },
 
-	AccountDocument: [{type: Schema.Types.ObjectId, ref: 'AccountDocument'}]
+	AccountDocument: [{ type: Schema.Types.ObjectId, ref: 'AccountDocument' }]
 });
 
 

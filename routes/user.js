@@ -3,8 +3,6 @@ var User = require('../models/user');
 var passport = require('passport');
 var passportConf = require('../config/passport');
 
-
-
 router.get('/login', function(req, res){
 	if(req.user) return res.redirect('/');
 	res.render('accounts/login', { message: req.flash('loginMessage')});
@@ -98,13 +96,10 @@ router.post('/edit-profile', function(req, res, next){
 	});
 });
 
-
-
 router.get('/mainpage', function(req, res, next){
 	res.render('content/mainpage', {
 		errors: req.flash('errors')
 	});
 });
-
 
 module.exports = router;
