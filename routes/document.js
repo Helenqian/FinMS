@@ -23,50 +23,47 @@ router.get('/header', function(req, res, next){
 
 router.post('/header', function(req, res, next) {
 
- if(!(req.body.headercode || req.body.headername)){
-  Header.find({}, function(err, headers){
-   if (err) return next(err);
-   res.render('document/header', 
-   { headers: headers, message: req.flash('message')
-  });
- });
- } 
+ 	if(!(req.body.headercode || req.body.headername)){
+ 		 Header.find({}, function(err, headers){
+ 		  if (err) return next(err);
+ 		  res.render('document/header', 
+		   { headers: headers, message: req.flash('message')
+ 			 });
+		 });
+	 } 
 
- else if(!req.body.headercode){
-   Header.find({name: req.body.headername}, 
-   function(err, headers){
-   if (err) return next(err);
-   if(!headers){
-   req.flash('message', 'No header has been found');
-   return res.redirect('/header');
-    } else {
-    res.render('document/header', {headers: headers, message: req.flash('success')});
-    }
+ 	else if(!req.body.headercode){
+ 	  Header.find({name: req.body.headername}, function(err, headers){
+  		 if (err) return next(err);
+  		 if(!headers){
+ 		  req.flash('message', 'No header has been found');
+		   return res.redirect('/header');
+  		  } else {
+  		  res.render('document/header', {headers: headers, message: req.flash('success')});
+ 	   }
+ 	 });
+ }
+ 	else if(!req.body.headername){
+  		Header.find({ code: req.body.headercode}, function(err, headers){
+  		 if (err) return next(err);
+  		 if(!headers){
+  			 req.flash('message', 'No header has been found');
+  			 return res.redirect('/header');
+   		 } else {
+   		 res.render('document/header', {headers: headers, message: req.flash('success')});
+   	 }
   });
  }
- else if(!req.body.headername){
-  Header.find({ code: req.body.headercode}, 
-  function(err, headers){
-   if (err) return next(err);
-   if(!headers){
-   req.flash('message', 'No header has been found');
-   return res.redirect('/header');
-    } else {
-    res.render('document/header', {headers: headers, message: req.flash('success')});
-    }
-  });
- }
- else{
-  Header.find({ code: req.body.headercode, name: req.body.headername}, 
-  function(err, headers){
-   if (err) return next(err);
-   if(!headers){
-   req.flash('message', 'No header has been found');
-   return res.redirect('/header');
-    } else {
-    res.render('document/header', {headers: headers, message: req.flash('success')});
-    }
-  });
+ 	else{
+ 		 Header.find({ code: req.body.headercode, name: req.body.headername}, function(err, headers){
+  		 if (err) return next(err);
+  		 if(!headers){
+  			 req.flash('message', 'No header has been found');
+   			return res.redirect('/header');
+  		  } else {
+  		  res.render('document/header', {headers: headers, message: req.flash('success')});
+	  	  }
+  	});
  }
 });
 
@@ -98,7 +95,7 @@ router.post('/addheader', function(req, res, next) {
 				 //req.flash('message', 'New header has been created');
 				 //res.json('New header has been created');
 				 return res.redirect('/addheader');
-//				 callback(null, header);
+				 //callback(null, header);
 				});
 			}
 		});
@@ -111,10 +108,10 @@ router.post('/addheader', function(req, res, next) {
 //	]);
 });
 
-/*
+
 router.delete('/header', function(req, res, next){
 
-	Header.findOne({code: req.body.code, name: req.body.name}, function(err, toDeleteHeader){
+	Header.findOne({code: req.body.headercode}, function(err, toDeleteHeader){
 		if(!toDeleteHeader){
 			req.flash('delete failed', 'Header does not exist');
 			return res.redirect('/header');
@@ -126,7 +123,7 @@ router.delete('/header', function(req, res, next){
 		}
 	});
 });
-*/
+
 
 router.get('/accountdocument', function(req, res, next){
 	res.render('document/accountdocument', {

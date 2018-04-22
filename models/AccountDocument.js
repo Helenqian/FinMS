@@ -17,8 +17,10 @@ var AccountDocumentSchema = new Schema({
 
 	//凭证号
 	num: { type: String, default: '', unique: true},
-	//日期
-	date: { type: Date, default: Date.now},
+	//录入日期
+	documentdate: { type: Date, default: Date.now},
+	//入账日期
+	postingdate: { type: Date, default: Date.now},
 	//制单人
 	maker: {type: String, default: ''},
 	//借方合计
