@@ -23,7 +23,7 @@ router.get('/header', function (req, res, next) {
 	}
 });
 
-<<<<<<< HEAD
+
 router.post('/header', function(req, res, next) {
 
  	if(!(req.body.headercode || req.body.headername)){
@@ -66,16 +66,18 @@ router.post('/header', function(req, res, next) {
   		  } else {
   		  res.render('document/header', {headers: headers, message: req.flash('success')});
 	  	  }
-  	});
- }
-=======
+	  });
+  	}
+  });
+ 
+
 router.get('/api/header', function (req, res, next) {
 	Header.find({}, function (err, headers) {
 		if (err) return next(err);
 		res.type = 'application/json';
 		res.send({ headers: headers });
 	});
->>>>>>> f34aa2308d32f68923f7c54269fb7f8a74ba8cd4
+
 });
 
 router.post('/header', function (req, res, next) {
@@ -128,7 +130,7 @@ router.post('/header', function (req, res, next) {
 	}
 });
 
-<<<<<<< HEAD
+
 router.post('/addheader', function(req, res, next) {
 	
 //	async.waterfall([
@@ -155,9 +157,9 @@ router.post('/addheader', function(req, res, next) {
 				});
 			}
 		});
+	});
 //	},
-=======
->>>>>>> f34aa2308d32f68923f7c54269fb7f8a74ba8cd4
+
 
 
 router.get('/addheader', function (req, res, next) {
@@ -250,18 +252,6 @@ router.post('/account', function (req, res, next) {
 		} else {
 			res.redirect('/account');
 		}
-	});
-});
-
-router.get('/list', function (req, res, next) {
-	res.render('document/list', {
-		errors: req.flash('errors')
-	});
-});
-
-router.get('/crud', function (req, res, next) {
-	res.render('document/crud', {
-		errors: req.flash('errors')
 	});
 });
 

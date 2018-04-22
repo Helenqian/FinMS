@@ -1,5 +1,5 @@
 <%- layout('style') -%>
-  <!DOCTYPE html>
+<!DOCTYPE html>
   <html>
 
   <head>
@@ -72,7 +72,7 @@
         </thead>
         <tbody>
           <% for(var i = 0; i < headers.length; i++) { %>
-<<<<<<< HEAD
+
           <tr>
             <td>
               <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div>
@@ -89,7 +89,7 @@
             </td>
           </tr>
         <% } %>
-=======
+
             <tr>
               <td>
                 <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'>
@@ -114,7 +114,7 @@
               </td>
             </tr>
             <% } %>
->>>>>>> f34aa2308d32f68923f7c54269fb7f8a74ba8cd4
+
         </tbody>
       </table>
       <div class="page">
@@ -138,7 +138,7 @@
       <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     </script>
     <script>
-
+/*
       layui.use('table', function () {
         var table = layui.table;
 
@@ -147,13 +147,15 @@
           var data = obj.data;
           if (obj.event === 'detail') {
             layer.msg('Code：' + data.code + ' 的查看操作');
-          } else if (obj.event === 'del') {
+          } 
+          else if (obj.event === 'del') {
             layer.confirm('真的删除行么', function (index) {
               obj.del();
               //
               layer.close(index);
             });
-          } else if (obj.event === 'edit') {
+          } 
+          else if (obj.event === 'edit') {
             layer.alert('编辑行：<br>' + JSON.stringify(data))
           }
         });
@@ -168,7 +170,6 @@
         //     , { field: 'name', title: '摘要名称', width: 80 }
         //   ]]
         // });
-
       });
 
       layui.use('laydate', function () {
@@ -210,7 +211,7 @@
       // }
 
       /*用户-删除*/
-<<<<<<< HEAD
+
       /*function member_del(obj,headercode){
       var headercode = $('input[name=headercode]').val(),
 
@@ -247,18 +248,19 @@
        }
     });
 
-              $(obj).parents("tr").remove();
+         $(obj).parents("tr").remove();
               layer.msg('已删除!',{icon:1,time:1000});
           });
-=======
-      function member_del(obj, id) {
+        }
+
+
+      /*function member_del(obj, id) {
         layer.confirm('确认要删除吗？', function (index) {
           //发异步删除数据
           $(obj).parents("tr").remove();
           layer.msg('已删除!', { icon: 1, time: 1000 });
         });
->>>>>>> f34aa2308d32f68923f7c54269fb7f8a74ba8cd4
-      }
+      }*/
 
 
 
@@ -273,18 +275,18 @@
         });
       }
 
-<<<<<<< HEAD
+/*
       form.on('submit(add)', function(data){
             //console.log(data);
             var headercode = $('input[name=headercode]').val(),
-=======
+*/
 
       layui.use('form', function () {
         var form = layui.form;
         form.on('submit(add)', function (data) {
           //console.log(data);
           var headercode = $('input[name=headercode]').val(),
->>>>>>> f34aa2308d32f68923f7c54269fb7f8a74ba8cd4
+
             headername = $('input[name=headername]').val();
 
           $(this).ajaxSubmit({
@@ -307,15 +309,14 @@
 
 
 
-
+*/
     </script>
-    <script>var _hmt = _hmt || []; (function () {
+     <script>var _hmt = _hmt || []; (function() {
         var hm = document.createElement("script");
         hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
         var s = document.getElementsByTagName("script")[0];
         s.parentNode.insertBefore(hm, s);
-      })();
-    </script>
+      })();</script>
   </body>
 
   </html>
