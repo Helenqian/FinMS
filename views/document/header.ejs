@@ -18,6 +18,8 @@
     <!--[if lt IE 9]>
       <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
       <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script> 
+      <script src="http://malsup.github.com/jquery.form.js"></script>
     <![endif]-->
   </head>
   
@@ -68,12 +70,15 @@
               <a title="查看"  onclick="x_admin_show('编辑','order-view.html')" href="javascript:;">
                 <i class="layui-icon">&#xe63c;</i>
               </a>
-              <a title="删除" onclick="member_del(this,<%= headers[i].code %>,id)" href="javascript:;">
-                <i class="layui-icon">&#xe640;</i>
+
+              <a title="删除" onclick="member_del(this,'<%= headers[i].code %>')" href="javascript:;"> 
+                <i class="layui-icon">&#xe640;</i> 
               </a>
+
             </td>
           </tr>
         <% } %>
+
         </tbody>
       </table>
       <div class="page">
@@ -127,36 +132,29 @@
           });
       }
 
+
+      
       /*用户-删除*/
-/*      function member_del(obj,headercode, id){
+      function member_del(obj,id){
+
           layer.confirm('确认要删除吗？',function(index){
-              //发异步删除数据
+          $.ajax({
+           type : "post",
+           url: "/deleteheader",
+           //dateType : "json",
+           data:{
+              'headercode': id
+            },
+           success: function(data) { 
+              //判断是否删除成功
               $(obj).parents("tr").remove();
-              layer.msg('已删除!',{icon:1,time:1000});
-          });
+                 layer.msg('已删除!',{icon:1,time:1000});
+                 layer.close(index);//关闭
+           }
+        });
+        });
       }
-*/
-
-        function member_del(obj, headercode, id){
-          layer.confirm('确认要删除吗？',function(index){
-              //发异步删除数据
-              $(obj).ajax({
-              type: 'post', // 提交方式 get/post
-              url: '/deleteheader', // 需要提交的 url
-              //dataType: "json",
-              data: {
-                'headercode': headercode
-              },
-              success: function(data) { 
-                alert(data);
-                $(obj).parents("tr").remove();
-                layer.msg('已删除!',{icon:1,time:1000});
-              }
-           });
-       }
-    }
-
-
+      
 
       function delAll (argument) {
 
@@ -164,6 +162,7 @@
   
         layer.confirm('确认要删除吗？'+data,function(index){
             //捉到所有被选中的，发异步进行删除
+            
             layer.msg('删除成功', {icon: 1});
             $(".layui-form-checked").not('.header').parents('tr').remove();
         });

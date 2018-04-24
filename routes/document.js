@@ -10,20 +10,20 @@ router.get('/header', function (req, res, next) {
 	if (!(req.body.headercode || req.body.headername)) {
 		Header.find({}, function (err, headers) {
 			if (err) return next(err);
-			res.render('document/header1',
+			res.render('document/header',
 				{
 					headers: headers, message: req.flash('message')
 				});
 		});
 	} else {
-		res.render('document/header1',
+		res.render('document/header',
 			{
 				headers: req.headers, message: req.flash('message')
 			});
 	}
 });
 
-
+/*
 router.post('/header', function(req, res, next) {
 
  if(!(req.body.headercode || req.body.headername)){
@@ -72,7 +72,7 @@ router.post('/header', function(req, res, next) {
 	  });
   	}
   });
- 
+*/
 /*
 router.get('/api/header', function (req, res, next) {
 	Header.find({}, function (err, headers) {
@@ -236,15 +236,17 @@ router.get('/header/del/:id', function(req, res, next){
 });
 
 router.post('/deleteheader', function(req, res, next){
-
+	console.log("in post" + req.body.headercode);
 	Header.findOne({code: req.body.headercode}, function(err, toDeleteHeader){
 		if(!toDeleteHeader){
+			console.log("not exist");
 			req.flash('delete failed', 'Header does not exist');
 			return res.redirect('/header');
 		} else {
 			Header.remove({ _id: toDeleteHeader._id }, function(err){
 				if(err) return next(err);
-				res.redirect('/header');
+				console.log("already delete");
+				return res.redirect('/header');
 			});
 		}
 	});

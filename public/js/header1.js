@@ -1,5 +1,5 @@
 layui.config({
-	base : "js/"
+	base : ""
 }).use(['form','layer','jquery','laypage'],function(){
 	var form = layui.form(),
 		layer = parent.layer === undefined ? layui.layer : parent.layer,
@@ -8,8 +8,8 @@ layui.config({
 
 	//加载页面数据
 	var usersData = '';
-	$.get("../../json/usersList.json", function(data){
-		usersData = data;
+	$.get("/header", function(data){
+		usersData = headers;
 		if(window.sessionStorage.getItem("addUser")){
 			var addUser = window.sessionStorage.getItem("addUser");
 			usersData = JSON.parse(addUser).concat(usersData);
@@ -25,7 +25,7 @@ layui.config({
 			var index = layer.msg('查询中，请稍候',{icon: 16,time:false,shade:0.8});
             setTimeout(function(){
             	$.ajax({
-					url : "../../json/usersList.json",
+					url : "/header",
 					type : "get",
 					dataType : "json",
 					success : function(data){
@@ -182,12 +182,8 @@ layui.config({
 				for(var i=0;i<currData.length;i++){
 					dataHtml += '<tr>'
 			    	+  '<td><input type="checkbox" name="checked" lay-skin="primary" lay-filter="choose"></td>'
-			    	+  '<td>'+currData[i].userName+'</td>'
-			    	+  '<td>'+currData[i].userEmail+'</td>'
-			    	+  '<td>'+currData[i].userSex+'</td>'
-			    	+  '<td>'+currData[i].userGrade+'</td>'
-			    	+  '<td>'+currData[i].userStatus+'</td>'
-			    	+  '<td>'+currData[i].userEndTime+'</td>'
+			    	+  '<td>'+currData[i].headercode+'</td>'
+			    	+  '<td>'+currData[i].headername+'</td>'
 			    	+  '<td>'
 					+    '<a class="layui-btn layui-btn-mini users_edit"><i class="iconfont icon-edit"></i> 编辑</a>'
 					+    '<a class="layui-btn layui-btn-danger layui-btn-mini users_del" data-id="'+data[i].usersId+'"><i class="layui-icon">&#xe640;</i> 删除</a>'
