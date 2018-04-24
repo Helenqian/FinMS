@@ -18,7 +18,7 @@ var AccountDocumentSchema = new Schema({
 	//凭证号
 
 	num: { type: String, default: '', unique: true},
-<<<<<<< HEAD
+
 	//录入日期
 	documentdate: { type: Date, default: Date.now},
 	//入账日期
@@ -28,10 +28,13 @@ var AccountDocumentSchema = new Schema({
 	//日期
 	date: { type: Date, default: Date.now },
 
-=======
+
 	//日期
 	date: { type: Date, default: Date.now},
->>>>>>> parent of 42fbcdd... commit
+
+	//日期
+	date: { type: Date, default: Date.now},
+
 	//制单人
 	maker: { type: String, default: '' },
 	//借方合计

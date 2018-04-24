@@ -10,13 +10,13 @@ router.get('/header', function (req, res, next) {
 	if (!(req.body.headercode || req.body.headername)) {
 		Header.find({}, function (err, headers) {
 			if (err) return next(err);
-			res.render('document/header',
+			res.render('document/header1',
 				{
 					headers: headers, message: req.flash('message')
 				});
 		});
 	} else {
-		res.render('document/header',
+		res.render('document/header1',
 			{
 				headers: req.headers, message: req.flash('message')
 			});
@@ -59,7 +59,7 @@ router.post('/header', function(req, res, next) {
     }
   });
  }
-<<<<<<< HEAD
+
  	else{
  		 Header.find({ code: req.body.headercode, name: req.body.headername}, function(err, headers){
   		 if (err) return next(err);
@@ -73,7 +73,7 @@ router.post('/header', function(req, res, next) {
   	}
   });
  
-
+/*
 router.get('/api/header', function (req, res, next) {
 	Header.find({}, function (err, headers) {
 		if (err) return next(err);
@@ -81,7 +81,7 @@ router.get('/api/header', function (req, res, next) {
 		res.send({ headers: headers });
 	});
 
-=======
+
  else{
   Header.find({ code: req.body.headercode, name: req.body.headername}, 
   function(err, headers){
@@ -94,8 +94,7 @@ router.get('/api/header', function (req, res, next) {
     }
   });
  }
->>>>>>> parent of 42fbcdd... commit
-});
+});*/
 
 router.post('/header', function (req, res, next) {
 
@@ -167,7 +166,7 @@ router.post('/addheader', function(req, res, next) {
 			  } else {
 				header.save(function(err, header){
 				 if(err) return next(err);
-				 //req.flash('message', 'New header has been created');
+				 req.flash('message', 'New header has been created');
 				 //res.json('New header has been created');
 				 return res.redirect('/addheader');
 //				 callback(null, header);
@@ -182,6 +181,7 @@ router.post('/addheader', function(req, res, next) {
 router.get('/addheader', function (req, res, next) {
 	res.render('document/addheader', { message: req.flash('message') });
 });
+
 
 router.post('/addheader', function (req, res, next) {
 
@@ -218,10 +218,26 @@ router.post('/addheader', function (req, res, next) {
 	//	]);
 });
 
-/*
-router.delete('/header', function(req, res, next){
+router.get('/header/del/:id', function(req, res, next){
+	if (!(req.body.headercode || req.body.headername)) {
+		Header.find({}, function (err, headers) {
+			if (err) return next(err);
+			res.render('document/header',
+				{
+					headers: headers, message: req.flash('message')
+				});
+		});
+	} else {
+		res.render('document/header',
+			{
+				headers: req.headers, message: req.flash('message')
+			});
+	}
+});
 
-	Header.findOne({code: req.body.code, name: req.body.name}, function(err, toDeleteHeader){
+router.post('/deleteheader', function(req, res, next){
+
+	Header.findOne({code: req.body.headercode}, function(err, toDeleteHeader){
 		if(!toDeleteHeader){
 			req.flash('delete failed', 'Header does not exist');
 			return res.redirect('/header');
@@ -233,9 +249,12 @@ router.delete('/header', function(req, res, next){
 		}
 	});
 });
-*/
 
-router.get('/accountdocument', function (req, res, next) {
+
+
+
+router.get('/accountdocument', function(req, res, next){
+
 	res.render('document/accountdocument', {
 		errors: req.flash('errors')
 	});

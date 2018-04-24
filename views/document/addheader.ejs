@@ -26,7 +26,7 @@
   
   <body>
     <div class="x-body">
-   
+   <!--
     <% if (message.length > 0) { %>
       <div class="layui-icon">
         <button type="button" class="close" data-dismmiss="alert" aria-label="Close">
@@ -34,7 +34,7 @@
         </button>
         <%= message %>
       </div> 
-    <% } %>
+    <% } %>-->
         
 
         <form class="layui-form" method="post">
@@ -120,7 +120,7 @@
                 'headername': headername
             },
             success: function(data) { 
-              layer.alert("增加成功", {icon: 6},function () {
+                layer.alert("增加成功", {icon: 6},function () {
                 // 获得frame索引
                 var index = parent.layer.getFrameIndex(window.name);
                 //关闭当前frame
