@@ -9,7 +9,7 @@ layui.config({
 	//加载页面数据
 	var usersData = '';
 	$.get("/header", function(data){
-		usersData = headers;
+		usersData = data;
 		if(window.sessionStorage.getItem("addUser")){
 			var addUser = window.sessionStorage.getItem("addUser");
 			usersData = JSON.parse(addUser).concat(usersData);
@@ -186,7 +186,7 @@ layui.config({
 			    	+  '<td>'+currData[i].headername+'</td>'
 			    	+  '<td>'
 					+    '<a class="layui-btn layui-btn-mini users_edit"><i class="iconfont icon-edit"></i> 编辑</a>'
-					+    '<a class="layui-btn layui-btn-danger layui-btn-mini users_del" data-id="'+data[i].usersId+'"><i class="layui-icon">&#xe640;</i> 删除</a>'
+					+    '<a class="layui-btn layui-btn-danger layui-btn-mini users_del" data-id="'+data[i].headercode+'"><i class="layui-icon">&#xe640;</i> 删除</a>'
 			        +  '</td>'
 			    	+'</tr>';
 				}

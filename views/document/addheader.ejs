@@ -110,7 +110,6 @@
             //console.log(data);
             var headercode = $('input[name=headercode]').val(),
             headername = $('input[name=headername]').val();
-
             $(this).ajaxSubmit({
             type: 'post', // 提交方式 get/post
             url: '/addheader', // 需要提交的 url
@@ -133,44 +132,6 @@
     });
 });
 
-
-           /* //发异步，把数据提交给php
-            layer.alert("增加成功", {icon: 6},function () {
-                // 获得frame索引
-                var index = parent.layer.getFrameIndex(window.name);
-                //关闭当前frame
-                parent.layer.close(index);
-            });
-            return false;
-          });
-          */
-
-  /*        form.on('submit(add)', function(data){
-            var headercode = $('input[name=headercode]').val(),
-            headername = $('input[name=headername]').val();
-
-            $(this).ajaxSubmit({
-            type: 'post', // 提交方式 get/post
-            url: '/addheader', // 需要提交的 url
-            data: {
-                'headercode': headercode,
-                'headername': headername
-            },
-            success: function(data) { // data 保存提交后返回的数据，一般为 json 数据
-                // 此处可对 data 作相关处理
-                console.log(data);
-                layer.alert("增加成功", {icon: 6},function () {
-                // 获得frame索引
-                var index = parent.layer.getFrameIndex(window.name);
-                //关闭当前frame
-                parent.layer.close(index);
-                });
-            }
-            $(this).resetForm(); // 提交后重置表单
-        });
-        return false; // 阻止表单自动提交事件
-    });
-});*/
           
     </script>
     <script>var _hmt = _hmt || []; (function() {

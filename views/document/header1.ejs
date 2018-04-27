@@ -13,9 +13,11 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="./css/font.css">
     <link rel="stylesheet" href="./css/xadmin.css">
+    <link rel="stylesheet" href="//res.layui.com/layui/dist/css/layui.css"  media="all">
     <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="./js/xadmin.js"></script>
+
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
       <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -48,26 +50,34 @@
         <span class="x-right" style="line-height:40px">共有数据：<%= headers.length %> 条</span>
       </xblock>
 
-    <div class="layui-form users_list">
-      <table class="layui-table">
-        <colgroup>
-        <col width="10">
-        <col width="30%">
-        <col width="35%">
-        <col width="25%">
-        </colgroup>
-        <thead>
-        <tr>
-          <th><input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose" id="allChoose"></th>
-          <th>摘要编号</th>
-            <th>摘要名称</th>
-            <th>操作</th>
-        </tr> 
-        </thead>
-        <tbody class="users_content"></tbody>
-       </table>
-    </div>
-    <div id="page"></div>
+
+<table class="layui-hide" id="test"></table>
+              
+          
+ 
+<script>
+layui.use('table', function(){
+  var table = layui.table;
+  
+  table.render({
+    elem: '#test'
+    ,url:'/header'
+    ,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+      layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+      //,curr: 5 //设定初始在第 5 页
+      ,groups: 1 //只显示 1 个连续页码
+      ,first: false //不显示首页
+      ,last: false //不显示尾页
+      
+    }
+    ,cols: [[
+      {field:'headercode', width:80, title: '摘要编号', sort: true}
+      ,{field:'headername', width:100, title: '摘要名称'}
+    ]]
+    
+  });
+});
+</script>
     <script type="text/javascript" src="../../layui/layui.js"></script>
     <script type="text/javascript" src="./js/header1.js"></script>
     <script>

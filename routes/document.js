@@ -8,102 +8,163 @@ var AccountDocument = require('../models/AccountDocument');
 
 router.get('/header', function (req, res, next) {
 	if (!(req.body.headercode || req.body.headername)) {
-		Header.find({}, function (err, headers) {
+		Header.find({}, 'code name', function (err, headers) {
 			if (err) return next(err);
 			res.render('document/header',
 				{
 					headers: headers, message: req.flash('message')
 				});
-		});
-	} else {
-		res.render('document/header',
+			});
+			} 
+			else {
+			res.render('document/header',
 			{
 				headers: req.headers, message: req.flash('message')
 			});
 	}
 });
 
-/*
-router.post('/header', function(req, res, next) {
 
- if(!(req.body.headercode || req.body.headername)){
-  Header.find({}, function(err, headers){
-   if (err) return next(err);
-   res.render('document/header', 
-   { headers: headers, message: req.flash('message')
-  });
- });
- } 
+router.get('/tabletest', function (req, res, next) {
+		res.render('document/tableTest',
+		{ headercode: req.body.headercode, headername: req.body.headername});
+});
 
- else if(!req.body.headercode){
-   Header.find({name: req.body.headername}, 
-   function(err, headers){
-   if (err) return next(err);
-   if(!headers){
-   req.flash('message', 'No header has been found');
-   return res.redirect('/header');
-    } else {
-    res.render('document/header', {headers: headers, message: req.flash('success')});
-    }
-  });
- }
- else if(!req.body.headername){
-  Header.find({ code: req.body.headercode}, 
-  function(err, headers){
-   if (err) return next(err);
-   if(!headers){
-   req.flash('message', 'No header has been found');
-   return res.redirect('/header');
-    } else {
-    res.render('document/header', {headers: headers, message: req.flash('success')});
-    }
-  });
- }
 
- 	else{
- 		 Header.find({ code: req.body.headercode, name: req.body.headername}, function(err, headers){
-  		 if (err) return next(err);
-  		 if(!headers){
-  			 req.flash('message', 'No header has been found');
-   			return res.redirect('/header');
-  		  } else {
-  		  res.render('document/header', {headers: headers, message: req.flash('success')});
-	  	  }
-	  });
-  	}
-  });
-*/
-/*
+
 router.get('/api/header', function (req, res, next) {
-	Header.find({}, function (err, headers) {
-		if (err) return next(err);
-		res.type = 'application/json';
-		res.send({ headers: headers });
+	if (!(req.body.headercode || req.body.headername)) {
+		Header.find({}, 'code name', function (err, headers) {
+			if (err) return next(err);
+			console.log("1");
+			var data = [];
+			for (var i in headers) {
+				var o = {};
+				o.code  = headers[i].code;
+				o.name = headers[i].name;
+				data.push(o);
+			}
+			var responsedata = {
+				code: 0,
+				msg: "",
+				count: headers.length,
+				data: data
+			  } 
+			// res.body = { headers: resdata };
+			res.send(responsedata)
+		});
+	}
+	else if (!req.body.headercode) {
+		Header.find({ name: req.body.headername }, 'code name',
+			function (err, headers) {
+				if (err) return next(err);
+				var data =[];
+				var _page = req.query.page;
+				var _limit = req.query.limit;
+				console.log("2"); 
+				for (var j = (_page - 1) * _limit ; j < _page * _limit && (header[j] != null); j++)
+				{
+					var o = {};
+					o.code  = headers[j].code;
+					o.name = headers[j].name;
+					data.push(o);
+				}
+				var responsedata = {
+				code: 0,
+				msg: "",
+				count: headers.length,
+				data: data
+				  } 
+				res.send(responsedata);
+			});
+	}
+	else if (!req.body.headername) {
+		Header.find({ code: req.body.headercode }, 'code name',
+			function (err, headers) {
+				if (err) return next(err);
+				var data =[];
+				var _page = req.query.page;
+				var _limit = req.query.limit;
+				console.log("3");
+				for (var j = (_page - 1) * _limit ; j < _page * _limit && (header[j] != null); j++)
+				{
+					var o = {};
+					o.code  = headers[j].code;
+					o.name = headers[j].name;
+					data.push(o);
+				}
+				var responsedata = {
+				code: 0,
+				msg: "",
+				count: headers.length,
+				data: data
+				  } 
+				res.send(responsedata);
+			});
+	}
+	else {
+		Header.find({ code: req.body.headercode, name: req.body.headername }, 'code name',
+			function (err, headers) {
+				if (err) return next(err);
+				var data =[];
+				var _page = req.query.page;
+				var _limit = req.query.limit;
+				console.log("4");
+				for (var j = (_page - 1) * _limit ; j < _page * _limit && (header[j] != null); j++)
+				{
+					var o = {};
+					o.code  = headers[j].code;
+					o.name = headers[j].name;
+					data.push(o);
+				}
+				var responsedata = {
+				code: 0,
+				msg: "",
+				count: headers.length,
+				data: data
+				  } 
+				res.send(responsedata);
+			});
+	}
+	/*if(!req.query.page) {
+		res.type('application/json'); 
+		for (var i in header.length)
+		{
+			var o = {};
+			o.code  = header[j].code;
+			o.name = header[j].name;
+			data.push(o);
+		}
+	}*/
 	});
 
 
- else{
-  Header.find({ code: req.body.headercode, name: req.body.headername}, 
-  function(err, headers){
-   if (err) return next(err);
-   if(!headers){
-   req.flash('message', 'No header has been found');
-   return res.redirect('/header');
-    } else {
-    res.render('document/header', {headers: headers, message: req.flash('success')});
-    }
-  });
- }
-});*/
 
-router.post('/header', function (req, res, next) {
+
+/*
+router.get('/query', function (req, res, next) {  
+	console.log('get请求参数对象 :',req.query);  
+	console.log('post请求参数对象 :',req.body);  
+	console.log('q的值为 :',req.query.q);  
+  });  
+
+router.post('/body', function (req, res, next) {  
+	console.log('get请求参数对象 :',req.query);  
+	console.log('post请求参数对象 :',req.body);  
+	console.log('q的值为 :',req.body.q);  
+	  
+  });  
+*/
+
+
+router.post('/tableTest', function (req, res, next) {
 
 	if (!(req.body.headercode || req.body.headername)) {
 		Header.find({}, function (err, headers) {
 			if (err) return next(err);
-			res.render('document/header',
+			res.render('document/tableTest',
 				{
-					headers: headers, message: req.flash('message')
+					headers: headers
 				});
 		});
 	}
@@ -114,9 +175,9 @@ router.post('/header', function (req, res, next) {
 				if (err) return next(err);
 				if (!headers) {
 					req.flash('message', 'No header has been found');
-					return res.redirect('/header');
+					return res.redirect('/tableTest');
 				} else {
-					res.render('document/header', { headers: headers, message: req.flash('success') });
+					res.render('document/tableTest', { headers: headers, message: req.flash('success') });
 				}
 			});
 	}
@@ -126,9 +187,9 @@ router.post('/header', function (req, res, next) {
 				if (err) return next(err);
 				if (!headers) {
 					req.flash('message', 'No header has been found');
-					return res.redirect('/header');
+					return res.redirect('/tableTest');
 				} else {
-					res.render('document/header', { headers: headers, message: req.flash('success') });
+					res.render('document/tableTest', { headers: headers, message: req.flash('success') });
 				}
 			});
 	}
@@ -138,19 +199,66 @@ router.post('/header', function (req, res, next) {
 				if (err) return next(err);
 				if (!headers) {
 					req.flash('message', 'No header has been found');
+					return res.redirect('/tableTest');
+				} else {
+					res.render('document/tableTest', { headers: headers, message: req.flash('success') });
+				}
+			});
+	}
+});
+
+router.post('/header', function (req, res, next) {
+
+	if (!(req.body.headercode || req.body.headername)) {
+		Header.find({}, function (err, headers) {
+			if (err) return next(err);
+			res.render('document/header',
+				{
+					headers: headers
+				});
+		});
+	}
+
+	else if (!req.body.headercode) {
+		Header.find({ name: req.body.headername },
+			function (err, headers) {
+				if (err) return next(err);
+				if (!headers) {
 					return res.redirect('/header');
 				} else {
-					res.render('document/header', { headers: headers, message: req.flash('success') });
+					res.render('document/header', { headers: headers});
+				}
+			});
+	}
+	else if (!req.body.headername) {
+		Header.find({ code: req.body.headercode },
+			function (err, headers) {
+				if (err) return next(err);
+				if (!headers) {
+					return res.redirect('/header');
+				} else {
+					res.render('document/header', { headers: headers });
+				}
+			});
+	}
+	else {
+		Header.find({ code: req.body.headercode, name: req.body.headername },
+			function (err, headers) {
+				if (err) return next(err);
+				if (!headers) {
+					return res.redirect('/header');
+				} else {
+					res.render('document/header', { headers: headers });
 				}
 			});
 	}
 });
 
 
+
+
 router.post('/addheader', function(req, res, next) {
 	
-//	async.waterfall([
-//		function(callback) {
 			var header = new Header();
 	
 			header.code = req.body.headercode;
@@ -161,20 +269,16 @@ router.post('/addheader', function(req, res, next) {
 				if(existingHeader){
 					//console.log(req.body.email + " is already exist");
 					req.flash('message', 'Header with that code already exists');
-					//res.json('Header with that code already exists');
 					return res.redirect('/addheader');
 			  } else {
 				header.save(function(err, header){
 				 if(err) return next(err);
 				 req.flash('message', 'New header has been created');
-				 //res.json('New header has been created');
 				 return res.redirect('/addheader');
-//				 callback(null, header);
 				});
 			}
 		});
 	});
-//	},
 
 
 
@@ -209,13 +313,6 @@ router.post('/addheader', function (req, res, next) {
 			});
 		}
 	});
-	//	},
-
-	//	function(header){
-	//		req.flash('success', 'New header has been created');
-	//		res.redirect('/addheader');
-	//	}
-	//	]);
 });
 
 router.get('/header/del/:id', function(req, res, next){
