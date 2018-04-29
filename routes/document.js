@@ -485,11 +485,11 @@ router.get('/header/del/:id', function(req, res, next){
 });
 
 router.post('/deleteheader', function(req, res, next){
-	console.log("in post" + req.body.headercode);
+	console.log("in post " + req.body.headercode);
 	Header.findOne({code: req.body.headercode}, function(err, toDeleteHeader){
 		if(!toDeleteHeader){
 			console.log("not exist");
-			req.flash('delete failed', 'Header does not exist');
+			console.log('delete failed', 'Header does not exist');
 			return res.redirect('/header');
 		} else {
 			Header.remove({ _id: toDeleteHeader._id }, function(err){
