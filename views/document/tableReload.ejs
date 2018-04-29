@@ -10,14 +10,30 @@
   <link rel="stylesheet" href="/layui/css/layui.css"  media="all">
   <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
 </head>
-<body> 
- 
+<body>
+    <div class="x-nav">
+        <span class="layui-breadcrumb">
+          <a href="">首页</a>
+          <a href="">演示</a>
+          <a>
+            <cite>导航元素</cite></a>
+        </span>
+      </div>
+<div class="x-body">   
 <div class="demoTable">
   <div class="layui-inline layui-col-md12 x-so">
     <input class="layui-input" name="code" placeholder="摘要编号" lay-verify="required" id="demoReload" autocomplete="off">
     <input class="layui-input" name="name" placeholder="摘要名称" id="nameReload" autocomplete="off">
     <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
   </div>
+</div>
+
+
+<xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <button class="layui-btn" onclick="x_admin_show('添加用户','/addheader')"><i class="layui-icon"></i>添加</button>
+        <span class="x-right" style="line-height:40px">共有数据： 条</span>
+</xblock>
 </div>
  
 <table class="layui-hide" id="LAY_table_user" lay-filter="user"></table> 
