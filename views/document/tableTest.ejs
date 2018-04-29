@@ -11,11 +11,12 @@
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
   <link rel="stylesheet" href="./css/font.css">
   <link rel="stylesheet" href="./css/xadmin.css">
+  <link rel="stylesheet" href="/layui/css/layui.css" media="all">
   <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-  <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
   <script type="text/javascript" src="./js/xadmin.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script> 
   <script src="http://malsup.github.com/jquery.form.js"></script>
+  
 </head>
 <body>
   <div class="x-nav">
@@ -32,8 +33,8 @@
     <div class="layui-row">
       <form class="layui-form layui-col-md12 x-so" action="">
           <div class="layui-form-item">
-                <input type="text" name="headercode" required  lay-verify="required" placeholder="摘要编号" autocomplete="off" class="layui-input">
-                <input type="text" name="headername"  placeholder="摘要名称" autocomplete="off" class="layui-input">
+                <input type="text" id="headercode" name="headercode" required  lay-verify="required" placeholder="摘要编号" autocomplete="off" class="layui-input">
+                <input type="text" id="headername" name="headername"  placeholder="摘要名称" autocomplete="off" class="layui-input">
                 <button class="layui-btn"  lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
               </div>
@@ -44,7 +45,6 @@
       <button class="layui-btn" onclick="x_admin_show('添加用户','/addheader')"><i class="layui-icon"></i>添加</button>
       <span class="x-right" style="line-height:40px">共有数据： 条</span>
     </xblock>
-
 
 <table id="demo" lay-filter="test"></table>
  
@@ -71,21 +71,10 @@ layui.use('table', function(){
       {type:'checkbox', fixed: 'left'}
       ,{field: 'code', title: '摘要编号', width:300, sort: true, fixed: 'left'}
       ,{field: 'name', title: '摘要名称', width:380}
-      ,{field: 'operation', title: '操作', fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}
+      ,{field: 'operation', title: '操作', fixed: 'right', width:180, align:'center', toolbar: '#barDemo'}
     ]]
   });
-  
-});
-/*
-table.reload('demoTest', {
-  where: { //设定异步数据接口的额外参数，任意设
-    headercode: $('input[name=headercode]').val()
-    ,headername: $('input[name=headername]').val(),
-  }
-  ,page: {
-    curr: 1 //重新从第 1 页开始
-  }
-  });*/
+
 
 table.on('tool(demo)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
     var data = obj.data //获得当前行数据
@@ -104,16 +93,55 @@ table.on('tool(demo)', function(obj){ //注：tool是工具条事件名，test�
     }
   });
 
-layui.use('form', function(data){
+
+layui.use('form',function(){
+
+form.on('submit(search)',function(data){
+  table.reload({
+   where: { //设定异步数据接口的额外参数，任意设
+    //headercode: $("#headercode").val()
+    //,headername: $("#headername").val(),
+    headercode: cn.code
+    ,headername: cn.name
+  }
+  ,page: {
+    page: 1 //重新从第 1 页开始
+  }
+  });
+  return false;
+});
+});
+});
+/*
+table.on('tool(demo)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+    var data = obj.data //获得当前行数据
+    ,layEvent = obj.event; //获得 lay-event 对应的值
+    //if(layEvent === 'detail'){
+    //  layer.msg('查看操作');
+    //}
+    if(layEvent === 'del'){
+      layer.confirm('真的删除行么', function(index){
+        obj.del(); //删除对应行（tr）的DOM结构
+        layer.close(index);
+        //向服务端发送删除指令
+      });
+    } else if(layEvent === 'edit'){
+      layer.msg('编辑操作');
+    }
+  });
+  
+});
+*/
+/*
+layui.use('form', function(){
     var form = layui.form;
-    var table = layui.table;
+
     form.on('submit(search)', function(data){
-            /*var headercode = $('input[name=hcode]').val(),
-            headername = $('input[name=hname]').val();
-            console.log("22222");
+            var headercode = $('input[name=headercode]').val(),
+            headername = $('input[name=headername]').val();
             $(this).ajaxSubmit({
             type: 'get', // 提交方式 get/post
-            url: '/api/header', // 需要提交的 url
+            url: '/tableTest', // 需要提交的 url
             dataType: "json",
             data: {
                 'headercode': headercode,
@@ -122,19 +150,13 @@ layui.use('form', function(data){
             success: function(data) { 
                alert(data);
             }
-            //$(this).resetForm(); // 提交后重置表单*/
-            table.reload('demoTest', {
-            where: { //设定异步数据接口的额外参数，任意设
-            headercode: $('input[name=headercode]').val()
-            ,headername: $('input[name=headername]').val(),
-             }
-            ,page: {
-           curr: 1 //重新从第 1 页开始
-           }
+            //$(this).resetForm(); // 提交后重置表单
         });
-    });
     return false; // 阻止表单自动提交事件
   });
+});
+*/
+
 
 
 

@@ -26,14 +26,163 @@ router.get('/header', function (req, res, next) {
 
 
 router.get('/tabletest', function (req, res, next) {
+		var cn = {};
+		cn.code = req.query.headercode;
+		cn.name = req.query.headername;
+		console.log(cn);
 		res.render('document/tableTest',
-		{ headercode: req.body.headercode, headername: req.body.headername});
+		{ cn: cn});
 });
 
 
+router.get('/tablereload', function (req, res, next) {
+	res.render('document/tableReload');
+});
+
+/*
+router.get('/api/header', function(req,res,next){
+	
+	Header.find({}, 'code name',
+	function (err, headers) {
+		if (err) return next(err);
+		var data =[];
+		var _page = req.query.page;
+		var _limit = req.query.limit;
+		for (var j = (_page - 1) * _limit ; j < _page * _limit && (headers[j] != null); j++)
+		{
+			var o = {};
+			o.code  = headers[j].code;
+			o.name = headers[j].name;
+			data.push(o);
+		}
+		var responsedata = {
+		code: 0,
+		msg: "",
+		count: headers.length,
+		data: data
+		  } 
+		res.send(responsedata);
+	});
+});
+*/
+
 
 router.get('/api/header', function (req, res, next) {
-	if (!(req.body.headercode || req.body.headername)) {
+	if (!(req.query.headercode || req.query.headername)) {
+		Header.find({}, 'code name', function (err, headers) {
+				if (err) return next(err);
+				var data =[];
+				var _page = req.query.page;
+				var _limit = req.query.limit;
+				console.log("1"); 
+				for (var j = (_page - 1) * _limit ; j < _page * _limit && (headers[j] != null); j++)
+				{
+					var o = {};
+					o.code  = headers[j].code;
+					o.name = headers[j].name;
+					data.push(o);
+				}
+				var responsedata = {
+				code: 0,
+				msg: "",
+				count: headers.length,
+				data: data
+				  } 
+				res.send(responsedata);
+			});
+	}
+	else if (!req.query.headercode) {
+		Header.find({ name: req.query.headername }, 'code name',
+			function (err, headers) {
+				if (err) return next(err);
+				var data =[];
+				var _page = req.query.page;
+				var _limit = req.query.limit;
+				console.log("2"); 
+				for (var j = (_page - 1) * _limit ; j < _page * _limit && (headers[j] != null); j++)
+				{
+					var o = {};
+					o.code  = headers[j].code;
+					o.name = headers[j].name;
+					data.push(o);
+				}
+				var responsedata = {
+				code: 0,
+				msg: "",
+				count: headers.length,
+				data: data
+				  } 
+				res.send(responsedata);
+			});
+	}
+	else if (!req.query.headername) {
+		Header.find({ code: req.query.headercode }, 'code name',
+			function (err, headers) {
+				if (err) return next(err);
+				var data =[];
+				var _page = req.query.page;
+				var _limit = req.query.limit;
+				console.log("3");
+				for (var j = (_page - 1) * _limit ; j < _page * _limit && (headers[j] != null); j++)
+				{
+					var o = {};
+					o.code  = headers[j].code;
+					o.name = headers[j].name;
+					data.push(o);
+				}
+				var responsedata = {
+				code: 0,
+				msg: "",
+				count: headers.length,
+				data: data
+				  } 
+				res.send(responsedata);
+			});
+	}
+	else {
+		Header.find({ code: req.query.headercode, name: req.query.headername }, 'code name',
+			function (err, headers) {
+				if (err) return next(err);
+				var data =[];
+				var _page = req.query.page;
+				var _limit = req.query.limit;
+				console.log("4");
+				for (var j = (_page - 1) * _limit ; j < _page * _limit && (headers[j] != null); j++)
+				{
+					var o = {};
+					o.code  = headers[j].code;
+					o.name = headers[j].name;
+					data.push(o);
+				}
+				var responsedata = {
+				code: 0,
+				msg: "",
+				count: headers.length,
+				data: data
+				  } 
+				res.send(responsedata);
+			});
+	}
+});
+	/*if(!req.query.page) {
+		res.type('application/json'); 
+		for (var i in header.length)
+		{
+			var o = {};
+			o.code  = header[j].code;
+			o.name = header[j].name;
+			data.push(o);
+		}
+	}*/
+/*	});
+*/
+
+
+
+
+/*
+router.get('/api/header', function (req, res, next) {
+	if (!(req.query.headercode || req.query.headername)) {
 		Header.find({}, 'code name', function (err, headers) {
 			if (err) return next(err);
 			console.log("1");
@@ -54,15 +203,15 @@ router.get('/api/header', function (req, res, next) {
 			res.send(responsedata)
 		});
 	}
-	else if (!req.body.headercode) {
-		Header.find({ name: req.body.headername }, 'code name',
+	else if (!req.query.headercode) {
+		Header.find({ name: req.query.headername }, 'code name',
 			function (err, headers) {
 				if (err) return next(err);
 				var data =[];
 				var _page = req.query.page;
 				var _limit = req.query.limit;
 				console.log("2"); 
-				for (var j = (_page - 1) * _limit ; j < _page * _limit && (header[j] != null); j++)
+				for (var j = (_page - 1) * _limit ; j < _page * _limit && (headers[j] != null); j++)
 				{
 					var o = {};
 					o.code  = headers[j].code;
@@ -78,15 +227,15 @@ router.get('/api/header', function (req, res, next) {
 				res.send(responsedata);
 			});
 	}
-	else if (!req.body.headername) {
-		Header.find({ code: req.body.headercode }, 'code name',
+	else if (!req.query.headername) {
+		Header.find({ code: req.query.headercode }, 'code name',
 			function (err, headers) {
 				if (err) return next(err);
 				var data =[];
 				var _page = req.query.page;
 				var _limit = req.query.limit;
 				console.log("3");
-				for (var j = (_page - 1) * _limit ; j < _page * _limit && (header[j] != null); j++)
+				for (var j = (_page - 1) * _limit ; j < _page * _limit && (headers[j] != null); j++)
 				{
 					var o = {};
 					o.code  = headers[j].code;
@@ -103,14 +252,14 @@ router.get('/api/header', function (req, res, next) {
 			});
 	}
 	else {
-		Header.find({ code: req.body.headercode, name: req.body.headername }, 'code name',
+		Header.find({ code: req.query.headercode, name: req.query.headername }, 'code name',
 			function (err, headers) {
 				if (err) return next(err);
 				var data =[];
 				var _page = req.query.page;
 				var _limit = req.query.limit;
 				console.log("4");
-				for (var j = (_page - 1) * _limit ; j < _page * _limit && (header[j] != null); j++)
+				for (var j = (_page - 1) * _limit ; j < _page * _limit && (headers[j] != null); j++)
 				{
 					var o = {};
 					o.code  = headers[j].code;
@@ -136,7 +285,10 @@ router.get('/api/header', function (req, res, next) {
 			data.push(o);
 		}
 	}*/
-	});
+/*	});
+*/
+
+
 
 
 
