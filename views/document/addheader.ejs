@@ -110,7 +110,7 @@
             //console.log(data);
             var headercode = $('input[name=headercode]').val(),
             headername = $('input[name=headername]').val();
-            $(this).ajaxSubmit({
+            $.ajax({
             type: 'post', // 提交方式 get/post
             url: '/addheader', // 需要提交的 url
             //dataType: "json",
@@ -127,7 +127,7 @@
               });
             }
         });
-        $(this).resetForm();// 提交后重置表单
+        //$(this).resetForm();// 提交后重置表单
         return false; // 阻止表单自动提交事件
     });
 });
