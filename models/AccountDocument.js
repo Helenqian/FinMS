@@ -12,28 +12,18 @@ var AccountDocumentSchema = new Schema({
 		//摘要
 		header: { type: Schema.Types.ObjectId, ref: 'Header' },
 		//科目
-		account: { type: Schema.Types.ObjectId, ref: 'Account' }
+		account: { type: Schema.Types.ObjectId, ref: 'Account' },
+		//日期
+		date: { type: Date, default: Date.now }
 	}],
 
 	//凭证号
-
 	num: { type: String, default: '', unique: true},
 
 	//录入日期
 	documentdate: { type: Date, default: Date.now},
 	//入账日期
 	postingdate: { type: Date, default: Date.now},
-
-	num: { type: String, default: '', unique: true },
-	//日期
-	date: { type: Date, default: Date.now },
-
-
-	//日期
-	date: { type: Date, default: Date.now},
-
-	//日期
-	date: { type: Date, default: Date.now},
 
 	//制单人
 	maker: { type: String, default: '' },

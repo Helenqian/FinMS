@@ -25,15 +25,6 @@ router.get('/header', function (req, res, next) {
 });
 
 
-router.get('/tabletest', function (req, res, next) {
-		var cn = {};
-		cn.code = req.query.headercode;
-		cn.name = req.query.headername;
-		console.log(cn);
-		res.render('document/tableTest',
-		{ cn: cn});
-});
-
 
 router.get('/tablereload', function (req, res, next) {
 	res.render('document/tableReload');
@@ -168,59 +159,6 @@ router.get('/api/header', function (req, res, next) {
 
 
 
-
-
-
-router.post('/tableTest', function (req, res, next) {
-
-	if (!(req.body.headercode || req.body.headername)) {
-		Header.find({}, function (err, headers) {
-			if (err) return next(err);
-			res.render('document/tableTest',
-				{
-					headers: headers
-				});
-		});
-	}
-
-	else if (!req.body.headercode) {
-		Header.find({ name: req.body.headername },
-			function (err, headers) {
-				if (err) return next(err);
-				if (!headers) {
-					req.flash('message', 'No header has been found');
-					return res.redirect('/tableTest');
-				} else {
-					res.render('document/tableTest', { headers: headers, message: req.flash('success') });
-				}
-			});
-	}
-	else if (!req.body.headername) {
-		Header.find({ code: req.body.headercode },
-			function (err, headers) {
-				if (err) return next(err);
-				if (!headers) {
-					req.flash('message', 'No header has been found');
-					return res.redirect('/tableTest');
-				} else {
-					res.render('document/tableTest', { headers: headers, message: req.flash('success') });
-				}
-			});
-	}
-	else {
-		Header.find({ code: req.body.headercode, name: req.body.headername },
-			function (err, headers) {
-				if (err) return next(err);
-				if (!headers) {
-					req.flash('message', 'No header has been found');
-					return res.redirect('/tableTest');
-				} else {
-					res.render('document/tableTest', { headers: headers, message: req.flash('success') });
-				}
-			});
-	}
-});
-
 router.post('/header', function (req, res, next) {
 
 	if (!(req.body.headercode || req.body.headername)) {
@@ -303,8 +241,6 @@ router.get('/addheader', function (req, res, next) {
 
 router.post('/addheader', function (req, res, next) {
 
-	//	async.waterfall([
-	//		function(callback) {
 	var header = new Header();
 
 	header.code = req.body.headercode;
@@ -323,28 +259,11 @@ router.post('/addheader', function (req, res, next) {
 				//req.flash('message', 'New header has been created');
 				//res.json('New header has been created');
 				return res.redirect('/addheader');
-				//				 callback(null, header);
 			});
 		}
 	});
 });
 
-router.get('/header/del/:id', function(req, res, next){
-	if (!(req.body.headercode || req.body.headername)) {
-		Header.find({}, function (err, headers) {
-			if (err) return next(err);
-			res.render('document/header',
-				{
-					headers: headers, message: req.flash('message')
-				});
-		});
-	} else {
-		res.render('document/header',
-			{
-				headers: req.headers, message: req.flash('message')
-			});
-	}
-});
 
 router.post('/deleteheader', function(req, res, next){
 	console.log("in post " + req.body.headercode);
@@ -377,7 +296,7 @@ router.post('/delallheader',function(req, res, next){
 		}
 	});
 	}
-	return res.redirect('/header');
+	res.redirect('/tableReload');
 });
 
 
@@ -391,34 +310,7 @@ router.get('/accountdocument', function(req, res, next){
 
 
 
-router.get('/account', function (req, res, next) {
-	Account.find({}, function (err, accounts) {
-		if (err) return next(err);
-		res.render('document/account',
-			{
-				accounts: accounts, message: req.flash('message')
-			});
-	});
-});
 
-
-router.post('/account', function (req, res, next) {
-
-	var account = new Account();
-
-	account.code = req.body.accountcode;
-	account.name = req.body.accountname;
-
-	Account.find({ code: req.body.code, name: req.body.name }, function (err, existingAccount) {
-
-		if (existingAccount) {
-			req.flash('errors', 'Account already exists');
-			return res.redirect('/account');
-		} else {
-			res.redirect('/account');
-		}
-	});
-});
 
 
 module.exports = router;

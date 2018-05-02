@@ -27,20 +27,20 @@
 <div class="x-body">   
 <div class="demoTable">
   <div class="layui-inline layui-col-md12 x-so">
-    <input class="layui-input" name="code" placeholder="摘要编号" lay-verify="required" id="codeReload" autocomplete="off">
-    <input class="layui-input" name="name" placeholder="摘要名称" id="nameReload" autocomplete="off">
+    <input class="layui-input" name="code" placeholder="科目编号" lay-verify="required" id="demoReload" autocomplete="off">
+    <input class="layui-input" name="name" placeholder="科目名称" id="nameReload" autocomplete="off">
     <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
   </div>
 
 
 <xblock>
     <button class="layui-btn layui-btn-danger" data-type="delCheckData"><i class="layui-icon"></i>批量删除</button>
-    <button class="layui-btn" onclick="x_admin_show('添加用户','/addheader')"><i class="layui-icon"></i>添加</button>
+    <button class="layui-btn" onclick="x_admin_show('添加用户','/addaccount')"><i class="layui-icon"></i>添加</button>
 </xblock>
 </div>
 </div>
  
-<table class="layui-hide" id="LAY_table_header" lay-filter="head"></table> 
+<table class="layui-hide" id="LAY_table_account" lay-filter="head"></table> 
                
           
 <script src="./lib/layui/layui.js" charset="utf-8"></script>
@@ -54,12 +54,12 @@ layui.use('table', function(){
   
   //方法级渲染
   table.render({
-    elem: '#LAY_table_header'
-    ,url: '/api/header'
+    elem: '#LAY_table_account'
+    ,url: '/api/account'
     ,cols: [[ //表头
       {checkbox: true, fixed: true}
-      ,{field: 'code', title: '摘要编号', width:300, sort: true, fixed: 'left'}
-      ,{field: 'name', title: '摘要名称', width:400}
+      ,{field: 'code', title: '科目编号', width:300, sort: true, fixed: 'left'}
+      ,{field: 'name', title: '科目名称', width:400}
       ,{field: 'operation', title: '操作', fixed: 'right', width:200, align:'center', toolbar: '#barDemo'}
     ]]
     ,id: 'idTest'
@@ -69,7 +69,7 @@ layui.use('table', function(){
   
   var $ = layui.$, active = {
     reload: function(){
-      var codeReload = $('#codeReload');
+      var demoReload = $('#demoReload');
       var nameReload = $('#nameReload');
       
       //执行重载
@@ -78,8 +78,8 @@ layui.use('table', function(){
           curr: 1 //重新从第 1 页开始
         }
         ,where: {
-            headercode: codeReload.val()
-            ,headername: nameReload.val()
+            accountcode: demoReload.val()
+            ,accountname: nameReload.val()
         }
       });
     }
@@ -90,7 +90,7 @@ layui.use('table', function(){
          //向服务端发送删除指令
         $.ajax({
            type : "post",
-           url: "/delallheader",
+           url: "/delallaccount",
            data:{
               'datas' : data
             },
@@ -128,9 +128,9 @@ table.on('tool(head)', function(obj){ //注：tool是工具条事件名，test�
          //向服务端发送删除指令
         $.ajax({
            type : "post",
-           url: "/deleteheader",
+           url: "/deleteaccount",
            data:{
-              'headercode' : obj.data.code
+              'accountcode' : obj.data.code
             },
            success: function(data) { 
               //判断是否删除成功
@@ -148,8 +148,8 @@ table.on('tool(head)', function(obj){ //注：tool是工具条事件名，test�
         
     //同步更新缓存对应的值
     obj.update({
-      headercode: '123'
-      ,headername: 'xxx'
+      accountcode: '123'
+      ,accountname: 'xxx'
     });
   }*/
 });

@@ -71,11 +71,16 @@ var userRoutes = require('./routes/user');
 var customerRoutes = require('./routes/customer');
 var adminRoutes = require('./routes/admin');
 var documentRoutes = require('./routes/document');
+var accountRoutes = require('./routes/account');
+var accdocRoutes = require('./routes/accdoc');
 exp.use(mainRoutes);
 exp.use(userRoutes);
 exp.use(customerRoutes);
 exp.use(adminRoutes);
 exp.use(documentRoutes);
+exp.use(accountRoutes);
+exp.use(accdocRoutes);
+
 
 
 exp.listen(secret.port, function(err) {
