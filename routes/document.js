@@ -363,6 +363,22 @@ router.post('/deleteheader', function(req, res, next){
 	});
 });
 
+router.post('/delallheader',function(req, res, next){
+	console.log("in post " + req.body.datas[0].code);
+	for(var i = 0; i < req.body.datas.length; i++){
+	Header.findOne({code: req.body.datas[i].code, name: req.body.datas[i].name}, function(err, toDeleteHeader){
+		if(!toDeleteHeader){
+			console.log('delete failed', 'Header does not exist');
+		} else {
+			Header.remove({ _id: toDeleteHeader._id }, function(err){
+				if(err) return next(err);
+				console.log("already delete" + toDeleteHeader.code);
+			});
+		}
+	});
+	}
+	return res.redirect('/header');
+});
 
 
 
