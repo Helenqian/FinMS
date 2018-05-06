@@ -19,7 +19,7 @@
     </ul>-->
     <div class="layui-inline layui-col-md12 x-so">
         <div class="layui-inline">
-                <label class="layui-form-label">凭证号：<%= 1001 + accdoc.length %> </label>
+                <label class="layui-form-label">凭证号：<%= num1 %> </label>
                 <!--<div class="layui-input-inline">
                         <input type="text" name="adnum"  placeholder="请输入凭证号" id="adnum" autocomplete="off" class="layui-input">
                 </div>-->
@@ -38,8 +38,8 @@
       <!--<button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>-->
     </div> 
     <xblock>
-            <button class="layui-btn" data-type="addLine"><i class="layui-icon"></i>添加</button>
-            <button class="layui-btn" data-type="recordAD"><i class="layui-icon">&#xe61f;</i>录入</button>
+            <button class="layui-btn" data-type="checkAD"><i class="layui-icon">&#xe6b2;</i>审核</button>
+            <button class="layui-btn" data-type="postAD"><i class="layui-icon">&#xe60a;</i>过账</button>
     </xblock>
 </div>
 
@@ -54,7 +54,7 @@ layui.use('table', function(){
     //方法级渲染
     table.render({
       elem: '#LAY_table_addaccdoc'
-      ,url: '/api/addaccdoc'
+      ,url: '/api/viewaccdoc'
       ,cols: [[ //表头
         {field:'id', title:'id', width:120, sort:true, edit: 'text', fixed: 'left'}
         ,{field:'num', title: '凭证号', width:100, sort: true, edit: 'text'}
@@ -66,6 +66,7 @@ layui.use('table', function(){
         ,{field:'credit', title:'贷方金额', width:120, edit: 'text'}
         ,{field: 'operation', title: '操作', fixed: 'right', width:150, align:'center', toolbar: '#barDemo'}
       ]]
+      ,nnum: num1
       ,id: 'addaccdoc'
       ,page: true
       ,height: 315

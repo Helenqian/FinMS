@@ -64,7 +64,7 @@
 <script src="./lib/layui/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-xs" lay-event="detail" >查看</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script>
@@ -89,8 +89,8 @@ layui.use('table', function(){
     ,cols: [[ //表头
       {checkbox: true, fixed: true}
       ,{field: 'num', title: '凭证号', width:100, sort: true, fixed: 'left'}
-      ,{field: 'docdate', title: '录入日期', width:100, sort: true, fixed: 'left'}
-      ,{field: 'postdate', title: '入账日期', width:100, sort: true, fixed: 'left'}
+      ,{field: 'docdate', title: '录入日期', width:100, sort: true}
+      ,{field: 'postdate', title: '入账日期', width:100, sort: true}
       ,{field: 'maker', title: '制单人', width:100}
       ,{field: 'debitsum', title: '借方合计', width:100}
       ,{field: 'creditsum', title: '贷方合计', width:100}
@@ -165,15 +165,22 @@ layui.use('table', function(){
         layer.close(index);
     });
   }
-  /* else if(layEvent === 'edit'){ //编辑
-    //do something
-        
-    //同步更新缓存对应的值
-    obj.update({
-      headercode: '123'
-      ,headername: 'xxx'
-    });
-  }*/
+  
+  else if(layEvent === 'detail'){ //查看
+    var url = "/viewaccdoc?num=" + obj.data.num;
+    x_admin_show('查看凭证',url,obj.data.num);
+  /*
+    $.ajax({
+           type :"post",
+           url: "/viewaccdoc",
+           data:{
+              'num' : obj.data.num
+            },
+           success: function(data) { 
+           }
+      });
+    */
+  }
 });
 
 });

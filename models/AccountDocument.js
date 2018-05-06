@@ -36,7 +36,7 @@ var AccountDocumentSchema = new Schema({
 	//凭证起始号
 	base: { type: Number, default:1000 },
 
-	DocumentItem: [{ type: Schema.Types.ObjectId, ref: 'DocumentItem' }]
+	//DocumentItem: [{ type: Schema.Types.ObjectId, ref: 'DocumentItem' }]
 
 });
 
