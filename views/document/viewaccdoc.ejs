@@ -14,20 +14,16 @@
 <body>
 <br>
 <div class="demoTable">
-    <!--<ul class="layui-tab-title">
-        <li class="layui-this">记账凭证</li>
-    </ul>-->
+
     <div class="layui-inline layui-col-md12 x-so">
         <div class="layui-inline">
-                <label class="layui-form-label">凭证号：<%= num1 %> </label>
-                <!--<div class="layui-input-inline">
-                        <input type="text" name="adnum"  placeholder="请输入凭证号" id="adnum" autocomplete="off" class="layui-input">
-                </div>-->
+                <label class="layui-form-label" id="xxx" >凭证号：<%= num1 %></label>
+
         </div>       
         <div class="layui-inline">
-            <!--<label class="layui-form-label">录入日期</label>-->
+
             <div class="layui-input-inline">
-              <input type="text" class="layui-input" id="docdate" placeholder="录入日期(yyyy-MM-dd)" lay-verify="required">
+              <input type="text" class="layui-input" id="docdate" placeholder="录入日期：" lay-verify="required">
             </div>
         </div>
         <div class="layui-inline">
@@ -35,7 +31,6 @@
                   <input type="text" class="layui-input" id="maker" placeholder="制单人" lay-verify="required">
                 </div>
         </div>
-      <!--<button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>-->
     </div> 
     <xblock>
             <button class="layui-btn" data-type="checkAD"><i class="layui-icon">&#xe6b2;</i>审核</button>
@@ -43,21 +38,21 @@
     </xblock>
 </div>
 
-<table class="layui-hide" id="LAY_table_addaccdoc" lay-filter="addaccdoc"></table>
+<table class="layui-hide" id="LAY_table_viewaccdoc" lay-filter="viewaccdoc"></table>
 
 <script src="./lib/layui/layui.js" charset="utf-8"></script>
+
 
 <script>
 layui.use('table', function(){
     var table = layui.table;
-    
+    var test = '<%=num1%>';
     //方法级渲染
     table.render({
-      elem: '#LAY_table_addaccdoc'
+      elem: '#LAY_table_viewaccdoc'
       ,url: '/api/viewaccdoc'
       ,cols: [[ //表头
-        {field:'id', title:'id', width:120, sort:true, edit: 'text', fixed: 'left'}
-        ,{field:'num', title: '凭证号', width:100, sort: true, edit: 'text'}
+        {field:'num', title: '凭证号', width:100, sort: true, edit: 'text'}
         ,{field:'headercode', title:'摘要编号', width:120, edit: 'text'}
         ,{field:'headername', title:'摘要名称', width:200, edit: 'text'}
         ,{field:'acccode', title:'科目编号', width:120, edit: 'text'}
@@ -66,59 +61,25 @@ layui.use('table', function(){
         ,{field:'credit', title:'贷方金额', width:120, edit: 'text'}
         ,{field: 'operation', title: '操作', fixed: 'right', width:150, align:'center', toolbar: '#barDemo'}
       ]]
-      ,nnum: num1
-      ,id: 'addaccdoc'
+      ,where:{
+          num: test
+      }
+      ,id: 'viewaccdoc'
       ,page: true
       ,height: 315
     });
 
-    table.reload("addaccdoc",{
+    table.reload("viewaccdoc",{
          page: {
              curr: 1 //重新从第 1 页开始
              }
          ,where: {
+             num: test
         }
     });
+    
   
     var $ = layui.$, active = {
-    addLine: function(){ //获取选中数据
-    layui.use('table', function(){
-     var table = layui.table;
-        table.reload("addaccdoc",{
-         page: {
-             curr: 1 //重新从第 1 页开始
-             }
-         ,where: {
-            new: 1
-        }
-        });
-      });
-    }
-    ,recordAD: function(){
-        if(!$("#docdate").val()) {layer.alert("请输入录入日期！");}
-        else if(!$("#maker").val()) {layer.alert("请输入制单人！");}
-        else{
-        layer.confirm('确定录入凭证吗？', function(index){
-        //判断借贷是否平衡
-        $.ajax({
-           type : "post",
-           url: "/checkbalance",
-           data:{
-                docdate: $("#docdate").val()
-                ,maker: $("#maker").val()
-            },
-           success: function(data) { 
-              //判断是否成功
-              layer.alert(data);
-              }
-              /*$(obj).parents("tr").remove();
-                 layer.msg('已删除!',{icon:1,time:1000});
-                 layer.close(index);//关闭
-                 */
-        });
-        })
-     }
-    }
   };
   
   $('.demoTable .layui-btn').on('click', function(){
@@ -127,7 +88,7 @@ layui.use('table', function(){
     });
 
 
-table.on('tool(addaccdoc)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+table.on('tool(viewaccdoc)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
   var data = obj.data; //获得当前行数据
   var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
   var tr = obj.tr; //获得当前行 tr 的DOM对象
@@ -219,28 +180,13 @@ table.on('tool(addaccdoc)', function(obj){ //注：tool是工具条事件名，t
 
 });
 </script>
+
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn layui-btn-xs" lay-event="add">添加</a>
     <a class="layui-btn layui-btn layui-btn-xs" lay-event="save">保存</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-
 </script>
-<script>
 
-          
-layui.use('table', function(){
-  var table = layui.table;
-  
-  //监听单元格编辑
-  table.on('edit(addaccdoc)', function(obj){
-    var value = obj.value //得到修改后的值
-    ,data = obj.data //得到所在行所有键值
-    ,field = obj.field; //得到字段
-    layer.msg('[ID: '+ data.id +'] ' + field + ' 字段更改为：'+ value);
-  });
-});
-
-</script>
 <script>
 layui.use('laydate', function(){
   var laydate = layui.laydate;

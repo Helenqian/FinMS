@@ -20,31 +20,6 @@ router.get('/addaccdoc', function (req, res, next) {
         });
 });
 
-/*
-router.post('/addaccdoc', function(req, res, next) {
-    
-                var accdoc = new Account();
-        
-                accdoc.num = req.body.accdocnum;
-                accdoc.name = req.body.accdocname;
-    
-                Account.findOne({ num: req.body.accdocnum }, function(err, existingAccount){
-    
-                    if(existingAccount){
-                        //console.log(req.body.email + " is already exist");
-                        req.flash('message', 'Account with that num already exists');
-                        return res.redirect('/addaccdoc');
-                  } else {
-                    accdoc.save(function(err, accdoc){
-                     if(err) return next(err);
-                     req.flash('message', 'New accdoc has been created');
-                     return res.redirect('/addaccdoc');
-                    });
-                }
-            });
-        });
-*/
-
 router.get('/api/accdoc', function (req, res, next) {
 
         AccountDocument.find({}, function (err, accdocs) {
@@ -65,7 +40,6 @@ router.get('/api/accdoc', function (req, res, next) {
                         o.poststatus = accdocs[j].poststatus;
                         data.push(o);
                     }
-                    console.log(data);
                     var responsedata = {
                     code: 0,
                     msg: "",
@@ -309,37 +283,75 @@ router.get('/api/accdoc', function (req, res, next) {
                 res.send(responsedata);
             });
    });
-
+/*
 router.get('/api/viewaccdoc', function (req, res, next) {
 
-    AccountDocument.find({num: req.query.nnum}, function (err, accdocs) {
+    AccountDocument.findOne({num: req.query.num}, function (err, accdoc) {
       if (err) return next(err);
       var data =[];
       var _page = req.query.page;
       var _limit = req.query.limit;
-      for (var j = (_page - 1) * _limit ; j < _page * _limit && (accdocs[j] != null); j++)
+        console.log("num == " +req.query.num);
+        console.log("ad == "+accdoc);
+      var docitem = accdoc.DocumentItem;
+      for (var j = (_page - 1) * _limit ; j < _page * _limit && (docitem[j] != null); j++)
          {
-             var o = {};
-                o.id = docitem[j].id;
-                o.num = docitem[j].num;
-                o.debit = docitem[j].debit;
-                o.credit = docitem[j].credit;
-                o.acccode = docitem[j].account.code;
-                o.accname = docitem[j].account.name;
-                o.headercode = docitem[j].header.code;
-                o.headername = docitem[j].header.name;
-                data.push(o);
+                Header.findOne({_id: docitem[j].header},'code name',function(err,h1){
+                    if(err) return next(err);
+                    Account.findOne({_id: docitem[j].account},'code name',function(err,a1){
+                        if(err) return next(err);
+                        var o = {};
+                        o.num = accdoc.num;
+                        o.debit = docitem[j].debit;
+                        o.credit = docitem[j].credit;
+                        o.headercode = h1.code;
+                        o.headername = h1.name;
+                        o.acccode = a1.code;
+                        o.accname = a1.name;
+                        data.push(o);
+                    });
+                });
         }
-                console.log(data);
+                
                 var responsedata = {
                 code: 0,
                 msg: "",
                 count: data.length,
                 data: data
                   } 
+                console.log("here!");
                 res.send(responsedata);
             });
    });
+*/
+
+router.get('/api/viewaccdoc', function(req, res, next){
+    DocumentItem.find({num: req.query.num}).populate('account').populate('header').exec(function (err, docitem) {
+        if (err) return next(err);
+         var data =[];
+         var _page = req.query.page;
+         var _limit = req.query.limit;
+      for (var j = (_page - 1) * _limit ; j < _page * _limit && (docitem[j] != null); j++){
+             var o = {};
+             o.num = docitem[j].num;
+             o.debit = docitem[j].debit;
+             o.credit = docitem[j].credit;
+             o.headercode = docitem[j].header.code;
+             o.headername = docitem[j].header.name;
+             o.acccode = docitem[j].account.code;
+             o.accname = docitem[j].account.name;
+             data.push(o);
+        }
+         var responsedata = {
+             code: 0,
+             msg: "",
+             count: data.length,
+             data: data
+        } 
+        console.log(data);
+        res.send(responsedata);
+    });
+});
 
 
 

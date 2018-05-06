@@ -137,7 +137,7 @@ $(function () {
     w       弹出层宽度（缺省调默认值）
     h       弹出层高度（缺省调默认值）
 */
-function x_admin_show(title,url,data,w,h){
+function x_admin_show(title,url,w,h){
     if (title == null || title == '') {
         title=false;
     };
@@ -158,7 +158,7 @@ function x_admin_show(title,url,data,w,h){
         shadeClose: true,
         shade:0.4,
         title: title,
-        content: url + data
+        content: url
     });
 }
 
