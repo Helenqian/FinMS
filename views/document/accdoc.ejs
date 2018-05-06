@@ -23,39 +23,37 @@
           <a>
             <cite>导航元素</cite></a>
         </span>
-        <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
-          <i class="layui-icon" style="line-height:30px">ဂ</i></a>
-      </div>
+    </div>
+    <div class="demoTable">
       <div class="x-body">
         <div class="layui-row">
           <form class="layui-form layui-col-md12 x-so">
-            <input type="text" name="adnum"  placeholder="请输入凭证号" autocomplete="off" class="layui-input">
-            <input type="text" class="layui-input" placeholder="开始日" id="start">
-            <input type="text" class="layui-input" placeholder="截止日" id="end">
+            <input type="text" name="adnum"  placeholder="请输入凭证号" id="adnum" autocomplete="off" class="layui-input">
+            <input type="text" class="layui-input" placeholder="日期范围" id="date">
             <!--<input class="layui-input" placeholder="截止日" name="end" id="end">-->
-            <input type="text" name="maker"  placeholder="请输入制单人" autocomplete="off" class="layui-input">
+            <input type="text" name="maker"  placeholder="请输入制单人" id="maker" autocomplete="off" class="layui-input">
             <!--<input type="text" name="headercode"  placeholder="请输入摘要号" autocomplete="off" class="layui-input">
             <input type="text" name="accountcode"  placeholder="请输入科目号" autocomplete="off" class="layui-input">-->
             <div class="layui-input-inline">
-              <select name="contrller">
+              <select name="contrller" id="checkstatus">
                 <option>审核状态</option>
                 <option>已审核</option>
                 <option>未审核</option>
               </select>
             </div>
             <div class="layui-input-inline">
-              <select name="contrller">
+              <select name="contrller" id="poststatus">
                 <option>过账状态</option>
                 <option>已过账</option>
                 <option>未过账</option>
               </select>
             </div>
-            <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+            <button class="layui-btn"  lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
           </form>
         </div>
         <xblock>
           <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-          <button class="layui-btn" onclick="x_admin_show('添加用户','/addaccdoc')"><i class="layui-icon"></i>添加</button>
+          <button class="layui-btn" onclick="x_admin_show('记账凭证','/addaccdoc')"><i class="layui-icon"></i>添加</button>
         </xblock>
     </div>
     </div>
@@ -66,26 +64,19 @@
 <script src="./lib/layui/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script>
     layui.use('laydate', function(){
       var laydate = layui.laydate;
-      
       //执行一个laydate实例
-      laydate.render({
-        elem: '#start' //指定元素
-      });
+      //日期范围选择
+      laydate.render({ 
+      elem: '#date'
+      ,range: true //或 range: '~' 来自定义分割字符
     });
-
-        layui.use('laydate', function(){
-      var laydate = layui.laydate;
-      
-      //执行一个laydate实例
-      laydate.render({
-        elem: '#end' //指定元素
-      });
-    });
+});
 </script>
 <script>
 layui.use('table', function(){
@@ -97,7 +88,7 @@ layui.use('table', function(){
     ,url: '/api/accdoc'
     ,cols: [[ //表头
       {checkbox: true, fixed: true}
-      ,{field: 'num', title: '凭证号', width:150, sort: true, fixed: 'left'}
+      ,{field: 'num', title: '凭证号', width:100, sort: true, fixed: 'left'}
       ,{field: 'docdate', title: '录入日期', width:100, sort: true, fixed: 'left'}
       ,{field: 'postdate', title: '入账日期', width:100, sort: true, fixed: 'left'}
       ,{field: 'maker', title: '制单人', width:100}
@@ -105,7 +96,7 @@ layui.use('table', function(){
       ,{field: 'creditsum', title: '贷方合计', width:100}
       ,{field: 'checkstatus', title: '审核状态', width:80}
       ,{field: 'poststatus', title: '过账状态', width:80}
-      ,{field: 'operation', title: '操作', fixed: 'right', width:100, align:'center', toolbar: '#barDemo'}
+      ,{field: 'operation', title: '操作', fixed: 'right', width:120, align:'center', toolbar: '#barDemo'}
     ]]
     ,id: 'accdocTest'
     ,page: true
@@ -114,44 +105,34 @@ layui.use('table', function(){
   
   var $ = layui.$, active = {
     reload: function(){
-      var demoReload = $('#demoReload');
-      var nameReload = $('#nameReload');
+      var numReload = $('#adnum');
+      var dateReload = $('#date');
+      var makerReload = $('#maker');
+      var checkReload = $('#checkstatus');
+      var postReload = $('#poststatus');
       
+      
+      laydate.render({ 
+       elem: '#test'
+      ,min: '2017-1-1'
+      ,max: '2017-12-31'
+      });
+
       //执行重载
       table.reload('accdocTest', {
         page: {
           curr: 1 //重新从第 1 页开始
         }
         ,where: {
-            headercode: demoReload.val()
-            ,headername: nameReload.val()
+            num: numReload.val()
+            ,docdate: dateReload.val()
+
+            
         }
       });
     }
-    ,delCheckData: function(obj){ //获取选中数据
-      var checkStatus = table.checkStatus('idTest');
-      var data = checkStatus.data;
-      layer.confirm('确定删除吗？ '+ JSON.stringify(data), function(){
-         //向服务端发送删除指令
-        $.ajax({
-           type : "post",
-           url: "/delallaccdoc",
-           data:{
-              'datas' : data
-            },
-           success: function(data) { 
-              //判断是否删除成功
-              $(obj).parents("tr").remove();
-                 layer.msg('已删除!',{icon:1,time:1000});
-                 layer.close(index);//关闭
-           }
-        });
-        obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-        layer.close(index);
-    });
-      }
-
   };
+  
 
   
   $('.demoTable .layui-btn').on('click', function(){
@@ -159,12 +140,8 @@ layui.use('table', function(){
     active[type] ? active[type].call(this) : '';
   });
 
-table.on('checkbox(head)', function(obj){
-      console.log(obj)
-        });
-
-
-table.on('tool(head)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+  
+  table.on('tool(accdoc)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
   var data = obj.data; //获得当前行数据
   var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
   var tr = obj.tr; //获得当前行 tr 的DOM对象
@@ -188,7 +165,17 @@ table.on('tool(head)', function(obj){ //注：tool是工具条事件名，test�
         layer.close(index);
     });
   }
+  /* else if(layEvent === 'edit'){ //编辑
+    //do something
+        
+    //同步更新缓存对应的值
+    obj.update({
+      headercode: '123'
+      ,headername: 'xxx'
+    });
+  }*/
 });
+
 });
 </script>
 

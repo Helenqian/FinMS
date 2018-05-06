@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="./css/font.css">
+  <link rel="stylesheet" href="./css/xadmin.css">
+  <link rel="stylesheet" href="./lib/layui/css/layui.css"  media="all">
+  <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+<br>
+<div class="demoTable">
+    <!--<ul class="layui-tab-title">
+        <li class="layui-this">记账凭证</li>
+    </ul>-->
+    <div class="layui-inline layui-col-md12 x-so">
+        <div class="layui-inline">
+                <label class="layui-form-label">凭证号：<%= 1001 + accdoc.length %> </label>
+                <!--<div class="layui-input-inline">
+                        <input type="text" name="adnum"  placeholder="请输入凭证号" id="adnum" autocomplete="off" class="layui-input">
+                </div>-->
+        </div>       
+        <div class="layui-inline">
+            <!--<label class="layui-form-label">录入日期</label>-->
+            <div class="layui-input-inline">
+              <input type="text" class="layui-input" id="inputdate" placeholder="yyyy-MM-dd">
+            </div>
+        </div>
+        <div class="layui-inline">
+                <div class="layui-input-inline">
+                  <input type="text" class="layui-input" id="maker" placeholder="制单人">
+                </div>
+        </div>
+      <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
+    </div> 
+    <xblock>
+            <button class="layui-btn" data-type="addLine"><i class="layui-icon"></i>添加</button>
+            <button class="layui-btn" data-type="recordAD"><i class="layui-icon">&#xe61f;</i>录入</button>
+            <button class="layui-btn" data-type="checkAD"><i class="layui-icon">&#xe6b2;</i>审核</button>
+            <button class="layui-btn" data-type="postAD"><i class="layui-icon">&#xe60a;</i>过账</button>
+    </xblock>
+</div>
+
+<table class="layui-hide" id="LAY_table_addaccdoc" lay-filter="addaccdoc"></table>
+
+<script src="./lib/layui/layui.js" charset="utf-8"></script>
+
+<script>
+layui.use('table', function(){
+    var table = layui.table;
+    
+    //方法级渲染
+    table.render({
+      elem: '#LAY_table_addaccdoc'
+      ,url: '/api/addaccdoc'
+      ,cols: [[ //表头
+        {field:'id', title:'id', width:120, sort:true, edit: 'text', fixed: 'left'}
+        ,{field:'num', title: '凭证号', width:100, sort: true, edit: 'text'}
+        ,{field:'headercode', title:'摘要编号', width:120, edit: 'text'}
+        ,{field:'headername', title:'摘要名称', width:200, edit: 'text'}
+        ,{field:'acccode', title:'科目编号', width:120, edit: 'text'}
+        ,{field:'accname', title:'科目名称', width:150, edit: 'text'}
+        ,{field:'debit', title:'借方金额', width:120, edit: 'text'}
+        ,{field:'credit', title:'贷方金额', width:120, edit: 'text'}
+        ,{field: 'operation', title: '操作', fixed: 'right', width:120, align:'center', toolbar: '#barDemo'}
+      ]]
+      ,id: 'addaccdoc'
+      ,page: true
+      ,height: 315
+    });
+
+    table.reload("addaccdoc",{
+         page: {
+             curr: 1 //重新从第 1 页开始
+             }
+         ,where: {
+        }
+        });
+  
+    var $ = layui.$, active = {
+    addLine: function(){ //获取选中数据
+    layui.use('table', function(){
+     var table = layui.table;
+      /*datas1 = [];
+      var table1 = table.cache.addaccdoc;
+      for (var g = 0; g < table1.length; g++){
+            datas1.push(table1[g]);
+      }
+        datas1.push({
+            headername: ""
+            ,headercode: ""
+            ,acccode: ""
+            ,accname: ""
+            ,debamt: ""
+            ,creamt: ""
+        });*/
+        table.reload("addaccdoc",{
+         page: {
+             curr: 1 //重新从第 1 页开始
+             }
+         ,where: {
+            new: 1
+        }
+        });
+      });
+    }
+  };
+  
+  $('.demoTable .layui-btn').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+
+
+table.on('tool(addaccdoc)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+  var data = obj.data; //获得当前行数据
+  var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+  var tr = obj.tr; //获得当前行 tr 的DOM对象
+  if(layEvent === 'del'){ //删除
+    layer.confirm('真的删除行么', function(index){
+         //向服务端发送删除指令
+        $.ajax({
+           type : "post",
+           url: "/deletedocitem",
+           data:{
+              //'' : obj.data.code
+            },
+           success: function(data) { 
+              //判断是否删除成功
+              $(obj).parents("tr").remove();
+                 layer.msg('已删除!',{icon:1,time:1000});
+                 layer.close(index);//关闭
+           }
+        });
+        obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+        layer.close(index);
+    });
+  }
+  else if(layEvent === 'save'){ //编辑
+    layer.confirm('保存凭证条目吗？', function(index){
+         //向服务端发送保存指令
+        $.ajax({
+           type : "post",
+           url: "/savedocitem",
+           data:{
+               num: obj.data.num
+               ,id: obj.data.id
+               ,debit: obj.data.debit
+               ,credit: obj.data.credit
+               ,headercode: obj.data.headercode
+               ,headername: obj.data.headername
+               ,acccode: obj.data.acccode
+               ,accname: obj.data.accname
+            },
+           success: function(data) { 
+              //判断是否保存成功
+              $(obj).parents("tr").remove();
+                 layer.msg('已保存!',{icon:1,time:1000});
+                 layer.close(index);//关闭
+           }
+        });
+    });
+  }
+});
+
+});
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="save">保存</a>
+</script>
+<script>
+
+          
+layui.use('table', function(){
+  var table = layui.table;
+  
+  //监听单元格编辑
+  table.on('edit(addaccdoc)', function(obj){
+    var value = obj.value //得到修改后的值
+    ,data = obj.data //得到所在行所有键值
+    ,field = obj.field; //得到字段
+    layer.msg('[ID: '+ data.id +'] ' + field + ' 字段更改为：'+ value);
+  });
+});
+
+</script>
+<script>
+layui.use('laydate', function(){
+  var laydate = layui.laydate;
+  
+  //常规用法
+  laydate.render({
+    elem: '#inputdate'
+  });
+});
+</script>
+
+</body>
+</html>

@@ -15,6 +15,9 @@ var Category = require('./models/category');
 var Customer = require('./models/customer');
 var Account = require('./models/Account');
 var Header = require('./models/Header');
+var AccountDocument = require('./models/AccountDocument');
+var DocumentItem = require('./models/DocumentItem');
+
 
 var exp = express();
 //var apps = require('./assets/js/src/app');
@@ -46,6 +49,10 @@ exp.use(function(req, res, next){
 	res.locals.user = req.user;
 	next();
 }); // 使所有页面的user为同一个
+exp.use(function(req, res, next){
+	res.locals.accdoc = req.accdoc;
+	next();
+}); 
 
 exp.use(function(req, res, next){
 	Category.find({}, function(err, categories){
