@@ -1,3 +1,4 @@
+<% layout('style') -%>
 <!DOCTYPE html>
 <html>
   
@@ -26,50 +27,33 @@
   
   <body>
     <div class="x-body">
-   <!--
-    <% if (message.length > 0) { %>
-      <div class="layui-icon">
-        <button type="button" class="close" data-dismmiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <%= message %>
-      </div> 
-    <% } %>-->
-        
-
+        <blockquote class="layui-elem-quote">欢迎使用该财务系统，请谨慎进行系统初始化</blockquote>
+        <fieldset class="layui-elem-field">
+        <br>
         <form class="layui-form" method="post">
           <div class="layui-form-item">
-              <label for="accountcode" class="layui-form-label">
-                  <span class="x-red">*</span>科目编号
+              <label for="startyear" class="layui-form-label">
+                  <span class="x-red">*</span>初始化年份
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="accountcode" name="accountcode" required="" lay-verify="required"
+                  <input type="text" id="startyear" name="startyear" placeholder="yyyy" required="" lay-verify="required"
                   autocomplete="off" class="layui-input">
               </div>
           </div>
           <div class="layui-form-item">
-              <label for="accountname" class="layui-form-label">
-                  <span class="x-red">*</span>科目名称
+              <label for="base" class="layui-form-label">
+                  <span class="x-red">*</span>凭证起始号
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="accountname" name="accountname" required="" lay-verify="required"
+                  <input type="text" id="base" name="base" required="" lay-verify="required"
                   autocomplete="off" class="layui-input">
               </div>
-          </div>
-          <div class="layui-form-item">
-                <label for="accounttype" class="layui-form-label">
-                    <span class="x-red">*</span>科目类型
-                </label>
-                <div class="layui-input-inline">
-                    <input type="text" id="accounttype" name="accounttype" required="" lay-verify="required"
-                    autocomplete="off" class="layui-input">
-                </div>
           </div>
           <div class="layui-form-item">
               <label for="L_repass" class="layui-form-label">
               </label>
               <button  class="layui-btn" lay-filter="add" lay-submit="">
-                  增加
+                  保存
               </button>
           </div>
         </form>
@@ -82,17 +66,17 @@
         
           //自定义验证规则
           form.verify({
-            nikename: function(value){
-              if(value.length < 5){
-                return '昵称至少得5个字符啊';
+            startyear: function(value){
+              if((value.length == 4)&&(parseInt(value)>2000)&&(parseInt(value))<2019){
+                return '初始化年份不符合标准';
               }
             }
-            ,pass: [/(.+){6,12}$/, '密码必须6到12位']
+            /*,pass: [/(.+){6,12}$/, '密码必须6到12位']
             ,repass: function(value){
                 if($('#L_pass').val()!=$('#L_repass').val()){
                     return '两次密码不一致';
                 }
-            }
+            }*/
           });
 
           //监听提交
@@ -117,27 +101,21 @@
 
           form.on('submit(add)', function(data){
             //console.log(data);
-            var accountcode = $('input[name=accountcode]').val(),
-            accountname = $('input[name=accountname]').val(),
-            accounttype = $('input[name=accounttype]').val();
+            var startyear = $('input[name=startyear]').val(),
+            base = $('input[name=base]').val();
             $.ajax({
             type: 'post', // 提交方式 get/post
-            url: '/addaccount', // 需要提交的 url
+            url: '/saveinitial', // 需要提交的 url
             //dataType: "json",
             data: {
-                'accountcode': accountcode,
-                'accountname': accountname,
-                'accounttype': accounttype
+                'startyear': startyear,
+                'base': base
             },
             success: function(data) { 
-                layer.alert("增加成功", {icon: 6},function () {
-                // 获得frame索引
-                var index = parent.layer.getFrameIndex(window.name);
-                //关闭当前frame
-                parent.layer.close(index);
-              });
-            }
-        });
+                 layer.msg('初始化成功!',{icon:1,time:1000});
+                 layer.close(index);//关闭
+              }
+            });
         //$(this).resetForm();// 提交后重置表单
         return false; // 阻止表单自动提交事件
     });

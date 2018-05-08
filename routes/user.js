@@ -9,7 +9,7 @@ router.get('/login', function(req, res){
 });
 
 router.post('/login', passport.authenticate('local-login',{
-	successRedirect: '/profile',
+	successRedirect: '/regime',
 	failureRedirect: '/login',
 	failureFlash: true
 }));

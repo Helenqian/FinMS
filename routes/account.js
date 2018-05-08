@@ -38,7 +38,8 @@ router.post('/addaccount', function(req, res, next) {
         
                 account.code = req.body.accountcode;
                 account.name = req.body.accountname;
-    
+                account.type = req.body.accounttype;
+
                 Account.findOne({ code: req.body.accountcode }, function(err, existingAccount){
     
                     if(existingAccount){
@@ -58,7 +59,7 @@ router.post('/addaccount', function(req, res, next) {
 
 router.get('/api/account', function (req, res, next) {
         if (!(req.query.accountcode || req.query.accountname)) {
-            Account.find({}, 'code name', function (err, accounts) {
+            Account.find({}, 'code name type', function (err, accounts) {
                     if (err) return next(err);
                     var data =[];
                     var _page = req.query.page;
@@ -69,6 +70,7 @@ router.get('/api/account', function (req, res, next) {
                         var o = {};
                         o.code  = accounts[j].code;
                         o.name = accounts[j].name;
+                        o.type = accounts[j].type;
                         data.push(o);
                     }
                     var responsedata = {
@@ -81,7 +83,7 @@ router.get('/api/account', function (req, res, next) {
                 });
         }
         else if (!req.query.accountcode) {
-            Account.find({ name: req.query.accountname }, 'code name',
+            Account.find({ name: req.query.accountname }, 'code name type',
                 function (err, accounts) {
                     if (err) return next(err);
                     var data =[];
@@ -93,6 +95,7 @@ router.get('/api/account', function (req, res, next) {
                         var o = {};
                         o.code  = accounts[j].code;
                         o.name = accounts[j].name;
+                        o.type = accounts[j].type;
                         data.push(o);
                     }
                     var responsedata = {
@@ -105,7 +108,7 @@ router.get('/api/account', function (req, res, next) {
                 });
         }
         else if (!req.query.accountname) {
-            Account.find({ code: req.query.accountcode }, 'code name',
+            Account.find({ code: req.query.accountcode }, 'code name type',
                 function (err, accounts) {
                     if (err) return next(err);
                     var data =[];
@@ -117,6 +120,7 @@ router.get('/api/account', function (req, res, next) {
                         var o = {};
                         o.code  = accounts[j].code;
                         o.name = accounts[j].name;
+                        o.type = accounts[j].type;
                         data.push(o);
                     }
                     var responsedata = {
@@ -129,7 +133,7 @@ router.get('/api/account', function (req, res, next) {
                 });
         }
         else {
-            Account.find({ code: req.query.accountcode, name: req.query.accountname }, 'code name',
+            Account.find({ code: req.query.accountcode, name: req.query.accountname }, 'code name type',
                 function (err, accounts) {
                     if (err) return next(err);
                     var data =[];
@@ -141,6 +145,7 @@ router.get('/api/account', function (req, res, next) {
                         var o = {};
                         o.code  = accounts[j].code;
                         o.name = accounts[j].name;
+                        o.type = accounts[j].type;
                         data.push(o);
                     }
                     var responsedata = {
@@ -154,7 +159,40 @@ router.get('/api/account', function (req, res, next) {
         }
     });
 
-
+    router.post('/deleteaccount', function(req, res, next){
+        console.log("in post " + req.body.accountcode);
+        Account.findOne({code: req.body.accountcode}, function(err, toDeleteAccount){
+            if(!toDeleteAccount){
+                console.log("not exist");
+                console.log('delete failed', 'Account does not exist');
+                return res.redirect('/account');
+            } else {
+                Account.remove({ _id: toDeleteAccount._id }, function(err){
+                    if(err) return next(err);
+                    console.log("Account already delete");
+                    return res.redirect('/account');
+                });
+            }
+        });
+    });
+    
+    router.post('/delallaccount',function(req, res, next){
+        console.log("in post " + req.body.datas[0].code);
+        for(var i = 0; i < req.body.datas.length; i++){
+        Account.findOne({code: req.body.datas[i].code, name: req.body.datas[i].name}, function(err, toDeleteAccount){
+            if(!toDeleteAccount){
+                console.log('delete failed', 'Account does not exist');
+            } else {
+                Account.remove({ _id: toDeleteAccount._id }, function(err){
+                    if(err) return next(err);
+                    console.log("Account already delete" + toDeleteAccount.code);
+                });
+            }
+        });
+        }
+        res.redirect('/tableReload');
+    });
+    
 
 
     module.exports = router;

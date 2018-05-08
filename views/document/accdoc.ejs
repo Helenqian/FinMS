@@ -1,5 +1,4 @@
 <%- layout('style') -%>
-<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -37,18 +36,18 @@
             <div class="layui-input-inline">
               <select name="contrller" id="checkstatus">
                 <option>审核状态</option>
-                <option>已审核</option>
-                <option>未审核</option>
+                <option>true</option>
+                <option>false</option>
               </select>
             </div>
             <div class="layui-input-inline">
               <select name="contrller" id="poststatus">
                 <option>过账状态</option>
-                <option>已过账</option>
-                <option>未过账</option>
+                <option>true</option>
+                <option>false</option>
               </select>
             </div>
-            <button class="layui-btn"  lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
+            <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
           </form>
         </div>
         <xblock>
@@ -102,6 +101,7 @@ layui.use('table', function(){
     ,page: true
     ,height: 315
   });
+
   
   var $ = layui.$, active = {
     reload: function(){
@@ -111,13 +111,12 @@ layui.use('table', function(){
       var checkReload = $('#checkstatus');
       var postReload = $('#poststatus');
       
-      
       laydate.render({ 
        elem: '#test'
       ,min: '2017-1-1'
       ,max: '2017-12-31'
       });
-
+      
       //执行重载
       table.reload('accdocTest', {
         page: {
@@ -126,8 +125,9 @@ layui.use('table', function(){
         ,where: {
             num: numReload.val()
             ,docdate: dateReload.val()
-
-            
+            ,maker: makerReload.val()
+            ,checkstatus: checkReload.val()
+            ,poststatus: postReload.val()     
         }
       });
     }

@@ -18,18 +18,19 @@
     <div class="layui-inline layui-col-md12 x-so">
         <div class="layui-inline">
                 <label class="layui-form-label" id="xxx" >凭证号：<%= num1 %></label>
-
         </div>       
         <div class="layui-inline">
-
             <div class="layui-input-inline">
-              <input type="text" class="layui-input" id="docdate" placeholder="录入日期：" lay-verify="required">
+              <!--<input type="text" class="layui-input" id="docdate" placeholder="录入日期：" lay-verify="required">-->
+              <label class="layui-form-label" id="docdate" >制单人：<%= maker1 %></label>
+              
             </div>
         </div>
         <div class="layui-inline">
-                <div class="layui-input-inline">
-                  <input type="text" class="layui-input" id="maker" placeholder="制单人" lay-verify="required">
-                </div>
+            <div class="layui-input-inline">
+                <!--<input type="text" class="layui-input" id="maker" placeholder="制单人" lay-verify="required">-->
+                <label class="layui-form-label" id="docdate" ><%= docdate1 %></label>
+            </div>
         </div>
     </div> 
     <xblock>
@@ -80,6 +81,47 @@ layui.use('table', function(){
     
   
     var $ = layui.$, active = {
+    checkAD: function(obj){
+    if('<%=cs1%>' == 'true') {layer.msg('已审核并通过!');} 
+    else{
+    layer.confirm('审核通过吗？', function(index){
+        $.ajax({
+           type : "post",
+           url: "/checkad",
+           data:{
+               num: test
+            },
+           success: function(data) { 
+              //判断是否保存成功
+              
+           }
+        });
+        $(obj).parents("tr").remove();
+                 layer.msg('已通过!',{icon:1,time:1000});
+                 layer.close(index);//关闭
+     });
+    }
+    }
+    ,postAD: function(obj){
+        if('<%=ps1%>' == 'true') {layer.msg('已过账!');}
+        else if ('<%=cs1%>' != 'true') {layer.msg('未审核!');}
+        else{
+        layer.confirm('确认过账吗？', function(index){
+        $.ajax({
+           type : "post",
+           url: "/postad",
+           data:{
+               num: test
+            },
+           success: function(data) { 
+           }
+        });
+        $(obj).parents("tr").remove();
+        layer.msg('已过账!',{icon:1,time:1000});
+        layer.close(index);//关闭
+     });
+     }
+    }
   };
   
   $('.demoTable .layui-btn').on('click', function(){
@@ -187,16 +229,7 @@ table.on('tool(viewaccdoc)', function(obj){ //注：tool是工具条事件名，
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 
-<script>
-layui.use('laydate', function(){
-  var laydate = layui.laydate;
-  
-  //常规用法
-  laydate.render({
-    elem: '#docdate'
-  });
-});
-</script>
+
 
 </body>
 </html>

@@ -27,20 +27,21 @@
 <div class="x-body">   
 <div class="demoTable">
   <div class="layui-inline layui-col-md12 x-so">
-    <input class="layui-input" name="code" placeholder="科目编号" lay-verify="required" id="demoReload" autocomplete="off">
-    <input class="layui-input" name="name" placeholder="科目名称" id="nameReload" autocomplete="off">
+    <input class="layui-input" name="email" placeholder="邮箱" lay-verify="required" id="email" autocomplete="off">
+    <input class="layui-input" name="name" placeholder="用户名" id="name" autocomplete="off">
+    <input class="layui-input" name="usertype" placeholder="用户类型" id="usertype" autocomplete="off">
     <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
   </div>
 
 
 <xblock>
     <button class="layui-btn layui-btn-danger" data-type="delCheckData"><i class="layui-icon"></i>批量删除</button>
-    <button class="layui-btn" onclick="x_admin_show('添加科目','/addaccount')"><i class="layui-icon"></i>添加</button>
+    <button class="layui-btn" onclick="x_admin_show('添加用户','/adduser')"><i class="layui-icon"></i>添加</button>
 </xblock>
 </div>
 </div>
  
-<table class="layui-hide" id="LAY_table_account" lay-filter="acc"></table> 
+<table class="layui-hide" id="LAY_table_user" lay-filter="users"></table> 
                
           
 <script src="./lib/layui/layui.js" charset="utf-8"></script>
@@ -54,23 +55,25 @@ layui.use('table', function(){
   
   //方法级渲染
   table.render({
-    elem: '#LAY_table_account'
-    ,url: '/api/account'
+    elem: '#LAY_table_user'
+    ,url: '/api/user'
     ,cols: [[ //表头
       {checkbox: true, fixed: true}
-      ,{field: 'code', title: '科目编号', width:200, sort: true, fixed: 'left'}
-      ,{field: 'name', title: '科目名称', width:300}
-      ,{field: 'type', title: '科目类型', width:300}
+      ,{field: 'email', title: '邮箱', width:180, sort: true, fixed: 'left'}
+      ,{field: 'name', title: '用户名', width:180}
+      ,{field: 'usertype', title: '权限类型', width:180}
+      ,{field: 'address', title: '地址', width:220}
       ,{field: 'operation', title: '操作', fixed: 'right', width:200, align:'center', toolbar: '#barDemo'}
     ]]
-    ,id: 'idTest'
+    ,id: 'userTest'
     ,page: true
     ,height: 315
   });
   
+  /*
   var $ = layui.$, active = {
     reload: function(){
-      var demoReload = $('#demoReload');
+      var codeReload = $('#codeReload');
       var nameReload = $('#nameReload');
       
       //执行重载
@@ -79,8 +82,8 @@ layui.use('table', function(){
           curr: 1 //重新从第 1 页开始
         }
         ,where: {
-            accountcode: demoReload.val()
-            ,accountname: nameReload.val()
+            headercode: codeReload.val()
+            ,headername: nameReload.val()
         }
       });
     }
@@ -91,7 +94,7 @@ layui.use('table', function(){
          //向服务端发送删除指令
         $.ajax({
            type : "post",
-           url: "/delallaccount",
+           url: "/delallheader",
            data:{
               'datas' : data
             },
@@ -102,8 +105,8 @@ layui.use('table', function(){
                  layer.close(index);//关闭
            }
         });
-        //obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-        //layer.close(index);
+        obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+        layer.close(index);
     });
       }
 
@@ -115,12 +118,12 @@ layui.use('table', function(){
     active[type] ? active[type].call(this) : '';
   });
 
-table.on('checkbox(acc)', function(obj){
+table.on('checkbox(head)', function(obj){
       console.log(obj)
         });
 
 
-table.on('tool(acc)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+table.on('tool(users)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
   var data = obj.data; //获得当前行数据
   var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
   var tr = obj.tr; //获得当前行 tr 的DOM对象
@@ -129,9 +132,9 @@ table.on('tool(acc)', function(obj){ //注：tool是工具条事件名，test是
          //向服务端发送删除指令
         $.ajax({
            type : "post",
-           url: "/deleteaccount",
+           url: "/deleteheader",
            data:{
-              'accountcode' : obj.data.code
+              'headercode' : obj.data.code
             },
            success: function(data) { 
               //判断是否删除成功
@@ -144,17 +147,9 @@ table.on('tool(acc)', function(obj){ //注：tool是工具条事件名，test是
         layer.close(index);
     });
   }
-  /* else if(layEvent === 'edit'){ //编辑
-    //do something
-        
-    //同步更新缓存对应的值
-    obj.update({
-      accountcode: '123'
-      ,accountname: 'xxx'
-    });
-  }*/
+ 
 });
-
+*/
 
 
  

@@ -17,6 +17,7 @@ var Account = require('./models/Account');
 var Header = require('./models/Header');
 var AccountDocument = require('./models/AccountDocument');
 var DocumentItem = require('./models/DocumentItem');
+var Initial = require('./models/initial');
 
 
 var exp = express();
@@ -80,6 +81,8 @@ var adminRoutes = require('./routes/admin');
 var documentRoutes = require('./routes/document');
 var accountRoutes = require('./routes/account');
 var accdocRoutes = require('./routes/accdoc');
+var manageuserRoutes = require('./routes/manageuser');
+var initialRoutes = require('./routes/initialize');
 exp.use(mainRoutes);
 exp.use(userRoutes);
 exp.use(customerRoutes);
@@ -87,6 +90,8 @@ exp.use(adminRoutes);
 exp.use(documentRoutes);
 exp.use(accountRoutes);
 exp.use(accdocRoutes);
+exp.use(manageuserRoutes);
+exp.use(initialRoutes);
 
 
 

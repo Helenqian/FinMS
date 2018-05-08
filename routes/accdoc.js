@@ -74,6 +74,8 @@ router.get('/api/addaccdoc', function (req, res, next) {
                 data.push(o);
             }
             if(req.query.new == 1){
+                for(var i = 0; i < 5; i++)
+                {
                 var o = {};
                     o.id= "";
                     o.num  = "";
@@ -84,6 +86,7 @@ router.get('/api/addaccdoc', function (req, res, next) {
                     o.debit = "";
                     o.credit = "";
                     data.push(o);
+                }
                 }
                 var responsedata = {
                 code: 0,
@@ -221,21 +224,6 @@ router.post('/checkbalance', function(req, res, next){
                           if (result)
                           console.log(result);
                         });
-                /*for(var i = 0; i < docitem.length && docitem[i]; i++)
-                 {
-                     console.log("w= "+w);
-                  AccountDocument.update({num: w}, { $push : 
-                      { DocumentItem: {debit: docitem[i].debit, credit: docitem[i].credit,
-                                      header: docitem[i].header, account: docitem[i].account}
-                              }},function(err,result){
-                      if (err) return console.error(err);
-                      console.log(result);});
-                  */
-                  /*accdoc.DocumentItem.debit = docitem[i].debit;
-                  accdoc.DocumentItem.credit = docitem[i].credit;
-                  accdoc.DocumentItem.header = docitem[i].header;
-                  accdoc.DocumentItem[i].account = docitem[i].account;*/
-                 
                 console.log("accdoc equals = "+accdoc);
                 res.send("Success,借贷平! "+"借: "+debitsum+" 贷: "+creditsum);
             });  
@@ -247,15 +235,19 @@ router.post('/checkbalance', function(req, res, next){
 });
 
 router.get('/viewaccdoc',function(req,res,next){
-    res.render('document/viewaccdoc',
-    {
-        num1: req.query.num
+    AccountDocument.findOne({num: req.query.num},'docdate maker checkstatus poststatus', function (err, accdoc) {
+        if(err) return next(err);
+        res.render('document/viewaccdoc',
+         {
+             num1: req.query.num, docdate1: accdoc.docdate, maker1: accdoc.maker
+             ,cs1: accdoc.checkstatus, ps1: accdoc.poststatus
+        });
     });
 });
 
 router.get('/api/accdoc', function (req, res, next) {
 
-    AccountDocument.find({num: req.query.nnum}, function (err, accdocs) {
+    AccountDocument.find({num: req.query.num}, function (err, accdocs) {
       if (err) return next(err);
       var data =[];
       var _page = req.query.page;
@@ -273,7 +265,7 @@ router.get('/api/accdoc', function (req, res, next) {
                 o.headername = docitem[j].header.name;
                 data.push(o);
         }
-                console.log(data);
+                //console.log(data);
                 var responsedata = {
                 code: 0,
                 msg: "",
@@ -283,47 +275,7 @@ router.get('/api/accdoc', function (req, res, next) {
                 res.send(responsedata);
             });
    });
-/*
-router.get('/api/viewaccdoc', function (req, res, next) {
 
-    AccountDocument.findOne({num: req.query.num}, function (err, accdoc) {
-      if (err) return next(err);
-      var data =[];
-      var _page = req.query.page;
-      var _limit = req.query.limit;
-        console.log("num == " +req.query.num);
-        console.log("ad == "+accdoc);
-      var docitem = accdoc.DocumentItem;
-      for (var j = (_page - 1) * _limit ; j < _page * _limit && (docitem[j] != null); j++)
-         {
-                Header.findOne({_id: docitem[j].header},'code name',function(err,h1){
-                    if(err) return next(err);
-                    Account.findOne({_id: docitem[j].account},'code name',function(err,a1){
-                        if(err) return next(err);
-                        var o = {};
-                        o.num = accdoc.num;
-                        o.debit = docitem[j].debit;
-                        o.credit = docitem[j].credit;
-                        o.headercode = h1.code;
-                        o.headername = h1.name;
-                        o.acccode = a1.code;
-                        o.accname = a1.name;
-                        data.push(o);
-                    });
-                });
-        }
-                
-                var responsedata = {
-                code: 0,
-                msg: "",
-                count: data.length,
-                data: data
-                  } 
-                console.log("here!");
-                res.send(responsedata);
-            });
-   });
-*/
 
 router.get('/api/viewaccdoc', function(req, res, next){
     DocumentItem.find({num: req.query.num}).populate('account').populate('header').exec(function (err, docitem) {
@@ -348,13 +300,89 @@ router.get('/api/viewaccdoc', function(req, res, next){
              count: data.length,
              data: data
         } 
-        console.log(data);
+        //console.log(data);
         res.send(responsedata);
     });
 });
 
+router.post("/checkad", function(req, res, next){
+    AccountDocument.findOne({num: req.body.num},function(err,accdoc){
+        if(err) return next(err);
+        console.log(accdoc);
+        if(accdoc){
+        accdoc.update({checkstatus: 'true'} ,function(err,result){
+            if (err)
+            return next(err);
+            if (result)
+            console.log(result);
+        });
+        }
+    });
+});
 
 
-    module.exports = router;
+router.post("/postad", function(req, res, next){
+    //过账流程：将凭证项目关联会计科目，
+    //根据会计科目类型，计算会计科目下对应年,月末的余额，期间变化额，结转下期
+    //最后将凭证过账状态 过账时间的改变
+    AccountDocument.find({num: req.body.num},function(err,accdoc){
+        if(err) return next(err);
+        var docdate = accdoc.docdate;
+        var year = docdate.substr(0,4);
+        var month = docdate.substr(5,2);
+    DocumentItem.find({num: req.body.num},function(err,docitem){
+        if(err) return next(err);
+        if(docitem){
+        for(var i = 0; i < docitem.length; i++){
+        Account.update({_id: docitem[i].account}, { $pushAll : 
+        { DocumentItem: docitem[i],}},{ safe:true, multi:true},
+            function(err,result){
+                if (err)
+                return next(err);
+                if (result)
+                console.log(result);
+              });
+        }
+        AccountDocument.find({num: req.body.num},function(err,accdoc){
+            if(err) return next(err);
+            var docdate = accdoc.docdate;
+            var year = docdate.substr(0,4);
+            var month = docdate.substr(5,2);
+            var y = [];
+            var o ={};
+            o.yearnum = year;
+            /*o.yearstart ,
+            yearend: {type: String, default: '0.00'},
+            yearamount: {type: String, default: '0.00'},*/
+            
+            Account.update({_id: docitem.account}, {year:year},{ safe:true, multi:true},
+                    function(err,result){
+                        if (err)
+                        return next(err);
+                        if (result)
+                        console.log(result);
+                      });
+                    });
+                }
+            });
+        });
+    /*
+    AccountDocument.findOne({num: req.body.num},function(err,accdoc){
+        if(err) return next(err);
+        console.log(accdoc);
+        if(accdoc){
+        accdoc.update({poststatus: 'true'} ,function(err,result){
+            if (err)
+            return next(err);
+            if (result)
+            console.log(result);
+        });
+        }
+    });
+    */
+});
+
+
+module.exports = router;
 
 

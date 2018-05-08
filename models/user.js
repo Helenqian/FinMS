@@ -15,11 +15,10 @@ var UserSchema = new mongoose.Schema({
 	},
 
 	address: String,
-	history: [{
-		date: Date,
-		paid: { type: Number, default: 0},
-		//item: { type: Schema.Types.ObjectId, ref: ''}
-	}]
+
+	//用户权限：管理员admin，操作员operator，审核员auditor，普通用户viewer
+	usertype: { type: String, default:'普通用户'}
+
 });
 
 

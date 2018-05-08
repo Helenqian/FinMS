@@ -18,9 +18,9 @@ var AccountDocumentSchema = new Schema({
 	num: { type: String, default: '', unique: true},
 
 	//录入日期
-	docdate: { type: String, default: '0/0/0000'},
+	docdate: { type: String, default: '0000-00-00'},
 	//入账日期
-	postdate: { type: String, default: '0/0/0000'},
+	postdate: { type: String, default: '0000-00-00'},
 
 	//制单人
 	maker: { type: String, default: '' },
@@ -32,9 +32,11 @@ var AccountDocumentSchema = new Schema({
 	checkstatus: { type: String, default: 'false' },
 	//过账状态
 	poststatus: { type: String, default: 'false' },
+	//凭证类型(现金凭证/银行凭证/转账凭证)
+	type: {type:String}
 
 	//凭证起始号
-	base: { type: Number, default:1000 },
+	//base: { type: Number, default:1000 },
 
 	//DocumentItem: [{ type: Schema.Types.ObjectId, ref: 'DocumentItem' }]
 
