@@ -8,7 +8,7 @@ var AccountSchema = new Schema({
 	type: { type: String, default: ''},
 	//科目
 	month:[{ 
-        num: {type: String, default: '00'},
+        num: {type: String, default: '000000'},
 		//期初余额
 		startbln: {type: String, default: '0.00'},
 		//期末余额

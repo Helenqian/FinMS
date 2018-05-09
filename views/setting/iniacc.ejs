@@ -35,12 +35,13 @@
 
 <xblock>
     <button class="layui-btn layui-btn-danger" data-type="delCheckData"><i class="layui-icon"></i>批量删除</button>
+    <button class="layui-btn layui-btn" data-type="saveCheckData"><i class="layui-icon"></i>批量保存</button>
     <button class="layui-btn" onclick="x_admin_show('添加科目','/addaccount')"><i class="layui-icon"></i>添加</button>
 </xblock>
 </div>
 </div>
  
-<table class="layui-hide" id="LAY_table_account" lay-filter="acc"></table> 
+<table class="layui-hide" id="LAY_table_iniacc" lay-filter="iniacc"></table> 
                
           
 <script src="./lib/layui/layui.js" charset="utf-8"></script>
@@ -52,21 +53,21 @@
 layui.use('table', function(){
   var table = layui.table;
   
-    
-
-
   //方法级渲染
   table.render({
-    elem: '#LAY_table_account'
-    ,url: '/api/account'
+    elem: '#LAY_table_iniacc'
+    ,url: '/api/iniacc'
     ,cols: [[ //表头
       {checkbox: true, fixed: true}
-      ,{field: 'code', title: '科目编号', width:200, sort: true, fixed: 'left'}
-      ,{field: 'name', title: '科目名称', width:300}
-      ,{field: 'type', title: '科目类型', width:300}
+      ,{field: 'code', title: '科目编号', width:100, sort: true, fixed: 'left'}
+      ,{field: 'name', title: '科目名称', width:150}
+      ,{field: 'type', title: '科目类型', width:100}
+      ,{field: 'yearnum', title: '起始年份', width:100}
+      ,{field: 'monthnum', title: '起始月份', width:100}
+      ,{field: 'yearstartbln', title:'年初余额',width:100,edit:true}
       ,{field: 'operation', title: '操作', fixed: 'right', width:200, align:'center', toolbar: '#barDemo'}
     ]]
-    ,id: 'idTest'
+    ,id: 'iniacc'
     ,page: true
     ,height: 315
   });
@@ -77,18 +78,18 @@ layui.use('table', function(){
       var nameReload = $('#nameReload');
       
       //执行重载
-      table.reload('idTest', {
+      table.reload('iniacc', {
         page: {
           curr: 1 //重新从第 1 页开始
         }
         ,where: {
             accountcode: demoReload.val()
-            ,accountname: nameReload.val()
+            ,accountname:nameReload.val()
         }
       });
     }
     ,delCheckData: function(obj){ //获取选中数据
-      var checkStatus = table.checkStatus('idTest');
+      var checkStatus = table.checkStatus('iniacc');
       var data = checkStatus.data;
       layer.confirm('确定删除吗？ '+ JSON.stringify(data), function(){
          //向服务端发送删除指令
@@ -107,7 +108,29 @@ layui.use('table', function(){
         });
         //obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
         //layer.close(index);
-    });
+        });
+      }
+      ,saveCheckData: function(obj){
+      var checkStatus = table.checkStatus('iniacc');
+      var data = checkStatus.data;
+      layer.confirm('确定保存吗？ '+ JSON.stringify(data), function(){
+         //向服务端发送删除指令
+        $.ajax({
+           type : "post",
+           url: "/saveiniacc",
+           data:{
+              'datas' : data
+            },
+           success: function(data) { 
+              //判断是否删除成功
+              $(obj).parents("tr").remove();
+                 layer.msg('已保存!',{icon:1,time:1000});
+                 layer.close(index);//关闭
+           }
+        });
+        //obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+        //layer.close(index);
+        });      
       }
 
   };

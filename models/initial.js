@@ -8,10 +8,10 @@ var InitialSchema = new Schema({
     //起始日期默认从1月1日开始
 
     //凭证起始号
-    base: { type: Number},
+    base: { type: String},
     
     //凭证当前号
-    currnum: { type: Number}
+    currnum: { type: String}
 });
 
 
