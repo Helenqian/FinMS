@@ -27,25 +27,26 @@
   
   <body>
     <div class="x-body">
-        <blockquote class="layui-elem-quote">欢迎使用该财务系统，请谨慎进行系统初始化</blockquote>
+        <blockquote class="layui-elem-quote">欢迎使用月末结账功能<br>
+        请注意：按时间顺序结账，否则将导致数据错误</blockquote>
         <fieldset class="layui-elem-field">
         <br>
         <form class="layui-form" method="post">
           <div class="layui-form-item">
               <label for="startyear" class="layui-form-label">
-                  <span class="x-red">*</span>初始化年份
+                  <span class="x-red">*</span>结账年份
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="startyear" name="startyear" placeholder="yyyy" required="" lay-verify="required"
+                  <input type="text" id="settleyear" name="settleyear" placeholder="yyyy" required="" lay-verify="required"
                   autocomplete="off" class="layui-input">
               </div>
           </div>
           <div class="layui-form-item">
               <label for="base" class="layui-form-label">
-                  <span class="x-red">*</span>凭证起始号
+                  <span class="x-red">*</span>结账月份
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="base" name="base" required="" lay-verify="required"
+                  <input type="text" id="settlemonth" name="settlemonth" placeholder="mm" required="" lay-verify="required"
                   autocomplete="off" class="layui-input">
               </div>
           </div>
@@ -53,11 +54,8 @@
               <label for="L_repass" class="layui-form-label">
               </label>
               <button  class="layui-btn" lay-filter="add" lay-submit="">
-                  保存
+                  结账
               </button>
-              <button  class="layui-btn" data-type="initials" lay-filter="initials" lay-submit="">
-                    初始化会计科目
-                </button>
           </div>
         </form>
     </div>
@@ -83,29 +81,33 @@
           });
 
 
-
-          form.on('submit(add)', function(data){
+    /*
+    form.on('submit(add)', function(data){
             //console.log(data);
-            var startyear = $('input[name=startyear]').val(),
-            base = $('input[name=base]').val();
+        var settleyear = $('input[name=settleyear]').val(),
+            settlemonth = $('input[name=settlemonth]').val();
+        layer.confirm('确定结账？', function(index){
             $.ajax({
             type: 'post', // 提交方式 get/post
-            url: '/saveinitial', // 需要提交的 url
+            url: '/settleacc', // 需要提交的 url
             //dataType: "json",
             data: {
-                'startyear': startyear,
-                'base': base
+                'settleyear': settleyear,
+                'settlemonth': settlemonth
             },
-            success: function(data) { 
-                 layer.msg('初始化成功!',{icon:1,time:1000});
-                 layer.close(index);//关闭
+            success: function(data) {
               }
             });
-        //$(this).resetForm();// 提交后重置表单
-        return false; // 阻止表单自动提交事件
+            layer.msg('初始化成功!',{icon:1,time:1000});
+                 layer.close(index);//关闭
+            //$(this).resetForm();// 提交后重置表单
+            //return false; // 阻止表单自动提交事件
         });
     });
+    */
+});
 </script>
+<!--
 <script>
 var $ = layui.$, active = {
     initials: function(){
@@ -129,6 +131,7 @@ var $ = layui.$, active = {
         });
       
     </script>
+-->
     <script>var _hmt = _hmt || []; (function() {
         var hm = document.createElement("script");
         hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";

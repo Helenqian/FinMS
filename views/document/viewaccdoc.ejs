@@ -60,7 +60,7 @@ layui.use('table', function(){
         ,{field:'accname', title:'科目名称', width:150, edit: 'text'}
         ,{field:'debit', title:'借方金额', width:120, edit: 'text'}
         ,{field:'credit', title:'贷方金额', width:120, edit: 'text'}
-        ,{field: 'operation', title: '操作', fixed: 'right', width:150, align:'center', toolbar: '#barDemo'}
+        //,{field: 'operation', title: '操作', fixed: 'right', width:150, align:'center', toolbar: '#barDemo'}
       ]]
       ,where:{
           num: test
@@ -103,7 +103,7 @@ layui.use('table', function(){
     }
     }
     ,postAD: function(obj){
-        if('<%=ps1%>' == 'true') {layer.msg('已过账!');}
+        if('<%=ps1%>' == 'true') {layer.msg('凭证已经过过账了!');}
         else if ('<%=cs1%>' != 'true') {layer.msg('未审核!');}
         else{
         layer.confirm('确认过账吗？', function(index){
@@ -224,8 +224,8 @@ table.on('tool(viewaccdoc)', function(obj){ //注：tool是工具条事件名，
 </script>
 
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn layui-btn-xs" lay-event="add">添加</a>
-    <a class="layui-btn layui-btn layui-btn-xs" lay-event="save">保存</a>
+    <!--<a class="layui-btn layui-btn layui-btn-xs" lay-event="add">添加</a>
+    <a class="layui-btn layui-btn layui-btn-xs" lay-event="save">保存</a>-->
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 

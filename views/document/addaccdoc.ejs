@@ -19,7 +19,7 @@
     </ul>-->
     <div class="layui-inline layui-col-md12 x-so">
         <div class="layui-inline">
-                <label class="layui-form-label">凭证号：<%= 1001 + accdoc.length %> </label>
+                <label class="layui-form-label">凭证号：<%= init[0].currnum %> </label>
                 <!--<div class="layui-input-inline">
                         <input type="text" name="adnum"  placeholder="请输入凭证号" id="adnum" autocomplete="off" class="layui-input">
                 </div>-->
@@ -35,11 +35,25 @@
                   <input type="text" class="layui-input" id="maker" placeholder="制单人" lay-verify="required">
                 </div>
         </div>
+        <div class="layui-inline">
+          <select name="contrller" class="layui-select" id="type">
+            <option>现金凭证</option>
+            <option>银行凭证</option>
+            <option>转账凭证</option>
+          </select>
+        </div>
+        <!--
+        <div class="layui-inline">
+          <div class="layui-input-inline">
+            <input type="text" class="layui-input" id="type" placeholder="凭证类型(现/银/转)" lay-verify="required">
+          </div>
+        </div>-->
       <!--<button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>-->
     </div> 
     <xblock>
             <button class="layui-btn" data-type="addLine"><i class="layui-icon"></i>新建</button>
-            <button class="layui-btn" data-type="recordAD"><i class="layui-icon">&#xe61f;</i>保存</button>
+            <button class="layui-btn" data-type="recordAD"><i class="layui-icon">&#xe61f;</i>批量保存</button>
+            <button class="layui-btn" data-type="submitAD"><i class="layui-icon">&#xe61f;</i>保存凭证</button>
     </xblock>
 </div>
 
@@ -56,18 +70,20 @@ layui.use('table', function(){
       elem: '#LAY_table_addaccdoc'
       ,url: '/api/addaccdoc'
       ,cols: [[ //表头
-        {field:'id', title:'id', width:120, sort:true, edit: 'text', fixed: 'left'}
+        {checkbox: true, fixed: true}
+        ,{field:'id', title:'id', width:60, sort:true, edit: 'text', fixed: 'left'}
         ,{field:'num', title: '凭证号', width:100, sort: true, edit: 'text'}
-        ,{field:'headercode', title:'摘要编号', width:120, edit: 'text'}
-        ,{field:'headername', title:'摘要名称', width:200, edit: 'text'}
-        ,{field:'acccode', title:'科目编号', width:120, edit: 'text'}
-        ,{field:'accname', title:'科目名称', width:150, edit: 'text'}
+        ,{field:'headercode', title:'摘要编号', width:80, edit: 'text'}
+        ,{field:'headername', title:'摘要名称', width:150, edit: 'text'}
+        ,{field:'acccode', title:'科目编号', width:80, edit: 'text'}
+        ,{field:'accname', title:'科目名称', width:140, edit: 'text'}
         ,{field:'debit', title:'借方金额', width:120, edit: 'text'}
         ,{field:'credit', title:'贷方金额', width:120, edit: 'text'}
         ,{field: 'operation', title: '操作', fixed: 'right', width:150, align:'center', toolbar: '#barDemo'}
       ]]
       ,id: 'addaccdoc'
       ,page: true
+      ,limit: 20
       ,height: 315
     });
 
@@ -81,42 +97,119 @@ layui.use('table', function(){
   
     var $ = layui.$, active = {
     addLine: function(){ //获取选中数据
-    layui.use('table', function(){
-     var table = layui.table;
+      layer.prompt({title: '请输入您要添加的行数(≤20)', formType: 1}, function(pass, index){
+      layer.close(index);
+      layer.msg('将会为您新建：'+ pass +'行');
+      layui.use('table', function(){
+      var table = layui.table;
         table.reload("addaccdoc",{
          page: {
              curr: 1 //重新从第 1 页开始
              }
          ,where: {
-            new: 1
-        }
+            new: pass
+          }
         });
       });
+    });
     }
-    ,recordAD: function(){
+    /*
+    ,recordAD: function(obj){
+        var checkStatus = table.checkStatus('addaccdoc');
+        var data = checkStatus.data;
+        for(var i = 0; i < data.length; i++){
+        if((data[i].num == "")||(data[i].id == "")||(data[i].deibt == "")||
+            (data[i].credit == "")||(data[i].headercode == "")||
+                (data[i].headername == "")||(data[i].acccode == "")||
+                    (data[i].accname == "")) 
+                    {layer.alert("id为"+data[i].id+"的凭证有空项！");}
+        }
         if(!$("#docdate").val()) {layer.alert("请输入录入日期！");}
         else if(!$("#maker").val()) {layer.alert("请输入制单人！");}
+        else if(!$("#type").val()) {layer.alert("请输入凭证类型！");}
         else{
+          console.log(data);
         layer.confirm('确定录入凭证吗？', function(index){
-        //判断借贷是否平衡
-        $.ajax({
+          $.ajax({
+                  type : "post",
+                    url: "/addcheckdocitem",
+                    data:{
+                    docdate: $("#docdate").val()
+                   ,maker: $("#maker").val()
+                   ,type: $("#type").val()
+                   ,datas : data
+                  },
+                  success: function(data) { 
+                   //判断是否成功
+                    layer.alert(data);
+                    }
+                 });
+        });
+     }
+    }
+    */
+    ,recordAD: function(obj){
+        var checkStatus = table.checkStatus('addaccdoc');
+        var data = checkStatus.data;
+        var flag = 1;
+        if(!$("#docdate").val()) {layer.alert("请输入录入日期！");}
+        else if(!$("#maker").val()) {layer.alert("请输入制单人！");}
+        else if(!$("#type").val()) {layer.alert("请输入凭证类型！");}
+        else{
+        for(var i = 0; i < data.length; i++){
+        if((data[i].num == "")||(data[i].id == "")||(data[i].deibt == "")||
+            (data[i].credit == "")||(data[i].headercode == "")||
+                (data[i].headername == "")||(data[i].acccode == "")||
+                    (data[i].accname == "")) 
+                    {layer.alert("第"+i+"行的凭证条目有空项！"); flag = 0;}
+        }
+        if(flag == 1){
+        console.log(data);
+        layer.confirm('确定录入选中的凭证条目吗？', function(index){
+          for(var i = 0; i < data.length; i++){
+          $.ajax({
            type : "post",
-           url: "/checkbalance",
+           url: "/adddocitem",
            data:{
-                docdate: $("#docdate").val()
-                ,maker: $("#maker").val()
+               num: data[i].num
+               ,id: data[i].id
+               ,debit: data[i].debit
+               ,credit: data[i].credit
+               ,headercode: data[i].headercode
+               ,headername: data[i].headername
+               ,acccode: data[i].acccode
+               ,accname: data[i].accname
+               ,docdate: $("#docdate").val()
             },
            success: function(data) { 
-              //判断是否成功
-              layer.alert(data);
-              }
-              /*$(obj).parents("tr").remove();
-                 layer.msg('已删除!',{icon:1,time:1000});
-                 layer.close(index);//关闭
-                 */
+              //判断是否保存成功
+            }
+          });
+          $(obj).parents("tr").remove();
+                 layer.msg('已添加!',{icon:1,time:1000});
+                layer.close(index);//关闭
+        }
         });
-        })
+      }
      }
+    }
+    ,submitAD: function(obj){
+      layer.confirm('确定保存凭证吗？', function(index){
+          //判断借贷是否平衡
+          $.ajax({
+                  type : "post",
+                    url: "/checkbalance",
+                    data:{
+                    docdate: $("#docdate").val()
+                   ,maker: $("#maker").val()
+                   ,type: $("#type").val()
+                  },
+                  success: function(data) { 
+                   //判断是否成功
+                    layer.alert(data);
+                    }         
+                 });
+      });
     }
   };
   
@@ -151,6 +244,7 @@ table.on('tool(addaccdoc)', function(obj){ //注：tool是工具条事件名，t
         layer.close(index);
     });
   }
+  /*
   else if(layEvent === 'add'){ //添加
     if((obj.data.num == "")||(obj.data.id == "")||(obj.data.deibt == "")||
             (obj.data.credit == "")||(obj.data.headercode == "")||
@@ -208,6 +302,7 @@ table.on('tool(addaccdoc)', function(obj){ //注：tool是工具条事件名，t
         });
     });
   }
+  */
 });
 
 });

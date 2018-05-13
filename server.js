@@ -17,7 +17,7 @@ var Account = require('./models/Account');
 var Header = require('./models/Header');
 var AccountDocument = require('./models/AccountDocument');
 var DocumentItem = require('./models/DocumentItem');
-var Initial = require('./models/initial');
+var Initial = require('./models/Initial');
 
 
 var exp = express();
@@ -50,10 +50,7 @@ exp.use(function(req, res, next){
 	res.locals.user = req.user;
 	next();
 }); // 使所有页面的user为同一个
-exp.use(function(req, res, next){
-	res.locals.accdoc = req.accdoc;
-	next();
-}); 
+
 
 exp.use(function(req, res, next){
 	Category.find({}, function(err, categories){
@@ -83,6 +80,7 @@ var accountRoutes = require('./routes/account');
 var accdocRoutes = require('./routes/accdoc');
 var manageuserRoutes = require('./routes/manageuser');
 var initialRoutes = require('./routes/initialize');
+var settleRoutes = require('./routes/settle');
 exp.use(mainRoutes);
 exp.use(userRoutes);
 exp.use(customerRoutes);
@@ -92,7 +90,7 @@ exp.use(accountRoutes);
 exp.use(accdocRoutes);
 exp.use(manageuserRoutes);
 exp.use(initialRoutes);
-
+exp.use(settleRoutes);
 
 
 exp.listen(secret.port, function(err) {

@@ -13,8 +13,11 @@ var DocumentItemSchema = new Schema({
 	//摘要
 	header: { type: Schema.Types.ObjectId, ref: 'Header' },
 	//科目
-    account: { type: Schema.Types.ObjectId, ref: 'Account' }
-    
+    account: { type: Schema.Types.ObjectId, ref: 'Account' },
+	//年
+	yearnum: {type: String, default: '0000'},
+	//月
+	monthnum: {type: String, default: '000000'}
 
 });
 

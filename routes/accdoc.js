@@ -4,6 +4,7 @@ var Header = require('../models/Header');
 var Account = require('../models/Account');
 var AccountDocument = require('../models/AccountDocument');
 var DocumentItem = require('../models/DocumentItem');
+var Initial = require('../models/Initial');
 
 router.get('/accdoc', function (req, res, next) {
     res.render('document/accdoc');
@@ -11,11 +12,11 @@ router.get('/accdoc', function (req, res, next) {
 
 
 router.get('/addaccdoc', function (req, res, next) {
-    AccountDocument.find({}, 'num base', function (err, accdoc) {
+    Initial.find({}, function (err, init) {
         if (err) return next(err);
         res.render('document/addaccdoc',
             {
-                accdoc: accdoc
+                init: init
             });
         });
 });
@@ -73,8 +74,8 @@ router.get('/api/addaccdoc', function (req, res, next) {
                 o.headername = docitem[j].header.name;
                 data.push(o);
             }
-            if(req.query.new == 1){
-                for(var i = 0; i < 5; i++)
+            if(req.query.new){
+                for(var i = 0; i < req.query.new && i < _limit; i++)
                 {
                 var o = {};
                     o.id= "";
@@ -109,6 +110,11 @@ router.post("/adddocitem", function(req, res, next) {
         docitem.num = req.body.num;
         docitem.debit = req.body.debit;
         docitem.credit = req.body.credit;
+        var docdate = req.body.docdate;
+        console.log("docdate = "+docdate);
+        var yearnum = docdate.substring(0,4);
+        var month1 = docdate.substring(5,7);
+        var monthnum = yearnum+month1;
         if(existingHeader) {
             docitem.header = existingHeader;
         }
@@ -142,12 +148,14 @@ router.post("/adddocitem", function(req, res, next) {
                 debit : docitem.debit,
                 credit : docitem.credit,
                 header : docitem.header,
-                account : docitem.account
+                account : docitem.account,
+                yearnum : yearnum,
+                monthnum : monthnum
                 });
                 di.save(function(err){
                 if(err) return next(err);
                 console.log('New docitem has been created   ');
-                return res.redirect('/addaccdoc');
+                //return res.redirect('/addaccdoc');
                 });
                 }
             });
@@ -155,6 +163,126 @@ router.post("/adddocitem", function(req, res, next) {
     });
 });
 
+/*
+router.post("/addcheckdocitem", function(req, res, next) {
+    console.log(req.body.datas);
+    codesum = [];
+    for(var i = 0; i < req.body.datas.length; i++){
+        codesum[i] = req.body.datas[i].headercode;
+    }
+    Header.find({code:{$in:[codesum]}}, function(err, existingHeader){
+        var docitem = {};
+        console.log("进入了"+req.body.datas[i].id+"的循环");
+        console.log(req.body.datas[i].headercode);
+        console.log("i="+i);
+        docitem.id = req.body.datas[i].id;
+        docitem.num = req.body.datas[i].num;
+        docitem.debit = req.body.datas[i].debit;
+        docitem.credit = req.body.datas[i].credit;
+        if(existingHeader) {
+            docitem.header = existingHeader;
+        }
+        else{
+            if(err) return next(err);
+            var header = new Header();
+            header.code = req.body.datas[i].headercode;
+            header.name = req.body.datas[i].headername;
+            header.save(function(err, header){
+            if(err) return next(err);
+            console.log('New header has been created' + header + " id " + header._id);
+            docitem.header = header._id;
+            });
+        }
+        Account.findOne({code: req.body.datas[i].acccode, name: req.body.datas[i].accname}, function(err, existingAcc){
+            if(existingAcc) {
+            docitem.account = existingAcc;
+            }
+            else{
+            if(err) return next(err);
+            console.log("Account is invalid!");
+            }
+            DocumentItem.findOne({ id: req.body.datas[i].id }, function(err, existingDoc){
+                if(existingDoc){
+                console.log("Document with that id already exists");
+                 } else {
+                var di = new DocumentItem({
+                id : docitem.id,
+                num : docitem.num,
+                debit : docitem.debit,
+                credit : docitem.credit,
+                header : docitem.header,
+                account : docitem.account
+                });
+                di.save(function(err){
+                if(err) return next(err);
+                console.log('New docitem has been created!');
+                });
+                }
+            });
+        });
+    });
+}
+
+
+Initial.find({},function(err, ini){
+    if (err) return next(err);
+    var w = ini[0].currnum;
+    console.log("w = "+w);
+    DocumentItem.find({ num: w }, function (err, docitem) {
+      if (err) return next(err);
+      if(!docitem) {console.log("该凭证"+w+"无条目！");}
+      else{ 
+      var debitsum = 0; var creditsum = 0;
+      for(var i = 0; i < docitem.length && docitem[i]; i++)
+      {
+            debitsum = debitsum + 1*(docitem[i].debit);
+            creditsum = creditsum + 1*(docitem[i].credit);
+      }
+      if (debitsum == creditsum) { 
+          var accdoc = new AccountDocument();
+          accdoc.num = w;
+          accdoc.docdate = req.body.docdate;
+          accdoc.postdate = '0000-00-00';
+          accdoc.maker = req.body.maker;
+          accdoc.debitsum = debitsum + "";
+          accdoc.creditsum = creditsum + "";
+          accdoc.checkstatus = 'false';
+          accdoc.poststatus = 'false';
+          accdoc.save(function(err, accdoc){
+              if(err) return next(err);
+                console.log('New accdoc has been created');
+                var docitems = [];
+                for(var j = 0; j < docitem.length; j++)
+               {
+                   var o={};
+                    o.debit = docitem[j].debit;
+                    o.credit = docitem[j].credit;
+                    o.header = docitem[j].header;
+                    o.account = docitem[j].account;
+                    docitems.push(o);
+                }
+            AccountDocument.update({num: w}, { $pushAll : 
+              { DocumentItem: docitems
+                  }},{ safe:true, multi:true},
+                  function(err,result){
+                      if (err)
+                      return next(err);
+                      if (result)
+                      console.log(result);
+                    });
+            console.log("accdoc equals = "+accdoc);
+            res.send("Success,借贷平! "+"借: "+debitsum+" 贷: "+creditsum);
+        });  
+    }            
+        else { res.send("Failure,借贷不平! "+"借: "+debitsum+" 贷: "+creditsum);}
+    }
+    });
+});
+
+});
+*/
+
+            
 
             
 
@@ -174,6 +302,7 @@ router.post('/deletedocitem', function(req, res, next){
 	});
 });
 
+/*
 router.post('/checkbalance', function(req, res, next){
     AccountDocument.find({},function(err, AD){
         if (err) return next(err);
@@ -228,6 +357,83 @@ router.post('/checkbalance', function(req, res, next){
                 res.send("Success,借贷平! "+"借: "+debitsum+" 贷: "+creditsum);
             });  
         }            
+            else { res.send("Failure,借贷不平! "+"借: "+debitsum+" 贷: "+creditsum);}
+        }
+        });
+    });
+});
+*/
+
+router.post('/checkbalance', function(req, res, next){
+    Initial.find({},function(err, ini){
+        if (err) return next(err);
+        var w = ini[0].currnum;
+        console.log("w = "+w);
+        DocumentItem.find({ num: w }, function (err, docitem) {
+          if (err) return next(err);
+          if(!docitem) {console.log("该凭证"+w+"无条目！");}
+          else{ 
+          var debitsum = 0; var creditsum = 0;
+          for(var i = 0; i < docitem.length && docitem[i]; i++)
+          {
+                debitsum = debitsum + 1*(docitem[i].debit);
+                creditsum = creditsum + 1*(docitem[i].credit);
+          }
+          if (debitsum == creditsum) { 
+              var accdoc = new AccountDocument();
+              accdoc.num = w;
+              accdoc.docdate = req.body.docdate;
+              accdoc.postdate = '0000-00-00';
+              accdoc.maker = req.body.maker;
+              accdoc.debitsum = debitsum + "";
+              accdoc.creditsum = creditsum + "";
+              accdoc.checkstatus = 'false';
+              accdoc.poststatus = 'false';
+              accdoc.type = req.body.type;
+              accdoc.save(function(err, accdoc){
+                  if(err) return next(err);
+                    console.log('New accdoc has been created');
+                    var docitems = [];
+                    for(var j = 0; j < docitem.length; j++)
+                   {
+                       var o={};
+                        o.debit = docitem[j].debit;
+                        o.credit = docitem[j].credit;
+                        o.header = docitem[j].header;
+                        o.account = docitem[j].account;
+                        o.yearnum = docitem[j].yearnum;
+                        o.monthnum = docitem[j].monthnum;
+                        docitems.push(o);
+                    }
+                AccountDocument.update({num: w}, { $pushAll : 
+                  { DocumentItem: docitems
+                      }},{ safe:true, multi:true},
+                      function(err,result){
+                          if (err)
+                          return next(err);
+                          if (result)
+                          console.log(result);
+                          var conditions = {currnum: w};
+                          var updates = {$set: {currnum: ((parseInt(w)+1)+"")}};//将用户名更新为“tiny”
+                          /*
+                          Initial.update({currnum: w}, {$push: {currnum: (parseInt(w)+1)+""}}, 
+                            function(err){
+                                if(err) return next(err);
+                            });
+                        });
+                        */
+                        Initial.update(conditions, updates, function (error) {  
+                            if (error) {  
+                            console.error(error);  
+                            } else {  
+                            console.error("更新currnum成功");  
+                            }  
+                        });  
+                console.log("accdoc equals = "+accdoc);
+                res.send("Success,借贷平! "+"借: "+debitsum+" 贷: "+creditsum);
+                });
+            });          
+        }    
             else { res.send("Failure,借贷不平! "+"借: "+debitsum+" 贷: "+creditsum);}
         }
         });
@@ -320,69 +526,221 @@ router.post("/checkad", function(req, res, next){
     });
 });
 
-
 router.post("/postad", function(req, res, next){
-    //过账流程：将凭证项目关联会计科目，
-    //根据会计科目类型，计算会计科目下对应年,月末的余额，期间变化额，结转下期
+    //过账流程：将会计科目关联的凭证项目改变
+    //根据会计科目类型，计算会计科目对应凭证下期间变化额（加入debitsum,creditsum)
     //最后将凭证过账状态 过账时间的改变
-    AccountDocument.find({num: req.body.num},function(err,accdoc){
-        if(err) return next(err);
-        var docdate = accdoc.docdate;
-        var year = docdate.substr(0,4);
-        var month = docdate.substr(5,2);
-    DocumentItem.find({num: req.body.num},function(err,docitem){
-        if(err) return next(err);
-        if(docitem){
-        for(var i = 0; i < docitem.length; i++){
-        Account.update({_id: docitem[i].account}, { $pushAll : 
-        { DocumentItem: docitem[i],}},{ safe:true, multi:true},
-            function(err,result){
+        AccountDocument.findOne({num: req.body.num},function(err,accdoc){
+            if(err) return next(err);
+            var docdate = accdoc.docdate;
+            console.log("docdate = "+docdate);
+            var yearnum = docdate.substring(0,4);
+            var month1 = docdate.substring(5,7);
+            var monthnum = yearnum+month1;
+            accdoc.update({poststatus: 'true'} ,function(err,result){
                 if (err)
                 return next(err);
                 if (result)
                 console.log(result);
-              });
-        }
-        AccountDocument.find({num: req.body.num},function(err,accdoc){
-            if(err) return next(err);
-            var docdate = accdoc.docdate;
-            var year = docdate.substr(0,4);
-            var month = docdate.substr(5,2);
-            var y = [];
-            var o ={};
-            o.yearnum = year;
-            /*o.yearstart ,
-            yearend: {type: String, default: '0.00'},
-            yearamount: {type: String, default: '0.00'},*/
-            
-            Account.update({_id: docitem.account}, {year:year},{ safe:true, multi:true},
-                    function(err,result){
-                        if (err)
-                        return next(err);
-                        if (result)
-                        console.log(result);
-                      });
-                    });
-                }
             });
+            var myDate = new Date();
+            accdoc.update({postdate: myDate.toLocaleDateString()} ,function(err,result){
+                if (err)
+                return next(err);
+                if (result)
+                console.log(result);
+            });
+            //console.log("yearnum:"+yearnum+"monthnum"+monthnum);
+            DocumentItem.find({num: req.body.num},function(err,docitem){
+                if(err) return next(err);
+                for(var i = 0; i < docitem.length; i++){
+                (function(i){
+                Account.update({_id: docitem[i].account}, { $push : 
+                 { DocumentItem: docitem[i]}},
+                 function(err,result){
+                console.log("1234 "+docitem[i]);
+                if (err) return next(err);
+                //if (result) console.log(result);
+                });
+            })(i)
+            }
+        
+                return res.redirect('/viewaccdoc?num=' + req.body.num);
         });
-    /*
-    AccountDocument.findOne({num: req.body.num},function(err,accdoc){
-        if(err) return next(err);
-        console.log(accdoc);
-        if(accdoc){
-        accdoc.update({poststatus: 'true'} ,function(err,result){
-            if (err)
-            return next(err);
-            if (result)
-            console.log(result);
-        });
-        }
     });
-    */
 });
 
+/*
+router.post("/postad", function(req, res, next){
+    //过账流程：将会计科目关联的凭证项目改变
+    //根据会计科目类型，计算会计科目对应凭证下期间变化额（加入debitsum,creditsum)
+    //最后将凭证过账状态 过账时间的改变
+        AccountDocument.findOne({num: req.body.num},function(err,accdoc){
+            if(err) return next(err);
+            var docdate = accdoc.docdate;
+            console.log("docdate = "+docdate);
+            var yearnum = docdate.substring(0,4);
+            var month1 = docdate.substring(5,7);
+            var monthnum = yearnum+month1;
+            //console.log("yearnum:"+yearnum+"monthnum"+monthnum);
+            DocumentItem.find({num: req.body.num},function(err,docitem){
+                if(err) return next(err);
+                for(var i = 0; i < docitem.length; i++){
+                
+                Account.update({_id: docitem[i].account}, { $push : 
+                 { DocumentItem: docitem[i]}},
+                 function(err,result){
+                console.log("1234 "+docitem[i]);
+                if (err) return next(err);
+                if (result) console.log(result);
+                });
+                
+               //console.log("11111 i: "+i+"docitem[i]:" +docitem[i]);
+                //var actn = docitem[i].account;
+                //var deb = docitem[i].debit;
+                //var cred = docitem[i].credit;
+                //console.log("1234 "+docitem[i]);
+                //console.log("56 "+deb);
+                //console.log("78 "+cred);
+                (function(i){
+                Account.findById(docitem[i].account, function(err, acc){
+                    if(err) return next(err);
+                    console.log("22222 i: "+i+"docitem[i]:" +docitem[i]);
+                    var y = {};
+                    (function(y){
+                    for(var j = 0; j < acc.year.length; j++)
+                    {
+                        if(acc.year[j].num == yearnum){
+                            y.num = acc.year[j].num;
+                            y.startbln = acc.year[j].startbln;
+                            y.endbln = acc.year[j].endbln;
+                            y.debamount = acc.year[j].debamount;
+                            y.credamount = acc.year[j].credamount;
+                            console.log("y.deba= "+y.debamount);
+                            console.log("y.creda= "+y.credamount);
+                        }
+                    }
+                    /*
+                    if(acc.year.debamount == undefined) {var a = 0.00;}
+                    else { var a = parseFloat(acc.year.debamount);}
+                    if(acc.year.credamount == undefined) {var b = 0.00;}
+                    else { var b = parseFloat(acc.year.credamount);}
+                    console.log("a: " + a);
+                    console.log("b: " + b);
+                    
+                    var c = parseFloat(docitem[i].debit);
+                    var d = parseFloat(docitem[i].credit);
+                    var e = a+c+"";
+                    var f = b+d+"";
+                    console.log("a: " + a);
+                    console.log("b: " + b);
+                    console.log("c: " + c);
+                    console.log("d: " + d);
+                    console.log("e: " + e);
+                    console.log("f: " + f);*/
+                    /*
+                    Account.update(  
+                        {   
+                             "_id" : acc._id,  
+                             "year.num" : yearnum  
+                        },  
+                        {  
+                             $set: {  
+                                  "year.$" : {
+                                  "num" : y.num,
+                                  "startbln" : y.startbln,
+                                  "endbln" : y.endbln,
+                                  "debamount" : (parseFloat(y.debamount)+c)+"",
+                                  "credamount" : (parseFloat(y.credamount)+d)+"",
+                                    }  
+                        }},function(err,result){  
+                          if (err) return console.error(err);  
+                          //console.log(result);  
+                    });
+                })(y)
+                });
+            })(i)
+            
+            /*
+            Account.aggregate({ $project: { _id: 1, year: 1, month: 1 } }).unwind('year').unwind('month').exec(function (err, doc) {  
+                if (err) return console.error(err);  
+                console.log("doc of acc= "+doc);
+                /*
+                for(var j = 0; j < doc.year.length; j++){
+                    if(doc.year[j].num == yearnum)
+                         {console.log("doc.year.num= "+doc.year[j].num);
+                         Account.update(  
+                            {   
+                                 "_id" : doc._id,  
+                                 "year.num" : yearnum  
+                            },  
+                            {  
+                                 $set: {  
+                                      "year.$" : {
+                                      "debamount" : (parseFloat(doc.year[j].debamount)+docitem[i].debit)+"",
+                                      "credamount" : (parseFloat(doc.year[j].credamount)+docitem[i].credit)+""
+                                        }  
+                            }},function(err,result){  
+                              if (err) return console.error(err);  
+                              console.log(result);  
+                        });
+                        }
+                    }
+                    */
+                /*});
+            }
+           /*
+           Account.findOne({"_id" : docitem[i].account,},function(error, doc) {
+                for(var j = 0; j < doc.year.length; j++){
+                    if(doc.year[j].num == yearnum) 
+                    {console.log("doc.year.num= "+doc.year[j].num);
+            Account.update(  
+                {   
+                     "_id" : doc._id,  
+                     "year.num" : yearnum  
+                },  
+                {  
+                     $set: {  
+                          "year.$" : {
+                          "debamount" : (parseFloat(doc.year[j].debamount)+docitem[i].debit)+"",
+                          "credamount" : (parseFloat(doc.year[j].credamount)+docitem[i].credit)+""
+                            }  
+                }},function(err,result){  
+                  if (err) return console.error(err);  
+                  console.log(result);  
+            });
+            }
+        }
+        for(var j = 0; j < doc.year.length; j++){
+            if(doc.month[j].num == monthnum)
+            {console.log("doc.month.num= "+doc.month[j].num);
+            Account.update(  
+                    {   
+                         "_id" : doc._id,  
+                         "month.num" : monthnum  
+                    },  
+                    {  
+                         $set: {  
+                              "month.$" : { 
+                              "num" : monthnum, 
+                              "debamount" : (parseFloat(doc.month[j].debamount)+docitem[i].debit)+"",
+                              "credamount" : (parseFloat(doc.month[j].credamount)+docitem[i].credit)+""
+                                }  
+                    }},function(err,result){  
+                      if (err) return console.error(err);  
+                      console.log(result);  
+            });
+             }
+
+            }
+        });
+        }
+
+        
+    });
+    
+});
+});
+*/
 
 module.exports = router;
-
-

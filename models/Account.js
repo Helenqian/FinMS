@@ -30,7 +30,7 @@ var AccountSchema = new Schema({
 		credamount: {type: String, default: '0.00'}
     }],
 
-	DocumentItem: [{ type: Schema.Types.ObjectId, ref: 'DocumentItem' }]
+	DocumentItem: [{ type: Schema.Types.ObjectId, ref: 'DocumentItem'}]
 });
 
 
