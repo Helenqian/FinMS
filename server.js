@@ -81,6 +81,7 @@ var accdocRoutes = require('./routes/accdoc');
 var manageuserRoutes = require('./routes/manageuser');
 var initialRoutes = require('./routes/initialize');
 var settleRoutes = require('./routes/settle');
+var sheetRoutes = require('./routes/sheet');
 exp.use(mainRoutes);
 exp.use(userRoutes);
 exp.use(customerRoutes);
@@ -91,6 +92,7 @@ exp.use(accdocRoutes);
 exp.use(manageuserRoutes);
 exp.use(initialRoutes);
 exp.use(settleRoutes);
+exp.use(sheetRoutes);
 
 
 exp.listen(secret.port, function(err) {

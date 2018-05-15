@@ -28,14 +28,15 @@
   
   <body>
     <div class="x-body">
-        <blockquote class="layui-elem-quote">欢迎使用月末结账功能<br>
-        请注意：按时间顺序结账，否则将导致数据错误</blockquote>
+        <blockquote class="layui-elem-quote">欢迎使用凭证入账功能<br>
+        请注意：凭证未入账前可以进行增删查改，入账后理论上不允许删改，仅能进行查询。<br>
+        如有错误，请会计人员手工进行红冲。</blockquote>
         <fieldset class="layui-elem-field">
         <br>
         <form class="layui-form" method="post">
           <div class="layui-form-item">
               <label for="startyear" class="layui-form-label">
-                  <span class="x-red">*</span>结账年份
+                  <span class="x-red">*</span>入账年份
               </label>
               <div class="layui-input-inline">
                   <input type="text" id="settleyear" name="settleyear" placeholder="yyyy" required="" lay-verify="required"
@@ -44,7 +45,7 @@
           </div>
           <div class="layui-form-item">
               <label for="base" class="layui-form-label">
-                  <span class="x-red">*</span>结账月份
+                  <span class="x-red">*</span>入账月份
               </label>
               <div class="layui-input-inline">
                   <input type="text" id="settlemonth" name="settlemonth" placeholder="mm" required="" lay-verify="required"
@@ -55,7 +56,7 @@
               <label for="L_repass" class="layui-form-label">
               </label>
               <button  class="layui-btn" lay-filter="add" lay-submit="">
-                  结账
+                  凭证入账
               </button>
           </div>
         </form>
