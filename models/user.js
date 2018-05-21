@@ -16,7 +16,7 @@ var UserSchema = new mongoose.Schema({
 
 	address: String,
 
-	//用户权限：管理员admin，操作员operator，审核员auditor，普通用户viewer
+	//用户权限：管理员admin，操作员operator，审计员auditor，普通用户viewer
 	usertype: { type: String, default:'普通用户'}
 
 });

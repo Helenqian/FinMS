@@ -14,6 +14,12 @@ router.post('/login', passport.authenticate('local-login',{
 	failureFlash: true
 }));
 
+router.get('/logout', function(req, res, next){
+	req.logout();
+	res.redirect('/');
+});
+
+
 router.get('/profile', function(req, res, next){
 	User.findOne({ _id: req.user._id }, function(err, user){
 		if (err) return next(err);
@@ -69,13 +75,6 @@ router.post('/manage', function(req, res, next) {
 	user.password = req.body.password;
 	user.email = req.body.email;
 	//user.profile.picture = user.gravatar();
-});
-
-
-
-router.get('/logout', function(req, res, next){
-	req.logout();
-	res.redirect('/');
 });
 
 router.get('/edit-profile', function(req, res, next){

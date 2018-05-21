@@ -11,13 +11,14 @@ var MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
 var secret = require('./config/secret');
 var User = require('./models/user');
-var Category = require('./models/category');
 var Customer = require('./models/customer');
 var Account = require('./models/Account');
 var Header = require('./models/Header');
 var AccountDocument = require('./models/AccountDocument');
 var DocumentItem = require('./models/DocumentItem');
 var Initial = require('./models/Initial');
+var BlnSheet = require('./models/BlnSheet');
+var PlSheet = require('./models/PlSheet');
 
 
 var exp = express();
@@ -51,15 +52,6 @@ exp.use(function(req, res, next){
 	next();
 }); // 使所有页面的user为同一个
 
-
-exp.use(function(req, res, next){
-	Category.find({}, function(err, categories){
-		if(err) return next(err);
-		res.locals.categories = categories;
-		next();
-	});
-});
-
 /*exp.use(function(req, res, next){
 	Header.find({}, function(err, headers){
 		if(err) return next(err);
@@ -82,6 +74,7 @@ var manageuserRoutes = require('./routes/manageuser');
 var initialRoutes = require('./routes/initialize');
 var settleRoutes = require('./routes/settle');
 var sheetRoutes = require('./routes/sheet');
+var docitemRoutes = require('./routes/docitem');
 exp.use(mainRoutes);
 exp.use(userRoutes);
 exp.use(customerRoutes);
@@ -89,11 +82,11 @@ exp.use(adminRoutes);
 exp.use(documentRoutes);
 exp.use(accountRoutes);
 exp.use(accdocRoutes);
+exp.use(docitemRoutes);
 exp.use(manageuserRoutes);
 exp.use(initialRoutes);
 exp.use(settleRoutes);
 exp.use(sheetRoutes);
-
 
 exp.listen(secret.port, function(err) {
 	if (err) throw err;

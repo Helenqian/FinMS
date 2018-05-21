@@ -18,7 +18,9 @@ var AccountSchema = new Schema({
 		//本月贷方发生额
 		credamount: {type: String, default: '0.00'},
 		//是否已月底结账
-		settlestatus: {type: String, default: 'false'}
+		settlestatus: {type: String, default: 'false'},
+		//余额方向(借/贷)
+		blndirect: {type: String, default:''}
     }],
     year:[{ 
         num: {type: String, default: '0000'},
@@ -31,7 +33,9 @@ var AccountSchema = new Schema({
 		//本年贷方发生额
 		credamount: {type: String, default: '0.00'},
 		//是否已年底结账
-		settlestatus: {type: String, default: 'false'}
+		settlestatus: {type: String, default: 'false'},
+		//余额方向(借/贷)
+		blndirect: {type: String, default:''}
     }],
 
 	DocumentItem: [{ type: Schema.Types.ObjectId, ref: 'DocumentItem'}]

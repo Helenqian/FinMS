@@ -136,15 +136,11 @@ router.post('/settlepl',function(req, res,next){
     });
 });
 
-//按凭证号入账
-router.post('/postaccbynum', function(req, res, next){
-    var 
-});
-
 // 按年月入账
-router.post('/postaccbyperiod', function(req, res, next){
+router.get('/postaccbyperiod', function(req, res, next){
     var yearnum = req.body.postyear, month = req.body.postmonth;
     var monthnum = yearnum + month;
+    yearnum = "2018"; month = "05"; monthnum = "201805";
     Account.find({'DocumentItem.1': {$exists: true}})
     .populate('DocumentItem')
     .exec(function (err, acc){  
@@ -274,7 +270,7 @@ router.post('/postaccbyperiod', function(req, res, next){
                  // console.log(result);
             });
            
-        if(i == acc.length -1) return res.redirect('/postacc');
+        if(i == acc.length -1) return res.redirect('/');
         }
     });
 });
@@ -482,6 +478,29 @@ router.post('/settleacc', function(req, res,next){
               
         if(i == acc.length -1) return res.redirect('/settleacc');
         }
+    });
+});
+
+router.get('/blndirect', function(req, res, next){
+    Account.update(  
+        {   
+             "_id" : acc[i]._id,  
+             "month.num" : monthnum,
+             "month.settlestatus" : "false"
+        },  
+        {  
+             $set: {  
+                  "month.$" : {
+                  "num" : monthnum,
+                  "startbln" : msbln,
+                  "endbln" : mebln,
+                  "debamount" : "0.00",
+                  "credamount" : "0.00",
+                  "settlestatus" : "true"
+                }  
+        }},function(err,result){  
+          if (err) return console.error(err);  
+         // console.log(result);
     });
 });
 

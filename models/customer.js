@@ -8,9 +8,12 @@ var CustomerSchema = new Schema({
 	email: { type: String, unique: true, lowercase: true},
 	phone: String,
 	name: String,
-	//sex: String,
+	sex: {type: String, default:'未知'},
 	address: String,
 	company: String,
+	salesmann: { type: Schema.Types.ObjectId, ref: 'User'},
+	salesman: {type: String, default:'王骞'},
+	tradeinfo: {type: String, default:'潜在客户'}
 	/*history: [{
 		date: Date,
 		paid: { type: Number, default: 0},

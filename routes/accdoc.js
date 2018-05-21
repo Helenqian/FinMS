@@ -283,9 +283,6 @@ Initial.find({},function(err, ini){
 */
 
             
-
-            
-
 router.post('/deletedocitem', function(req, res, next){
     console.log("id + " + req.body.id + " num : "+ req.body.num);
 	DocumentItem.findOne({id: req.body.id, num: req.body.num}, function(err, toDeleteDocitem){

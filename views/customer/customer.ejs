@@ -1,0 +1,83 @@
+<%- layout('style') -%>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="./css/font.css">
+  <link rel="stylesheet" href="./css/xadmin.css">
+  <link rel="stylesheet" href="./lib/layui/css/layui.css"  media="all">
+  <script type="text/javascript" src="./js/xadmin.js"></script>
+  <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>-->
+
+  <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+    <div class="x-nav">
+        <span class="layui-breadcrumb">
+          <a href="">首页</a>
+          <a href="">演示</a>
+          <a>
+            <cite>导航元素</cite></a>
+        </span>
+      </div>
+<div class="x-body">   
+<div class="demoTable">
+  <div class="layui-inline layui-col-md12 x-so">
+    <input class="layui-input" name="email" placeholder="邮箱" lay-verify="required" id="email" autocomplete="off">
+    <input class="layui-input" name="name" placeholder="客户名" id="name" autocomplete="off">
+    <input class="layui-input" name="salesman" placeholder="业务员" id="salesman" autocomplete="off">
+    <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
+  </div>
+
+
+<xblock>
+    <button class="layui-btn layui-btn-danger" data-type="delCheckData"><i class="layui-icon"></i>批量删除</button>
+    <button class="layui-btn" onclick="x_admin_show('添加客户','/addcustomer')"><i class="layui-icon"></i>添加</button>
+</xblock>
+</div>
+</div>
+ 
+<table class="layui-hide" id="LAY_table_customer" lay-filter="customer"></table> 
+               
+          
+<script src="./lib/layui/layui.js" charset="utf-8"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn layui-btn-xs" lay-event="del">更新</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+layui.use('table', function(){
+  var table = layui.table;
+
+  //方法级渲染
+  table.render({
+    elem: '#LAY_table_customer'
+    ,url: '/api/customer'
+    ,cols: [[ //表头
+      {checkbox: true, fixed: true}
+      ,{field: 'email', title: '邮箱', width:100, sort: true, fixed: 'left'}
+      ,{field: 'name', title: '客户名', width:100}
+      ,{field: 'phone', title: '手机号', width:100}
+      ,{field: 'company', title: '公司', width:100}
+      ,{field: 'sex', title: '性别', width:60}
+      ,{field: 'salesman', title: '业务员', width:100}
+      ,{field: 'address', title: '地址', width:150}
+      ,{field: 'tradeinfo', title: '交易信息', width:150}
+      ,{field: 'operation', title: '操作', fixed: 'right', width:120, align:'center', toolbar: '#barDemo'}
+    ]]
+    ,id: 'customerTest'
+    ,page: true
+    ,height: 315
+  });
+
+
+});
+</script>
+
+</body>
+</html>

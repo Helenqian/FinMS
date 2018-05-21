@@ -2,9 +2,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('../models/user');
 
-
-// serialize and deserialize
-// translate the datastructure into format that can be stored
+// 进行序列化和反序列化，将数据结构转换为可存储的格式
 passport.serializeUser(function(user, done){
 	done(null, user._id);
 });
@@ -14,7 +12,6 @@ passport.deserializeUser(function(id, done){
 		done(err, user);
 	});
 });
-
 
 // Middleware
 passport.use('local-login', new LocalStrategy({
@@ -35,7 +32,6 @@ passport.use('local-login', new LocalStrategy({
 		return done(null, user);
 	});	
 }));
-
 
 // custom function to validate
 exports.isAuthenticated = function(req, res, next){
