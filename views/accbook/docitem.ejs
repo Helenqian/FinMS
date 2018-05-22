@@ -27,13 +27,13 @@
     <div class="demoTable">
         <div class="layui-row">
           <form class="layui-form layui-col-md12 x-so">
-            <input type="text" name="adnum"  placeholder="请输入凭证号" id="adnum" autocomplete="off" class="layui-input">
-            <input type="text" class="layui-input" placeholder="日期范围" id="date">
+            <!--<input type="text" name="adnum"  placeholder="请输入凭证号" id="adnum" autocomplete="off" class="layui-input">-->
+            <input type="text" class="layui-input" placeholder="日期范围" id="date" name="date">
             <!--<input class="layui-input" placeholder="截止日" name="end" id="end">-->
             <!--<input type="text" name="maker"  placeholder="请输入制单人" id="maker" autocomplete="off" class="layui-input">-->
             <!--<input type="text" name="headercode"  placeholder="请输入摘要号" autocomplete="off" class="layui-input">
             <input type="text" name="accountcode"  placeholder="请输入科目号" autocomplete="off" class="layui-input">-->
-            <div class="layui-input-inline">
+            <!--<div class="layui-input-inline">
               <select name="contrller" id="checkstatus">
                 <option>审核状态</option>
                 <option>true</option>
@@ -46,7 +46,7 @@
                 <option>true</option>
                 <option>false</option>
               </select>
-            </div>
+            </div>-->
             <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
           </form>
         </div>
@@ -55,9 +55,9 @@
           <button class="layui-btn" onclick="x_admin_show('记账凭证','/addaccdoc')"><i class="layui-icon"></i>添加</button>
         </xblock>-->
     </div>
+
+    <table class="layui-hide" id="LAY_table_docitem" lay-filter="docitem"></table>
     </div>
- 
-<table class="layui-hide" id="LAY_table_docitem" lay-filter="docitem"></table> 
                
           
 <script src="./lib/layui/layui.js" charset="utf-8"></script>
@@ -67,6 +67,15 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>-->
 <script>
+layui.use('laydate', function(){
+      var laydate = layui.laydate;
+      //执行一个laydate实例
+      //日期范围选择
+      laydate.render({ 
+      elem: '#date'
+      ,range: true //或 range: '~' 来自定义分割字符
+    });
+});
 layui.use('table', function(){
   var table = layui.table;
   
@@ -88,16 +97,28 @@ layui.use('table', function(){
     ,page: true
     ,height: 315
   });
-  
-  var $ = layui.$, active = {
-   
-  };
 
-  
-  $('.demoTable .layui-btn').on('click', function(){
+ var $ = layui.$, active = {
+    reload: function(){
+      var date = $('#date');
+      
+      //执行重载
+      table.reload('docitemTest', {
+        page: {
+          curr: 1 //重新从第 1 页开始
+        }
+        ,where: {
+            date: date.val()
+        }
+      });
+    }
+};
+
+$('.demoTable .layui-btn').on('click', function(){
     var type = $(this).data('type');
     active[type] ? active[type].call(this) : '';
   });
+
 
 table.on('checkbox(docitem', function(obj){
       console.log(obj)

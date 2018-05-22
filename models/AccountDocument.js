@@ -33,7 +33,7 @@ var AccountDocumentSchema = new Schema({
 	//过账状态
 	poststatus: { type: String, default: 'false' },
 	//凭证类型(现金凭证/银行凭证/转账凭证)
-	type: {type:String}
+	type: { type:String }
 
 	//凭证起始号
 	//base: { type: Number, default:1000 },

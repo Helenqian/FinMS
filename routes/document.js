@@ -59,6 +59,7 @@ router.get('/api/header', function(req,res,next){
 
 
 router.get('/api/header', function (req, res, next) {
+	console.log("c: "+req.query.headercode+" n: "+req.query.headername);
 	if (!(req.query.headercode || req.query.headername)) {
 		Header.find({}, 'code name', function (err, headers) {
 				if (err) return next(err);
@@ -110,6 +111,7 @@ router.get('/api/header', function (req, res, next) {
 		Header.find({ code: req.query.headercode }, 'code name',
 			function (err, headers) {
 				if (err) return next(err);
+				console.log(headers);
 				var data =[];
 				var _page = req.query.page;
 				var _limit = req.query.limit;
@@ -124,7 +126,7 @@ router.get('/api/header', function (req, res, next) {
 				var responsedata = {
 				code: 0,
 				msg: "",
-				count: headers.length,
+				count: data.length,
 				data: data
 				  } 
 				res.send(responsedata);

@@ -164,7 +164,6 @@ layui.use('table', function(){
                     {layer.alert("第"+i+"行的凭证条目有空项！"); flag = 0;}
         }
         if(flag == 1){
-        console.log(data);
         layer.confirm('确定录入选中的凭证条目吗？', function(index){
           for(var i = 0; i < data.length; i++){
           $.ajax({
@@ -182,7 +181,6 @@ layui.use('table', function(){
                ,docdate: $("#docdate").val()
             },
            success: function(data) { 
-              //判断是否保存成功
             }
           });
           $(obj).parents("tr").remove();

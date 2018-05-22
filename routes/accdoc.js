@@ -20,7 +20,7 @@ router.get('/addaccdoc', function (req, res, next) {
             });
         });
 });
-
+/*
 router.get('/api/accdoc', function (req, res, next) {
 
         AccountDocument.find({}, function (err, accdocs) {
@@ -50,6 +50,7 @@ router.get('/api/accdoc', function (req, res, next) {
                     res.send(responsedata);
                 });
        });
+    */
 
 router.get('/api/addaccdoc', function (req, res, next) {
     AccountDocument.find({},function(err, AD){
@@ -102,8 +103,7 @@ router.get('/api/addaccdoc', function (req, res, next) {
     
 
 
-router.post("/adddocitem", function(req, res, next) {
-    
+router.post("/adddocitem", function(req, res, next) {  
     Header.findOne({code: req.body.headercode}, function(err, existingHeader){
         var docitem = {};
         docitem.id = req.body.id;
@@ -111,7 +111,6 @@ router.post("/adddocitem", function(req, res, next) {
         docitem.debit = req.body.debit;
         docitem.credit = req.body.credit;
         var docdate = req.body.docdate;
-        console.log("docdate = "+docdate);
         var yearnum = docdate.substring(0,4);
         var month1 = docdate.substring(5,7);
         var monthnum = yearnum+month1;
@@ -411,14 +410,7 @@ router.post('/checkbalance', function(req, res, next){
                           if (result)
                           console.log(result);
                           var conditions = {currnum: w};
-                          var updates = {$set: {currnum: ((parseInt(w)+1)+"")}};//将用户名更新为“tiny”
-                          /*
-                          Initial.update({currnum: w}, {$push: {currnum: (parseInt(w)+1)+""}}, 
-                            function(err){
-                                if(err) return next(err);
-                            });
-                        });
-                        */
+                          var updates = {$set: {currnum: ((parseInt(w)+1)+"")}};
                         Initial.update(conditions, updates, function (error) {  
                             if (error) {  
                             console.error(error);  
@@ -449,24 +441,62 @@ router.get('/viewaccdoc',function(req,res,next){
 });
 
 router.get('/api/accdoc', function (req, res, next) {
-
-    AccountDocument.find({num: req.query.num}, function (err, accdocs) {
+    let option ={}; 
+    var min = ""; var max = "";
+    var mindate = new Date(); var maxdate = new Date();
+    if(req.query.adnum) option.num = req.query.adnum;
+    if(req.query.maker) option.maker = req.query.maker;
+    if(req.query.date) {
+        min = req.query.date.substring(0,10);
+        console.log("min"+min);
+        max = req.query.date.substring(13,23);
+        console.log("max"+max);
+        mindate.setFullYear(min.substring(0,4),min.substring(5,7),min.substring(8,10));
+        maxdate.setFullYear(max.substring(0,4),max.substring(5,7),max.substring(8,10));
+        console.log("mindate"+mindate);
+        console.log("maxdate"+maxdate);
+    }
+    if((req.query.checkstatus == "false")||(req.query.checkstatus == "true")) 
+        option.checkstatus = req.query.checkstatus;
+    if((req.query.poststatus == "false")||(req.query.poststatus == "true")) 
+        option.poststatus = req.query.poststatus;
+    AccountDocument.find(option, function (err, accdocs) {
       if (err) return next(err);
       var data =[];
       var _page = req.query.page;
       var _limit = req.query.limit;
       for (var j = (_page - 1) * _limit ; j < _page * _limit && (accdocs[j] != null); j++)
          {
-             var o = {};
-                o.id = docitem[j].id;
-                o.num = docitem[j].num;
-                o.debit = docitem[j].debit;
-                o.credit = docitem[j].credit;
-                o.acccode = docitem[j].account.code;
-                o.accname = docitem[j].account.name;
-                o.headercode = docitem[j].header.code;
-                o.headername = docitem[j].header.name;
+            if(req.query.date){
+            var e = accdocs[j].docdate;
+            var dt = new Date(); 
+            dt.setFullYear(e.substring(0,4),e.substring(5,7),e.substring(8,10));
+            console.log("dt"+dt);
+            if((dt>mindate || dt==mindate) && (dt<maxdate || dt==maxdate)){
+                var o = {};
+                o.num  = accdocs[j].num;
+                o.docdate = accdocs[j].docdate;
+                o.postdate = accdocs[j].postdate;
+                o.maker = accdocs[j].maker;
+                o.debitsum = accdocs[j].debitsum;
+                o.creditsum = accdocs[j].creditsum;
+                o.checkstatus = accdocs[j].checkstatus;
+                o.poststatus = accdocs[j].poststatus;
                 data.push(o);
+            }
+            }
+            else{
+                var o = {};
+                o.num  = accdocs[j].num;
+                o.docdate = accdocs[j].docdate;
+                o.postdate = accdocs[j].postdate;
+                o.maker = accdocs[j].maker;
+                o.debitsum = accdocs[j].debitsum;
+                o.creditsum = accdocs[j].creditsum;
+                o.checkstatus = accdocs[j].checkstatus;
+                o.poststatus = accdocs[j].poststatus;
+                data.push(o);
+            }
         }
                 //console.log(data);
                 var responsedata = {

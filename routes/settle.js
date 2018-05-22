@@ -140,7 +140,7 @@ router.post('/settlepl',function(req, res,next){
 router.get('/postaccbyperiod', function(req, res, next){
     var yearnum = req.body.postyear, month = req.body.postmonth;
     var monthnum = yearnum + month;
-    yearnum = "2018"; month = "05"; monthnum = "201805";
+    //yearnum = "2018"; month = "05"; monthnum = "201805";
     Account.find({'DocumentItem.1': {$exists: true}})
     .populate('DocumentItem')
     .exec(function (err, acc){  

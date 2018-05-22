@@ -8,12 +8,14 @@ var DocumentItem = require('../models/DocumentItem');
 var Initial = require('../models/Initial');
 
 router.get('/docitem', function (req, res, next) {
-        res.render('document/docitem');
+        res.render('accbook/docitem');
 });
 
 router.get('/api/docitem', function (req, res, next) {
+    if(!req.query.date){
     DocumentItem.find({}).populate('account').populate('header').exec(function (err, docitem) {
         if (err) return next(err);
+        //console.log("date:"+req.query.date);
         var data =[];
         var _page = req.query.page;
         var _limit = req.query.limit;
@@ -35,6 +37,33 @@ router.get('/api/docitem', function (req, res, next) {
                   } 
                 res.send(responsedata);
       });  
+    }
+    else{
+        DocumentItem.find({}).populate('account').populate('header').exec(function (err, docitem) {
+            if (err) return next(err);
+            console.log("date:"+req.query.date);
+            var data =[];
+            var _page = req.query.page;
+            var _limit = req.query.limit;
+              for (var j = (_page - 1) * _limit ; j < _page * _limit && (docitem[j] != null); j++){
+                  var o = {};
+                  o.id = docitem[j].id;
+                  o.num = docitem[j].num;
+                  o.debit = docitem[j].debit;
+                  o.credit = docitem[j].credit;
+                  o.account = docitem[j].account.name;
+                  o.header = docitem[j].header.name;
+                  data.push(o);
+              }
+                    var responsedata = {
+                    code: 0,
+                    msg: "",
+                    count: data.length,
+                    data: data
+                      } 
+                    res.send(responsedata);
+          });  
+    }
 });
 
 router.get('/glacc', function (req, res, next) {

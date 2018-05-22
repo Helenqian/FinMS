@@ -23,33 +23,28 @@
             <cite>导航元素</cite></a>
         </span>
     </div>
+    <div class="x-body">
     <div class="demoTable">
-      <div class="x-body">
-        <div class="layui-row">
-          <form class="layui-form layui-col-md12 x-so">
-            <input type="text" name="adnum"  placeholder="请输入凭证号" id="adnum" autocomplete="off" class="layui-input">
-            <input type="text" class="layui-input" placeholder="日期范围" id="date">
-            <!--<input class="layui-input" placeholder="截止日" name="end" id="end">-->
-            <input type="text" name="maker"  placeholder="请输入制单人" id="maker" autocomplete="off" class="layui-input">
-            <!--<input type="text" name="headercode"  placeholder="请输入摘要号" autocomplete="off" class="layui-input">
-            <input type="text" name="accountcode"  placeholder="请输入科目号" autocomplete="off" class="layui-input">-->
+          <div class="layui-inline layui-col-md12 x-so">
+            <input class="layui-input" name="adnum" placeholder="请输入凭证号" id="adnum" autocomplete="off">
+            <input class="layui-input" name="date" placeholder="日期范围" id="date" autocomplete="off">
+            <input class="layui-input" name="maker" placeholder="请输入制单人" id="maker" autocomplete="off">
             <div class="layui-input-inline">
-              <select name="contrller" id="checkstatus">
+              <select name="checkstatus" id="checkstatus">
                 <option>审核状态</option>
                 <option>true</option>
                 <option>false</option>
               </select>
             </div>
             <div class="layui-input-inline">
-              <select name="contrller" id="poststatus">
+              <select name="poststatus" id="poststatus">
                 <option>过账状态</option>
                 <option>true</option>
                 <option>false</option>
               </select>
             </div>
             <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
-          </form>
-        </div>
+          </div>
         <xblock>
           <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
           <button class="layui-btn" onclick="x_admin_show('记账凭证','/addaccdoc')"><i class="layui-icon"></i>添加</button>
@@ -58,10 +53,7 @@
     </div>
  
 <table class="layui-hide" id="LAY_table_accdoc" lay-filter="accdoc"></table> 
-               
-          
 <script src="./lib/layui/layui.js" charset="utf-8"></script>
-<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-xs" lay-event="detail" >查看</a>
     <a class="layui-btn layui-btn layui-btn-xs" lay-event="edit">修改</a>
@@ -70,26 +62,18 @@
 <script>
 layui.use('laydate', function(){
       var laydate = layui.laydate;
-      //执行一个laydate实例
-      //日期范围选择
+      //执行一个laydate实例，日期范围选择
       laydate.render({ 
       elem: '#date'
       ,range: true //或 range: '~' 来自定义分割字符
     });
 });
-</script>
-<script type="text/html" id="checkboxTpl">
-  <!-- 这里的 checked 的状态只是演示 -->
-  <input type="checkbox" name="lock" value="{{d.id}}" title="锁定" lay-filter="lockDemo" {{ d.id == 10006 ? 'checked' : '' }}>
-</script>
-<script>
 layui.use('table', function(){
   var table = layui.table;
-  
   //方法级渲染
   table.render({
     elem: '#LAY_table_accdoc'
-    ,url: '/api/accdoc'
+    ,url: '/api/accdoc' //表格数据接口
     ,cols: [[ //表头
       {checkbox: true, fixed: true}
       ,{field: 'num', title: '凭证号', width:100, sort: true, fixed: 'left'}
@@ -108,7 +92,6 @@ layui.use('table', function(){
     ,height: 315
   });
 
-  
   var $ = layui.$, active = {
     reload: function(){
       var numReload = $('#adnum');
@@ -116,21 +99,15 @@ layui.use('table', function(){
       var makerReload = $('#maker');
       var checkReload = $('#checkstatus');
       var postReload = $('#poststatus');
-      
-      laydate.render({ 
-       elem: '#test'
-      ,min: '2017-1-1'
-      ,max: '2017-12-31'
-      });
-      
+
       //执行重载
       table.reload('accdocTest', {
         page: {
           curr: 1 //重新从第 1 页开始
         }
         ,where: {
-            num: numReload.val()
-            ,docdate: dateReload.val()
+            adnum: numReload.val()
+            ,date: dateReload.val()
             ,maker: makerReload.val()
             ,checkstatus: checkReload.val()
             ,poststatus: postReload.val()     
@@ -139,17 +116,23 @@ layui.use('table', function(){
     }
   };
   
-
-  
   $('.demoTable .layui-btn').on('click', function(){
     var type = $(this).data('type');
     active[type] ? active[type].call(this) : '';
-  });
+  })
 
-  
-  table.on('tool(accdoc)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+      /*
+      laydate.render({ 
+       elem: '#test'
+      ,min: '2017-1-1'
+      ,max: '2017-12-31'
+      });
+      */
+  /*
+  table.on('tool(accdoc)', function(obj){ 
+  //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
   var data = obj.data; //获得当前行数据
-  var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+  var layEvent = obj.event;//获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
   var tr = obj.tr; //获得当前行 tr 的DOM对象
   if(layEvent === 'del'){ //删除
     layer.confirm('真的删除行么', function(index){
@@ -174,7 +157,12 @@ layui.use('table', function(){
   
   else if(layEvent === 'detail'){ //查看
     var url = "/viewaccdoc?num=" + obj.data.num;
-    x_admin_show('查看凭证',url);
+    x_admin_show('查看凭证',url); //弹出查看具体凭证的窗口
+  }
+});
+*/
+});
+
   /*
     $.ajax({
            type :"post",
@@ -186,10 +174,6 @@ layui.use('table', function(){
            }
       });
     */
-  }
-});
-
-});
 </script>
 
 </body>
