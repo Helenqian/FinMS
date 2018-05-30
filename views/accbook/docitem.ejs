@@ -25,8 +25,8 @@
     </div>
     <div class="x-body">
     <div class="demoTable">
-        <div class="layui-row">
-          <form class="layui-form layui-col-md12 x-so">
+        <div class="layui-row layui-col-md12 x-so">
+          <!--<form class="layui-form layui-col-md12 x-so">-->
             <!--<input type="text" name="adnum"  placeholder="请输入凭证号" id="adnum" autocomplete="off" class="layui-input">-->
             <input type="text" class="layui-input" placeholder="日期范围" id="date" name="date">
             <!--<input class="layui-input" placeholder="截止日" name="end" id="end">-->
@@ -48,7 +48,7 @@
               </select>
             </div>-->
             <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
-          </form>
+          <!--</form>-->
         </div>
         <!--<xblock>
           <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
@@ -95,7 +95,7 @@ layui.use('table', function(){
     ]]
     ,id: 'docitemTest'
     ,page: true
-    ,height: 315
+    ,height: 400
   });
 
  var $ = layui.$, active = {
