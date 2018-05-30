@@ -517,6 +517,7 @@ router.get('/api/viewaccdoc', function(req, res, next){
          var _page = req.query.page;
          var _limit = req.query.limit;
       for (var j = (_page - 1) * _limit ; j < _page * _limit && (docitem[j] != null); j++){
+            console.log(docitem[j]);
              var o = {};
              o.num = docitem[j].num;
              o.debit = docitem[j].debit;
