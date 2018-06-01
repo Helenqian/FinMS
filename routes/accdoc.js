@@ -432,10 +432,13 @@ router.post('/checkbalance', function(req, res, next){
 router.get('/viewaccdoc',function(req,res,next){
     AccountDocument.findOne({num: req.query.num},'docdate maker checkstatus poststatus', function (err, accdoc) {
         if(err) return next(err);
-        res.render('document/viewaccdoc',
+        User.findOne({ _id: req.user._id }, function(err, user){
+            if (err) return next(err);
+            res.render('document/viewaccdoc',
          {
              num1: req.query.num, docdate1: accdoc.docdate, maker1: accdoc.maker
-             ,cs1: accdoc.checkstatus, ps1: accdoc.poststatus
+             ,cs1: accdoc.checkstatus, ps1: accdoc.poststatus, user: user
+         });
         });
     });
 });

@@ -171,8 +171,6 @@ router.get('/postaccbyperiod', function(req, res, next){
                     break;
                 }
             }
-            //var sbln = acc[i].year[0].startbln;
-            //var ebln1 = acc[i].year[0].endbln;
             var type = acc[i].type;
             ebln = ebln1;
             mbln = mebln1;
@@ -221,12 +219,6 @@ router.get('/postaccbyperiod', function(req, res, next){
                     mebln = (parseFloat(msbln) + parseFloat(mdebamt) - parseFloat(mcredamt))+"";
                 }
             }
-            
-            console.log("i== " +i);
-            console.log("mdebamt= "+ mdebamt);
-            console.log("mcredamt= "+ mcredamt);
-            console.log("msbln= "+ msbln);
-            console.log("mebln= "+ mebln);
 
             Account.update(  
                 {   
@@ -285,8 +277,6 @@ router.post('/settleacc', function(req, res,next){
     //.unwind('year').unwind('month')
     .exec(function (err, acc){  
         if (err) return next(err);
-        //console.log(acc);
-        //console.log(acc[0].DocumentItem);
         for(var i = 0; i < acc.length; i++)
         {
             var debamt = "0.00", credamt = "0.00";
@@ -298,8 +288,9 @@ router.post('/settleacc', function(req, res,next){
                 if(acc[i].year[x].num == yearnum) 
                 {
                     if(acc[i].year[x].num.settlestatus == "true")
+                    {
                         //已经结账过了
-
+                    }
                     sbln = acc[i].year[x].startbln;
                     ebln1 = acc[i].year[x].endbln;
                     break;
@@ -379,10 +370,8 @@ router.post('/settleacc', function(req, res,next){
                             }  
                 }},function(err,result){  
                   if (err) return console.error(err);  
-                  //console.log(result);  
             });
             var nextyearnum = (parseInt(yearnum)+1)+"";
-
             var nexty = {};
             nexty.num = nextyearnum;
             nexty.startbln = ebln;
@@ -390,24 +379,18 @@ router.post('/settleacc', function(req, res,next){
             nexty.debamount = "0.00";
             nexty.credamount = "0.00";
             nexty.settlestatus = "false";
-            console.log("nextm: "+nextm);
-            /*Account.find({"month.num": nextmonthnum}, function(err, existingmonth){
-                if(err) return next(err);
-                console.log("exm! "+existingmonth);*/
-            
+
             Account.update({ "_id" : acc[i]._id}, 
-            { $pull : { month: {num : nextmonthnum }}},function(err,result){  
+            { $pull : { year: {num : nextyearnum }}},function(err,result){  
                 if (err) return console.error(err);  
                 console.log("pull!!!!"); 
             });
-            
 
             Account.update({_id: acc[i]._id}, { $push : 
-                { month: nextm}},
+                { year: nexty}},
                 function(err,result){
                if (err) return next(err);
                console.log("push!!!!");
-               //if (result) console.log(result);
             });
             }
 
@@ -430,7 +413,6 @@ router.post('/settleacc', function(req, res,next){
                         }  
                 }},function(err,result){  
                   if (err) return console.error(err);  
-                 // console.log(result);
             });
             var nextmonth = "0", nextmonthnum = "0";
             if(parseInt(month) < 9) {
@@ -448,7 +430,11 @@ router.post('/settleacc', function(req, res,next){
             nextm.debamount = "0.00";
             nextm.credamount = "0.00";
             nextm.settlestatus = "false";
-            console.log("nextm: "+nextm);
+            Account.update({_id: acc[i]._id}, { $push : 
+                { month: nextm}},
+                function(err,result){
+               if (err) return next(err);
+               console.log("push!!!!");
             /*Account.find({"month.num": nextmonthnum}, function(err, existingmonth){
                 if(err) return next(err);
                 console.log("exm! "+existingmonth);*/
@@ -467,11 +453,6 @@ router.post('/settleacc', function(req, res,next){
                 }
             });
             */
-            Account.update({_id: acc[i]._id}, { $push : 
-                { month: nextm}},
-                function(err,result){
-               if (err) return next(err);
-               console.log("push!!!!");
                //if (result) console.log(result);
             });
         }

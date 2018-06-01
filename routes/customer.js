@@ -22,19 +22,11 @@ router.get('/addCustomer', function (req, res, next) {
 router.post('/addCustomer', function (req, res, next) {
 	var customer = new Customer();
 
-	//customer.category = req.body.category;
 	customer.name = req.body.name;
 	customer.email = req.body.email;
 	customer.phone = req.body.phone;
 	customer.address = req.body.address;
-	//customer.sex = req.body.sex;
 	customer.company = req.body.company;
-
-	/*	customer.save(function(err){
-			if(err) return next(err);
-			req.flash('success', 'Successfully added a customer');
-			return res.redirect('/')
-		});*/
 
 	Customer.findOne({ email: req.body.email }, function (err, existingCustomer) {
 

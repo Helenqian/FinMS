@@ -13,7 +13,6 @@ router.get('/api/user', function (req, res, next) {
 			    var data =[];
 				var _page = req.query.page;
 				var _limit = req.query.limit;
-				console.log("1"); 
 				for (var j = (_page - 1) * _limit ; j < _page * _limit && (users[j] != null); j++)
 				{
 					var o = {};

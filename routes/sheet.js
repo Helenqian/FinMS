@@ -43,14 +43,10 @@ router.get('/api/blsheet', function(req, res, next){
         });
 });
 
+//生成资产负债表数据
 router.get('/generatebl', function(req, res, next){
-    var curryear = "2018", currmonth = "201805";
+    var curryear = req.body.blyear, currmonth = req.body.blmonth;                                           //var curryear = "2018", currmonth = "201805";
     BlnSheet.find({period: "template"}, function (err, blnitems) {
-    //Account.aggregate({$project: { _id: 1, month: 1, year: 1 } })
-    //.unwind('month').unwind('year').exec(function (err, acc){
-    //Account.find({})
-    //.unwind('month').unwind('year').exec(function (err, acc){
-    //console.log(acc);
     Account.find({}, function(err, acc){
     var blndata = [];
     for(var j=0; j<blnitems.length; j++){
@@ -61,22 +57,15 @@ router.get('/generatebl', function(req, res, next){
         other.startbln = "0.00"; other.endbln = "0.00";
         intangible.startbln = "0.00"; intangible.endbln = "0.00";
         short.startbln = "0.00"; short.endbln = "0.00";
-
         o.assproj  = blnitems[j].assproj;
         o.assnum  = blnitems[j].assnum;
-        //o.assendbln  = blnitems[j].assendbln;
-        //o.assstartbln  = blnitems[j].assstartbln;
         o.assendbln  = "";
         o.assstartbln  = "";
         o.liabproj  = blnitems[j].liabproj;
         o.liabnum  = blnitems[j].liabnum;
-        //o.liabendbln  = blnitems[j].liabendbln;
-        //o.liabstartbln  = blnitems[j].liabstartbln;
         o.liabendbln  = "";
         o.liabstartbln  = "";
-
         for(var i=0; i<acc.length; i++){
-            
             //货币资金
             if(acc[i].code == '1001' || acc[i].code == '1002'
                 || acc[i].code == '1003' ){
@@ -111,7 +100,6 @@ router.get('/generatebl', function(req, res, next){
                 continue;
             }
             //存货
-            
             if(acc[i].code.indexOf("12") == 0 ){
                 for(var s=0; s<acc[i].year.length; s++){
                     if(acc[i].year[s].num == curryear){
@@ -162,7 +150,6 @@ router.get('/generatebl', function(req, res, next){
             }
             if(acc[i].name == o.assproj) {
                //找到了对应的资产
-                //console.log("i!!!"+acc[i]);
                for(var s=0; s<acc[i].year.length; s++){
                     if(acc[i].year[s].num == curryear){
                         o.assstartbln = acc[i].year[s].startbln;
@@ -188,33 +175,32 @@ router.get('/generatebl', function(req, res, next){
              }
            }
         }
-        //console.log("cash"+cash.startbln);
         if(o.assproj == "货币资金") {o.assstartbln = cash.startbln; o.assendbln = cash.endbln;}
         else if (o.assproj == "短期投资") {o.assstartbln = short.startbln; o.assendbln = short.endbln;}
         else if (o.assproj == "存货") {o.assstartbln = stock.startbln; o.assendbln = stock.endbln;}
         else if (o.assproj == "无形资产") {o.assstartbln = intangible.startbln; o.assendbln = intangible.endbln;}
         else if (o.assproj == "其他长期资产") {o.assstartbln = other.startbln; o.assendbln = other.endbln;}
+        o.period = currmonth;
         blndata.push(o);
     }
     console.log(blndata);
-    /*
-        var di = new DocumentItem({
-            id : docitem.id,
-            num : docitem.num,
-            debit : docitem.debit,
-            credit : docitem.credit,
-            header : docitem.header,
-            account : docitem.account,
-            yearnum : yearnum,
-            monthnum : monthnum
-            });
-            di.save(function(err){
+    for(var i=0; i<blndata.length; i++){
+        var bln = new BlnSheet({
+            period: blndata[i].period,
+            assproj: blndata[i].assproj,
+            assnum: blndata[i].assnum,
+            assendbln: blndata[i].assendbln,
+            assstartbln: blndata[i].assstartbln,
+            liabproj: blndata[i].liabproj,
+            liabnum: blndata[i].liabnum,
+            liabendbln: blndata[i].liabendbln,
+            liabstartbln: blndata[i].liabstartbln
+        });
+        bln.save(function(err){
             if(err) return next(err);
-            console.log('New docitem has been created   ');
-            //return res.redirect('/addaccdoc');
-            });
-            }
-            */
+            console.log('New blnsheetitem has been created   ');
+        });
+    }
     });
     });
 });

@@ -33,28 +33,24 @@ router.get('/addaccount', function (req, res, next) {
 
 
 router.post('/addaccount', function(req, res, next) {
-    
-                var account = new Account();
-        
-                account.code = req.body.accountcode;
-                account.name = req.body.accountname;
-                account.type = req.body.accounttype;
-
-                Account.findOne({ code: req.body.accountcode }, function(err, existingAccount){
+    var account = new Account();
+    account.code = req.body.accountcode;
+    account.name = req.body.accountname;
+    account.type = req.body.accounttype;
     
-                    if(existingAccount){
-                        //console.log(req.body.email + " is already exist");
-                        req.flash('message', 'Account with that code already exists');
-                        return res.redirect('/addaccount');
-                  } else {
-                    account.save(function(err, account){
-                     if(err) return next(err);
-                     req.flash('message', 'New account has been created');
-                     return res.redirect('/addaccount');
-                    });
-                }
-            });
-        });
+    Account.findOne({ code: req.body.accountcode }, function(err, existingAccount){
+        if(existingAccount){
+          req.flash('message', 'Account with that code already exists');
+          return res.redirect('/addaccount');
+        } else {
+          account.save(function(err, account){
+          if(err) return next(err);
+          req.flash('message', 'New account has been created');
+          return res.redirect('/addaccount');
+          });
+       }
+    });
+});
     
 
 router.get('/api/account', function (req, res, next) {
