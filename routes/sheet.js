@@ -13,7 +13,7 @@ router.get('/balancesheet', function(req, res, next){
 });
 
 router.get('/api/blsheet', function(req, res, next){
-    BlnSheet.find({period: "template"},
+    BlnSheet.find({period: "201805"},
         function (err, blnitems) {
             if (err) return next(err);
             var data =[];
@@ -45,7 +45,7 @@ router.get('/api/blsheet', function(req, res, next){
 
 //生成资产负债表数据
 router.get('/generatebl', function(req, res, next){
-    var curryear = req.body.blyear, currmonth = req.body.blmonth;                                           //var curryear = "2018", currmonth = "201805";
+    var curryear = "2018", currmonth = "201805";                                           //var curryear = "2018", currmonth = "201805";
     BlnSheet.find({period: "template"}, function (err, blnitems) {
     Account.find({}, function(err, acc){
     var blndata = [];
@@ -209,7 +209,7 @@ router.get('/generatebl', function(req, res, next){
 
 router.get('/calculatebl', function(req, res, next){
     var curryear = req.body.blyear, currmonth = req.body.blmonth;                                           //var curryear = "2018", currmonth = "201805";
-    BlnSheet.find({period: "template"}, function (err, blnitems) {
+    BlnSheet.find({period: "201805"}, function (err, blnitems) {
         for(var i=0; i< blnitems.length; i++){
             if(blnitems[i].assproj == "流动资产合计"){
                 var sum1 = "0.00"; var sum2 = "0.00";
@@ -222,7 +222,7 @@ router.get('/calculatebl', function(req, res, next){
                     }
                 }
                 var conditions = {_id: blnitems[i]._id};  
-                var updates = {$set: {assstartbln: sum1, assendbln: sum2}};//将用户名更新为“tiny”  
+                var updates = {$set: {assstartbln: sum1, assendbln: sum2}};
                 BlnSheet.update(conditions, updates, function (error) {  
                     if (error) {  console.error(error);  
                     } else {  console.log("更新流动资产合计成功")  }  });  
@@ -373,133 +373,133 @@ router.get('/calculatebl', function(req, res, next){
                     if (error) {  console.error(error);  
                     } else {  console.log("更新资产总额成功")  }  });  
             }
-            else if(blnitems[i].assproj == "流动负债合计"){
+            if(blnitems[i].liabproj == "流动负债合计"){
                 var sum1 = "0.00"; var sum2 = "0.00";
                 for(var j=0; j<blnitems.length; j++){
-                    if((blnitems[j].assnum>38) && (blnitems[j].assnum<60)){
-                        if((blnitems[j].assstartbln != "") && (blnitems[j].assstartbln != null))
-                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].assstartbln)+"";}
-                        if((blnitems[j].assendbln != "") && (blnitems[j].assendbln != null))
-                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].assendbln)+"";}
+                    if((blnitems[j].liabnum>38) && (blnitems[j].liabnum<53)){
+                        if((blnitems[j].liabstartbln != "") && (blnitems[j].liabstartbln != null))
+                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].liabstartbln)+"";}
+                        if((blnitems[j].liabendbln != "") && (blnitems[j].liabendbln != null))
+                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].liabendbln)+"";}
                     }
                 }
                 var conditions = {_id: blnitems[i]._id};  
-                var updates = {$set: {assstartbln: sum1, assendbln: sum2}};  
+                var updates = {$set: {liabstartbln: sum1, liabendbln: sum2}};  
                 BlnSheet.update(conditions, updates, function (error) {  
                     if (error) {  console.error(error);  
                     } else {  console.log("更新流动负债合计成功")  }  });  
             }
-            else if(blnitems[i].assproj == "长期负债合计"){
+            else if(blnitems[i].liabproj == "长期负债合计"){
                 var sum1 = "0.00"; var sum2 = "0.00";
                 for(var j=0; j<blnitems.length; j++){
-                    if((blnitems[j].assnum>54) && (blnitems[j].assnum<60)){
-                        if((blnitems[j].assstartbln != "") && (blnitems[j].assstartbln != null))
-                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].assstartbln)+"";}
-                        if((blnitems[j].assendbln != "") && (blnitems[j].assendbln != null))
-                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].assendbln)+"";}
+                    if((blnitems[j].liabnum>54) && (blnitems[j].liabnum<60)){
+                        if((blnitems[j].liabstartbln != "") && (blnitems[j].liabstartbln != null))
+                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].liabstartbln)+"";}
+                        if((blnitems[j].liabendbln != "") && (blnitems[j].liabendbln != null))
+                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].liabendbln)+"";}
                     }
                 }
                 var conditions = {_id: blnitems[i]._id};  
-                var updates = {$set: {assstartbln: sum1, assendbln: sum2}};
+                var updates = {$set: {liabstartbln: sum1, liabendbln: sum2}};
                 BlnSheet.update(conditions, updates, function (error) {  
                     if (error) {  console.error(error);  
                     } else {  console.log("更新长期负债合计成功")  }  });  
             }
-            else if(blnitems[i].assproj == "负债合计"){
+            else if(blnitems[i].liabproj == "负债合计"){
                 var sum1 = "0.00"; var sum2 = "0.00";
                 for(var j=0; j<blnitems.length; j++){
-                    if((blnitems[j].assnum>38) && (blnitems[j].assnum<63)){
-                        if((blnitems[j].assnum==53)||(blnitems[j].assnum==54)||
-                        (blnitems[j].assnum==60)){
+                    if((blnitems[j].liabnum>38) && (blnitems[j].liabnum<63)){
+                        if((blnitems[j].liabnum==53)||(blnitems[j].liabnum==54)||
+                        (blnitems[j].liabnum==60)){
                             continue;
                         }
-                        if((blnitems[j].assstartbln != "") && (blnitems[j].assstartbln != null))
-                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].assstartbln)+"";}
-                        if((blnitems[j].assendbln != "") && (blnitems[j].assendbln != null))
-                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].assendbln)+"";}
+                        if((blnitems[j].liabstartbln != "") && (blnitems[j].liabstartbln != null))
+                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].liabstartbln)+"";}
+                        if((blnitems[j].liabendbln != "") && (blnitems[j].liabendbln != null))
+                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].liabendbln)+"";}
                     }
                 }
                 var conditions = {_id: blnitems[i]._id};  
-                var updates = {$set: {assstartbln: sum1, assendbln: sum2}};
+                var updates = {$set: {liabstartbln: sum1, liabendbln: sum2}};
                 BlnSheet.update(conditions, updates, function (error) {  
                     if (error) {  console.error(error);  
                     } else {  console.log("更新负债合计成功")  }  });  
             }
-            else if(blnitems[i].assproj == "所有者权益（或股东权益）合计"){
+            else if(blnitems[i].liabproj == "所有者权益（或股东权益）合计"){
                 var sum1 = "0.00"; var sum2 = "0.00";
                 for(var j=0; j<blnitems.length; j++){
-                    if((blnitems[j].assnum>38) && (blnitems[j].assnum<63)){
-                        if(blnitems[j].assnum==67){
+                    if((blnitems[j].liabnum>64) && (blnitems[j].liabnum<72)){
+                        if(blnitems[j].liabnum==67){
                             continue;
                         }
-                        if(blnitems[j].assnum==66){
-                            if((blnitems[j].assstartbln != "") && (blnitems[j].assstartbln != null))
-                            {sum1 = parseFloat(sum1)-parseFloat(blnitems[j].assstartbln)+"";}
-                            if((blnitems[j].assendbln != "") && (blnitems[j].assendbln != null))
-                            {sum2 = parseFloat(sum2)-parseFloat(blnitems[j].assendbln)+"";}
+                        if(blnitems[j].liabnum==66){
+                            if((blnitems[j].liabstartbln != "") && (blnitems[j].liabstartbln != null))
+                            {sum1 = parseFloat(sum1)-parseFloat(blnitems[j].liabstartbln)+"";}
+                            if((blnitems[j].liabendbln != "") && (blnitems[j].liabendbln != null))
+                            {sum2 = parseFloat(sum2)-parseFloat(blnitems[j].liabendbln)+"";}
                         }  else {
-                        if((blnitems[j].assstartbln != "") && (blnitems[j].assstartbln != null))
-                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].assstartbln)+"";}
-                        if((blnitems[j].assendbln != "") && (blnitems[j].assendbln != null))
-                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].assendbln)+"";}
+                        if((blnitems[j].liabstartbln != "") && (blnitems[j].liabstartbln != null))
+                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].liabstartbln)+"";}
+                        if((blnitems[j].liabendbln != "") && (blnitems[j].liabendbln != null))
+                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].liabendbln)+"";}
                         }
                     }
                 }
                 var conditions = {_id: blnitems[i]._id};  
-                var updates = {$set: {assstartbln: sum1, assendbln: sum2}};
+                var updates = {$set: {liabstartbln: sum1, liabendbln: sum2}};
                 BlnSheet.update(conditions, updates, function (error) {  
                     if (error) {  console.error(error);  
                     } else {  console.log("更新所有者权益（或股东权益）合计成功")  }  });  
             }
-            else if(blnitems[i].assproj == "实收资本（股本）净额"){
+            else if(blnitems[i].liabproj == "实收资本（股本）净额"){
                 var sum1 = "0.00"; var sum2 = "0.00";
                 for(var j=0; j<blnitems.length; j++){
-                    if((blnitems[j].assproj == "实收资本（股本）")){
+                    if((blnitems[j].liabproj == "实收资本（股本）")){
                         //加上实收资本（股本）
-                        if((blnitems[j].assstartbln != "") && (blnitems[j].assstartbln != null))
-                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].assstartbln)+"";}
-                        if((blnitems[j].assendbln != "") && (blnitems[j].assendbln != null))
-                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].assendbln)+"";}
+                        if((blnitems[j].liabstartbln != "") && (blnitems[j].liabstartbln != null))
+                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].liabstartbln)+"";}
+                        if((blnitems[j].liabendbln != "") && (blnitems[j].liabendbln != null))
+                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].liabendbln)+"";}
                         for(var s=0; s<blnitems.length; s++){
-                            if((blnitems[s].assproj == "减：已归还投资")){
+                            if((blnitems[s].liabproj == "减：已归还投资")){
                                 //减去已归还投资
-                                if((blnitems[s].assstartbln != "") && (blnitems[s].assstartbln != null))
-                                {sum1 = parseFloat(sum1)-parseFloat(blnitems[s].assstartbln)+"";}
-                                if((blnitems[s].assendbln != "") && (blnitems[s].assendbln != null))
-                                {sum2 = parseFloat(sum2)-parseFloat(blnitems[s].assendbln)+"";}
+                                if((blnitems[s].liabstartbln != "") && (blnitems[s].liabstartbln != null))
+                                {sum1 = parseFloat(sum1)-parseFloat(blnitems[s].liabstartbln)+"";}
+                                if((blnitems[s].liabendbln != "") && (blnitems[s].liabendbln != null))
+                                {sum2 = parseFloat(sum2)-parseFloat(blnitems[s].liabendbln)+"";}
                             }
                         }
                     }
                 }
                 var conditions = {_id: blnitems[i]._id};  
-                var updates = {$set: {assstartbln: sum1, assendbln: sum2}};
+                var updates = {$set: {liabstartbln: sum1, liabendbln: sum2}};
                 BlnSheet.update(conditions, updates, function (error) {  
                     if (error) {  console.error(error);  
                     } else {  console.log("更新实收资本（股本）净额成功")  }  });  
             }
-            else if(blnitems[i].assproj == "负债及所有者权益总计"){
+            else if(blnitems[i].liabproj == "负债及所有者权益总计"){
                 var sum1 = "0.00"; var sum2 = "0.00";
                 for(var j=0; j<blnitems.length; j++){
-                    if((blnitems[j].assnum>38) && (blnitems[j].assnum<72)){
-                        if ((blnitems[j].assnum==53) || (blnitems[j].assnum==54) || (blnitems[j].assnum==60) 
-                        ||(blnitems[j].assnum==63)||(blnitems[j].assnum==64)||(blnitems[j].assnum==67)){
+                    if((blnitems[j].liabnum>38) && (blnitems[j].liabnum<72)){
+                        if ((blnitems[j].liabnum==53) || (blnitems[j].liabnum==54) || (blnitems[j].liabnum==60) 
+                        ||(blnitems[j].liabnum==63)||(blnitems[j].liabnum==64)||(blnitems[j].liabnum==67)){
                             continue;
                         }
-                        if((blnitems[j].assnum==66)){
-                            if((blnitems[j].assstartbln != "") && (blnitems[j].assstartbln != null))
-                            {sum1 = parseFloat(sum1)-parseFloat(blnitems[j].assstartbln)+"";}
-                            if((blnitems[j].assendbln != "") && (blnitems[j].assendbln != null))
-                            {sum2 = parseFloat(sum2)-parseFloat(blnitems[j].assendbln)+"";}
+                        if((blnitems[j].liabnum==66)){
+                            if((blnitems[j].liabstartbln != "") && (blnitems[j].liabstartbln != null))
+                            {sum1 = parseFloat(sum1)-parseFloat(blnitems[j].liabstartbln)+"";}
+                            if((blnitems[j].liabendbln != "") && (blnitems[j].liabendbln != null))
+                            {sum2 = parseFloat(sum2)-parseFloat(blnitems[j].liabendbln)+"";}
                         }  else {
-                        if((blnitems[j].assstartbln != "") && (blnitems[j].assstartbln != null))
-                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].assstartbln)+"";}
-                        if((blnitems[j].assendbln != "") && (blnitems[j].assendbln != null))
-                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].assendbln)+"";}
+                        if((blnitems[j].liabstartbln != "") && (blnitems[j].liabstartbln != null))
+                        {sum1 = parseFloat(sum1)+parseFloat(blnitems[j].liabstartbln)+"";}
+                        if((blnitems[j].liabendbln != "") && (blnitems[j].liabendbln != null))
+                        {sum2 = parseFloat(sum2)+parseFloat(blnitems[j].liabendbln)+"";}
                         }
                     }
                 }
                 var conditions = {_id: blnitems[i]._id};  
-                var updates = {$set: {assstartbln: sum1, assendbln: sum2}};
+                var updates = {$set: {liabstartbln: sum1, liabendbln: sum2}};
                 BlnSheet.update(conditions, updates, function (error) {  
                     if (error) {  console.error(error);  
                     } else {  console.log("更新负债及所有者权益总计成功")  }  });  
