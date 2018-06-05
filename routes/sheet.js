@@ -585,6 +585,59 @@ router.post('/addplsheet', function(req, res, next) {
                      console.log("new template has been created"+req.body.plproj+"  "+req.body.plbproj);
                      return res.redirect('/addplsheet');
                     });
-      });
+});
+
+router.get('/generatepl', function(req, res, next){
+    var curryear = "2018", currmonth = "201805";                                           //var curryear = "2018", currmonth = "201805";
+    PlSheet.find({period: "template"}, function (err, plitems) {
+    Account.find({}, function(err, acc){
+    var pldata = [];
+    for(var j=0; j<plitems.length; j++){
+        var o = {};
+        o.plproj = plitems[j].plproj;
+        o.plnum  = plitems[j].plnum;
+        o.plmonthamt  = "";
+        o.plyearamt  = "";
+        o.period = currmonth;
+        for(var i=0; i<acc.length; i++){
+            if((acc[i].name == o.plproj) || (o.plproj.indexOf(acc[i].name)!=-1)) {
+           //找到了对应
+           for(var s=0; s<acc[i].year.length; s++){
+                if(acc[i].year[s].num == curryear){
+                    o.plyearamt = acc[i].year[s].endbln;
+                }
+           }
+           for(var s=0; s<acc[i].month.length; s++){
+            if(acc[i].month[s].num == currmonth){
+                o.plmonthamt = acc[i].month[s].endbln;
+            }
+           }
+         }
+        }
+        pldata.push(o);
+    }
+    console.log(pldata);
+    /*
+    for(var i=0; i<blndata.length; i++){
+        var bln = new BlnSheet({
+            period: blndata[i].period,
+            assproj: blndata[i].assproj,
+            assnum: blndata[i].assnum,
+            assendbln: blndata[i].assendbln,
+            assstartbln: blndata[i].assstartbln,
+            liabproj: blndata[i].liabproj,
+            liabnum: blndata[i].liabnum,
+            liabendbln: blndata[i].liabendbln,
+            liabstartbln: blndata[i].liabstartbln
+        });
+        bln.save(function(err){
+            if(err) return next(err);
+            console.log('New blnsheetitem has been created   ');
+        });
+    }
+    */
+});
+});
+});
 
 module.exports = router;
