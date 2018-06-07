@@ -385,7 +385,8 @@ router.post('/saveiniacc',function(req, res, next){
                       "startbln" : req.body.datas[i].yearstartbln,
                       "endbln" : 0.00,
                       "debamount" : 0.00,
-                      "credamount" : 0.00
+                      "credamount" : 0.00,
+                      "settlestatus" : "false"
                         }  
                        }  
             },function(err,result){  
@@ -406,7 +407,8 @@ router.post('/saveiniacc',function(req, res, next){
                           "startbln" : req.body.datas[i].yearstartbln,
                           "endbln" : 0.00,
                           "debamount" : 0.00,
-                          "credamount" : 0.00
+                          "credamount" : 0.00,
+                          "settlestatus" : "false"
                             }   
                            }  
                 },function(err,result){  

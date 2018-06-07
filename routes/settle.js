@@ -271,7 +271,7 @@ router.get('/postaccbyperiod', function(req, res, next){
 router.post('/settleacc', function(req, res,next){
     var yearnum = req.body.settleyear, month = req.body.settlemonth;
     var monthnum = yearnum + month;
-    Account.find({'DocumentItem.1': {$exists: true}})
+    Account.find()
     .populate('DocumentItem')
         //.aggregate({'DocumentItem.1': {$exists: true}},{ $project: { _id: 1, year: 1, month: 1 } })
     //.unwind('year').unwind('month')
@@ -342,10 +342,21 @@ router.post('/settleacc', function(req, res,next){
                 ebln = (parseFloat(sbln) + parseFloat(credamt) - parseFloat(debamt))+"";
                 mebln = (parseFloat(msbln) + parseFloat(mcredamt) - parseFloat(mdebamt))+"";
             }
-            /*else if(type == '损益类'){
-                if((acc[i].name.indexOf("收入") != -1)||(acc[i].name.indexOf("益") != -1))
-
-            }*/
+            else if(type == '损益类'){
+                    //贷方余额
+                    //益：期末余额=期初余额+本期贷方发生额-本期借方发生额。
+                    if(((acc[i].name.indexOf("收入") != -1)||(acc[i].name.indexOf("益") != -1))
+                        &&(acc[i].name != "以前年度损益调整")){
+                        ebln = (parseFloat(sbln) + parseFloat(credamt) - parseFloat(debamt))+"";
+                        mebln = (parseFloat(msbln) + parseFloat(mcredamt) - parseFloat(mdebamt))+"";
+                    }
+                    //借方余额
+                    //损：期末余额=期初余额+本期借方发生额-本期贷方发生额。
+                    else{
+                        ebln = (parseFloat(sbln) + parseFloat(debamt) - parseFloat(credamt))+"";
+                        mebln = (parseFloat(msbln) + parseFloat(mdebamt) - parseFloat(mcredamt))+"";
+                    }
+            }
             console.log("i== " +i);
             console.log("mdebamt= "+ mdebamt);
             console.log("mcredamt= "+ mcredamt);

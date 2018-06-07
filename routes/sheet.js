@@ -588,7 +588,7 @@ router.post('/addplsheet', function(req, res, next) {
 });
 
 router.get('/generatepl', function(req, res, next){
-    var curryear = "2018", currmonth = "201805";                                           //var curryear = "2018", currmonth = "201805";
+    var curryear = "2018", currmonth = "201801";                                           //var curryear = "2018", currmonth = "201805";
     PlSheet.find({period: "template"}, function (err, plitems) {
     Account.find({}, function(err, acc){
     var pldata = [];
@@ -599,8 +599,9 @@ router.get('/generatepl', function(req, res, next){
         o.plmonthamt  = "";
         o.plyearamt  = "";
         o.period = currmonth;
+        var incomey = "", incomem = "", outflowy = "", outflowm = "";
         for(var i=0; i<acc.length; i++){
-            if((acc[i].name == o.plproj) || (o.plproj.indexOf(acc[i].name)!=-1)) {
+          if((acc[i].name == o.plproj) || (o.plproj.indexOf(acc[i].name)!=-1)) {
            //找到了对应
            for(var s=0; s<acc[i].year.length; s++){
                 if(acc[i].year[s].num == curryear){
@@ -613,31 +614,164 @@ router.get('/generatepl', function(req, res, next){
             }
            }
          }
+         else if(acc[i].name == "其他业务收入"){
+            for(var s=0; s<acc[i].year.length; s++){
+                if(acc[i].year[s].num == curryear){
+                    incomey = acc[i].year[s].endbln;
+                }
+           }
+           for(var s=0; s<acc[i].month.length; s++){
+            if(acc[i].month[s].num == currmonth){
+                incomem = acc[i].month[s].endbln;
+            }
+           }
+         }
+         else if(acc[i].name == "其他业务支出"){
+            for(var s=0; s<acc[i].year.length; s++){
+                if(acc[i].year[s].num == curryear){
+                    outflowy = acc[i].year[s].endbln;
+                }
+           }
+           for(var s=0; s<acc[i].month.length; s++){
+            if(acc[i].month[s].num == currmonth){
+                outflowm = acc[i].month[s].endbln;
+            }
+           }
+         }
+        }
+        if(o.plproj == "加：其他业务利润") {
+            o.plyearamt = parseFloat(incomey)-parseFloat(outflowy)+"";
+            o.plmonthamt = parseFloat(incomem)-parseFloat(outflowm)+"";
         }
         pldata.push(o);
     }
     console.log(pldata);
-    /*
-    for(var i=0; i<blndata.length; i++){
-        var bln = new BlnSheet({
-            period: blndata[i].period,
-            assproj: blndata[i].assproj,
-            assnum: blndata[i].assnum,
-            assendbln: blndata[i].assendbln,
-            assstartbln: blndata[i].assstartbln,
-            liabproj: blndata[i].liabproj,
-            liabnum: blndata[i].liabnum,
-            liabendbln: blndata[i].liabendbln,
-            liabstartbln: blndata[i].liabstartbln
+    for(var i=0; i<pldata.length; i++){
+        var pl = new PlSheet({
+            period: pldata[i].period,
+            plproj: pldata[i].plproj,
+            plnum: pldata[i].plnum,
+            plmonthamt: pldata[i].plmonthamt,
+            plyearamt: pldata[i].plyearamt
         });
-        bln.save(function(err){
+        pl.save(function(err){
             if(err) return next(err);
-            console.log('New blnsheetitem has been created   ');
+            console.log('New plsheetitem has been created   ');
         });
     }
-    */
+    });
 });
 });
+
+router.get('/calculatepl', function(req, res, next){
+    var curryear = "2018", currmonth = "201801";
+    PlSheet.find({period: "template"}, function (err, plitems) {
+        for(var i=0;i<plitems.length;i++){
+            if(plitems.plproj == "二、主营业务利润"){
+                var sum1 = "0.00"; var sum2 = "0.00";
+                for(var j=0; j<plitems.length; j++){
+                    if((plitems[j].plnum>0)&&(plitems[j].plnum<5)){
+                        if(plitems[j].plnum==1){
+                            if((plitems[j].plmonthamt != "") && (plitems[j].plmonthamt != null))
+                            {sum1 = parseFloat(sum1)+parseFloat(plitems[j].plmonthamt)+"";}
+                            if((plitems[j].plyearamt != "") && (plitems[j].plyearamt != null))
+                            {sum2 = parseFloat(sum2)+parseFloat(plitems[j].plyearamt)+"";}
+                        }
+                        else{
+                            if((plitems[j].plmonthamt != "") && (plitems[j].plmonthamt != null))
+                            {sum1 = parseFloat(sum1)-parseFloat(plitems[j].plmonthamt)+"";}
+                            if((plitems[j].plyearamt != "") && (plitems[j].plyearamt != null))
+                            {sum2 = parseFloat(sum2)-parseFloat(plitems[j].plyearamt)+"";}
+                        }
+                    }
+                }
+                var conditions = {_id: plitems[i]._id};  
+                var updates = {$set: {plmonthamt: sum1, plyearamt: sum2}};
+                BlnSheet.update(conditions, updates, function (error) {  
+                    if (error) {  console.error(error);  
+                    } else {  console.log("更新主营业务利润成功")  }  });  
+                }
+                else if(plitems.plproj == "三、营业利润"){
+                    var sum1 = "0.00"; var sum2 = "0.00";
+                    for(var j=0; j<plitems.length; j++){
+                        if((plitems[j].plnum>0)&&(plitems[j].plnum<9)){
+                            if(plitems[j].plnum==5) {continue;}
+                            else if((plitems[j].plnum==1) || (plitems[j].plnum==6)){
+                                if((plitems[j].plmonthamt != "") && (plitems[j].plmonthamt != null))
+                                {sum1 = parseFloat(sum1)+parseFloat(plitems[j].plmonthamt)+"";}
+                                if((plitems[j].plyearamt != "") && (plitems[j].plyearamt != null))
+                                {sum2 = parseFloat(sum2)+parseFloat(plitems[j].plyearamt)+"";}
+                            }
+                            else{
+                                if((plitems[j].plmonthamt != "") && (plitems[j].plmonthamt != null))
+                                {sum1 = parseFloat(sum1)-parseFloat(plitems[j].plmonthamt)+"";}
+                                if((plitems[j].plyearamt != "") && (plitems[j].plyearamt != null))
+                                {sum2 = parseFloat(sum2)-parseFloat(plitems[j].plyearamt)+"";}
+                            }
+                        }
+                    }
+                    var conditions = {_id: plitems[i]._id};  
+                    var updates = {$set: {plmonthamt: sum1, plyearamt: sum2}};
+                    BlnSheet.update(conditions, updates, function (error) {  
+                        if (error) {  console.error(error);  
+                        } else {  console.log("更新营业利润成功")  }  });  
+                }
+                else if(plitems.plproj == "四、利润总额"){
+                    var sum1 = "0.00"; var sum2 = "0.00";
+                    for(var j=0; j<plitems.length; j++){
+                        if((plitems[j].plnum>0)&&(plitems[j].plnum<15)){
+                            if((plitems[j].plnum==5)||(plitems[j].plnum==9)) {continue;}
+                            else if((plitems[j].plnum==1) || (plitems[j].plnum==6)||
+                                    (plitems[j].plnum==10) || (plitems[j].plnum==11) || 
+                                    (plitems[j].plnum==12) || (plitems[j].plnum==14)){
+                                if((plitems[j].plmonthamt != "") && (plitems[j].plmonthamt != null))
+                                {sum1 = parseFloat(sum1)+parseFloat(plitems[j].plmonthamt)+"";}
+                                if((plitems[j].plyearamt != "") && (plitems[j].plyearamt != null))
+                                {sum2 = parseFloat(sum2)+parseFloat(plitems[j].plyearamt)+"";}
+                            }
+                            else{
+                                if((plitems[j].plmonthamt != "") && (plitems[j].plmonthamt != null))
+                                {sum1 = parseFloat(sum1)-parseFloat(plitems[j].plmonthamt)+"";}
+                                if((plitems[j].plyearamt != "") && (plitems[j].plyearamt != null))
+                                {sum2 = parseFloat(sum2)-parseFloat(plitems[j].plyearamt)+"";}
+                            }
+                        }
+                    }
+                    var conditions = {_id: plitems[i]._id};  
+                    var updates = {$set: {plmonthamt: sum1, plyearamt: sum2}};
+                    BlnSheet.update(conditions, updates, function (error) {  
+                        if (error) {  console.error(error);  
+                        } else {  console.log("更新利润总额成功")  }  });  
+                }
+                else if(plitems.plproj == "五、净利润"){
+                    var sum1 = "0.00"; var sum2 = "0.00";
+                    for(var j=0; j<plitems.length; j++){
+                        if((plitems[j].plnum>0)&&(plitems[j].plnum<15)){
+                            if((plitems[j].plnum==5)||(plitems[j].plnum==9)||(plitems[j].plnum==15)) {continue;}
+                            else if((plitems[j].plnum==1) || (plitems[j].plnum==6)||
+                                    (plitems[j].plnum==10) || (plitems[j].plnum==11) || 
+                                    (plitems[j].plnum==12) || (plitems[j].plnum==14)){
+                                if((plitems[j].plmonthamt != "") && (plitems[j].plmonthamt != null))
+                                {sum1 = parseFloat(sum1)+parseFloat(plitems[j].plmonthamt)+"";}
+                                if((plitems[j].plyearamt != "") && (plitems[j].plyearamt != null))
+                                {sum2 = parseFloat(sum2)+parseFloat(plitems[j].plyearamt)+"";}
+                            }
+                            else{
+                                if((plitems[j].plmonthamt != "") && (plitems[j].plmonthamt != null))
+                                {sum1 = parseFloat(sum1)-parseFloat(plitems[j].plmonthamt)+"";}
+                                if((plitems[j].plyearamt != "") && (plitems[j].plyearamt != null))
+                                {sum2 = parseFloat(sum2)-parseFloat(plitems[j].plyearamt)+"";}
+                            }
+                        }
+                    }
+                    var conditions = {_id: plitems[i]._id};  
+                    var updates = {$set: {plmonthamt: sum1, plyearamt: sum2}};
+                    BlnSheet.update(conditions, updates, function (error) {  
+                        if (error) {  console.error(error);  
+                        } else {  console.log("更新净利润成功")  }  });  
+                }
+        }
+    });
 });
 
 module.exports = router;
