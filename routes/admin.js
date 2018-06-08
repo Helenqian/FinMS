@@ -6,6 +6,10 @@ router.get('/add-category', function(req, res, next){
 	res.render('admin/add-category', { message: req.flash('success')});
 });
 
+router.get('/noauthority',function(req, res, next){
+	res.render('setting/noauthority');
+});
+
 /*router.post('/add-category', function(req, res,next){
 	var category = new Category();
 	category.name = req.body.name;

@@ -10,6 +10,8 @@ router.get('/regime', function(req, res){
 	res.render('document/regime');
 });
 
+
+
 router.get('/about', function(req, res){
 	res.render('main/about');
 });

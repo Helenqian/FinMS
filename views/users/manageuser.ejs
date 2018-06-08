@@ -70,31 +70,33 @@ layui.use('table', function(){
     ,height: 315
   });
   
-  /*
+  
   var $ = layui.$, active = {
     reload: function(){
-      var codeReload = $('#codeReload');
-      var nameReload = $('#nameReload');
+      var emailReload = $('#email');
+      var nameReload = $('#name');
+      var usertypeReload = $("#usertype");
       
       //执行重载
-      table.reload('idTest', {
+      table.reload('userTest', {
         page: {
           curr: 1 //重新从第 1 页开始
         }
         ,where: {
-            headercode: codeReload.val()
-            ,headername: nameReload.val()
+            email: emailReload.val()
+            ,name: nameReload.val()
+            ,usertype: usertypeReload.val()
         }
       });
     }
     ,delCheckData: function(obj){ //获取选中数据
-      var checkStatus = table.checkStatus('idTest');
+      var checkStatus = table.checkStatus('userTest');
       var data = checkStatus.data;
       layer.confirm('确定删除吗？ '+ JSON.stringify(data), function(){
          //向服务端发送删除指令
         $.ajax({
            type : "post",
-           url: "/delallheader",
+           url: "/delalluser",
            data:{
               'datas' : data
             },
@@ -108,9 +110,8 @@ layui.use('table', function(){
         obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
         layer.close(index);
     });
-      }
-
-  };
+  }
+};
 
   
   $('.demoTable .layui-btn').on('click', function(){
@@ -118,9 +119,9 @@ layui.use('table', function(){
     active[type] ? active[type].call(this) : '';
   });
 
-table.on('checkbox(head)', function(obj){
+table.on('checkbox(users)', function(obj){
       console.log(obj)
-        });
+});
 
 
 table.on('tool(users)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
@@ -132,9 +133,9 @@ table.on('tool(users)', function(obj){ //注：tool是工具条事件名，test�
          //向服务端发送删除指令
         $.ajax({
            type : "post",
-           url: "/deleteheader",
+           url: "/deleteuser",
            data:{
-              'headercode' : obj.data.code
+              'demail' : obj.data.email
             },
            success: function(data) { 
               //判断是否删除成功
@@ -149,7 +150,7 @@ table.on('tool(users)', function(obj){ //注：tool是工具条事件名，test�
   }
  
 });
-*/
+
 
 
  

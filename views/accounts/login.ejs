@@ -14,6 +14,7 @@
     <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="./lib/layui/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="./js/xadmin.js"></script>
+    <link rel="stylesheet" href="./lib/layui/css/layui.css"  media="all">
 
 </head>
 <body class="login-bg">
@@ -21,14 +22,6 @@
     <div class="login">
         <div class="message">管理登录</div>
         <div id="darkbannerwrap"></div>
-        <% if (message.length > 0) { %>
-			<div class="alert alert-danger alert-dismissible">
-				<button type="button" class="close" data-dismmiss="alert" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-				<%= message %>
-	 		</div> 
-		<% } %>
         <form method="post" class="layui-form" >
             <input name="email" placeholder="邮箱"  type="text" lay-verify="required" class="layui-input" >
             <hr class="hr15">
@@ -48,18 +41,20 @@
               //   });
               //监听提交
               form.on('submit(login)', function(data){
-                // alert(888)
-                layer.msg(JSON.stringify(data.field),function(){
+                //layer.msg(JSON.stringify(data.field),function(){
                     //location.href='/'
                     $.ajax({
                       type : "post",
                       url: "/login",
                     data:{
+                        email: $("#email").val(),
+                        password: $("#password").val()
                          },
                    success: function(data) { 
+
                     }
                   });
-                });
+                //});
                 return false;
               });
             });

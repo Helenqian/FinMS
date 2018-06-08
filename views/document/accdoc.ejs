@@ -11,8 +11,6 @@
   <link rel="stylesheet" href="./lib/layui/css/layui.css"  media="all">
   <script type="text/javascript" src="./js/xadmin.js"></script>
   <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>-->
-
-  <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
 </head>
 <body>
     <div class="x-nav">
@@ -156,7 +154,8 @@ layui.use('table', function(){
   }
   
   else if(layEvent === 'detail'){ //查看
-    var url = "/viewaccdoc?num=" + obj.data.num;
+    if(('<%=usertype%>'!="操作员")&&('<%=usertype%>'!="审计员")) {layer.msg('抱歉您没有权限！',{icon:1,time:1000}); }
+    else var url = "/viewaccdoc?num=" + obj.data.num;
     x_admin_show('查看凭证',url); //弹出查看具体凭证的窗口
   }
 });

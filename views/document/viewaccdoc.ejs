@@ -82,7 +82,7 @@ layui.use('table', function(){
   
     var $ = layui.$, active = {
     checkAD: function(obj){
-    if('<%= user.usertype %>' != '审计员' ) {layer.msg('您没有权限！');}
+    if('<%= user.usertype %>' != '审计员' ) {layer.msg('抱歉您没有权限！');}
     else if('<%=cs1%>' == 'true') {layer.msg('已审核并通过!');} 
     else{
     layer.confirm('审核通过吗？', function(index){
@@ -104,7 +104,7 @@ layui.use('table', function(){
     }
     }
     ,postAD: function(obj){
-        if('<%= user.usertype %>' != '操作员' ) {layer.msg('您没有权限！');}
+        if('<%= user.usertype %>' != '操作员') {layer.msg('抱歉您没有权限！');}
         else if('<%=ps1%>' == 'true') {layer.msg('凭证已经过过账了!');}
         else if ('<%=cs1%>' != 'true') {layer.msg('未审核!');}
         else{

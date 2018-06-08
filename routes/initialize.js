@@ -8,7 +8,12 @@ var DocumentItem = require('../models/DocumentItem');
 var Initial = require('../models/Initial');
 
 router.get('/initial', function (req, res, next) {
-    res.render('setting/initial');
+    if(!req.user._id) res.redirect('/login');
+	User.findOne({ _id: req.user._id }, function(err, user){
+        if (err) return next(err);
+        if(user.usertype != "超级管理员") res.redirect('/noauthority');
+		else res.render('setting/initial', { user: user});
+	});
 });
 
 router.post('/initial', function (req, res, next) {
@@ -86,8 +91,13 @@ router.get("/iniacc1", function (req, res, next) {
 
 
 router.get('/iniaccount', function (req, res, next) {
-        res.render('setting/iniacc');
-    });
+    if(!req.user._id) res.redirect('/login');
+	User.findOne({ _id: req.user._id }, function(err, user){
+        if (err) return next(err);
+        if(user.usertype != "超级管理员") res.redirect('/noauthority');
+		else res.render('setting/iniacc', { user: user});
+	});
+});
 
 router.get('/saaaa', function(req,res,next){
     Initial.find({}, function(err,ini){
@@ -260,7 +270,7 @@ router.get('/api/iniacc', function (req, res, next) {
                 var data =[];
                 var _page = req.query.page;
                 var _limit = req.query.limit; 
-                for (var j = (_page - 1) * _limit ; j < _page * _limit && j < accounts.length &&
+                for (var j = 0 ; j < accounts.length &&
                 (accounts[j].year.num == ini[0].startyear); j++){
                     if(accounts[j].code == req.query.accountcode){
                     var o = {};
@@ -289,7 +299,7 @@ router.get('/api/iniacc', function (req, res, next) {
                 var data =[];
                 var _page = req.query.page;
                 var _limit = req.query.limit; 
-                for (var j = (_page - 1) * _limit ; j < _page * _limit && j < accounts.length &&
+                 for (var j = 0 ; j < accounts.length &&
                  (accounts[j].year.num == ini[0].startyear); j++){
                     if((accounts[j].name == req.query.accountname)){
                     var o = {};
@@ -318,8 +328,8 @@ router.get('/api/iniacc', function (req, res, next) {
                 var data =[];
                 var _page = req.query.page;
                 var _limit = req.query.limit; 
-                for (var j = (_page - 1) * _limit ; j < _page * _limit && j < accounts.length
-                && (accounts[j].year.num == ini[0].startyear); j++){
+                 for (var j = 0 ; j < accounts.length &&
+                (accounts[j].year.num == ini[0].startyear); j++){
                     if((accounts[j].code == req.query.accountcode) && (accounts[j].name = req.query.accountname)){
                     var o = {};
                     o.code = accounts[j].code;
@@ -391,7 +401,7 @@ router.post('/saveiniacc',function(req, res, next){
                        }  
             },function(err,result){  
               if (err) return console.error(err);  
-              console.log(result);   
+              //console.log(result);   
               });
         }
             for(var i = 0; i < req.body.datas.length; i++){
@@ -413,7 +423,7 @@ router.post('/saveiniacc',function(req, res, next){
                            }  
                 },function(err,result){  
                   if (err) return console.error(err);  
-                  console.log(result);  
+                  //console.log(result);  
                   });
             }
 //    Account.update({_id: req.body.datas[i]._id}, { $push : { year:{

@@ -34,7 +34,6 @@
 
 
 <xblock>
-    <button class="layui-btn layui-btn-danger" data-type="delCheckData"><i class="layui-icon"></i>批量删除</button>
     <button class="layui-btn layui-btn" data-type="saveCheckData"><i class="layui-icon"></i>批量保存</button>
     <button class="layui-btn" onclick="x_admin_show('添加科目','/addaccount')"><i class="layui-icon"></i>添加</button>
 </xblock>
@@ -64,8 +63,8 @@ layui.use('table', function(){
       ,{field: 'type', title: '科目类型', width:100}
       ,{field: 'yearnum', title: '起始年份', width:100}
       ,{field: 'monthnum', title: '起始月份', width:100}
-      ,{field: 'yearstartbln', title:'年初余额',width:100,edit:true}
-      ,{field: 'operation', title: '操作', fixed: 'right', width:200, align:'center', toolbar: '#barDemo'}
+      ,{field: 'yearstartbln', title:'年初余额',width:150,edit:true}
+      ,{field: 'operation', title: '操作', fixed: 'right', width:100, align:'center', toolbar: '#barDemo'}
     ]]
     ,id: 'iniacc'
     ,page: true

@@ -5,7 +5,7 @@ var passportConf = require('../config/passport');
 
 router.get('/login', function(req, res){
 	if(req.user) return res.redirect('/');
-	res.render('accounts/login', { message: req.flash('loginMessage')});
+	res.render('accounts/login1', { message: req.flash('loginMessage')});
 });
 
 router.post('/login', passport.authenticate('local-login',{

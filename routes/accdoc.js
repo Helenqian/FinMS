@@ -7,7 +7,12 @@ var DocumentItem = require('../models/DocumentItem');
 var Initial = require('../models/Initial');
 
 router.get('/accdoc', function (req, res, next) {
-    res.render('document/accdoc');
+    if(!req.user._id) res.redirect('/login');
+	User.findOne({ _id: req.user._id }, function(err, user){
+		if (err) return next(err);
+        res.render('document/accdoc', 
+        { user: user, usertype: user.usertype});
+	});
 });
 
 
@@ -131,11 +136,6 @@ router.post("/adddocitem", function(req, res, next) {  
         Account.findOne({code: req.body.acccode, name: req.body.accname}, function(err, existingAcc){
             if(existingAcc) {
             docitem.account = existingAcc;
-            }
-            else{
-            if(err) return next(err);
-            console.log("Account is invalid!");
-            }
             DocumentItem.findOne({ id: req.body.id }, function(err, existingDoc){
                 if(existingDoc){
                 console.log("Document with that id already exists");
@@ -158,6 +158,11 @@ router.post("/adddocitem", function(req, res, next) {  
                 });
                 }
             });
+            }
+            else{
+            if(err) return next(err);
+            console.log("Account is invalid!");
+            }
         });
     });
 });
@@ -369,11 +374,16 @@ router.post('/checkbalance', function(req, res, next){
           if (err) return next(err);
           if(!docitem) {console.log("该凭证"+w+"无条目！");}
           else{ 
+              console.log(docitem);
           var debitsum = 0; var creditsum = 0;
           for(var i = 0; i < docitem.length && docitem[i]; i++)
           {
+            console.log("debit"+docitem[i].debit);
+            console.log("credit"+docitem[i].credit);
                 debitsum = debitsum + 1*(docitem[i].debit);
                 creditsum = creditsum + 1*(docitem[i].credit);
+                console.log("debitsum"+debitsum);
+                console.log("creditsum"+creditsum);
           }
           if (debitsum == creditsum) { 
               var accdoc = new AccountDocument();

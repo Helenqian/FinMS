@@ -496,4 +496,43 @@ router.get('/blndirect', function(req, res, next){
     });
 });
 
+router.get('/updatesth', function(req, res, next){
+Account.find({}, function(err,acc){
+    if(err) return next(err);
+    for(var i=0;i<acc.length;i++){
+    Account.update(  
+        {
+             "_id" : acc[i]._id,
+             "month.num" : "000000",
+        },  
+        {  
+             $set: {  
+                  "month.$" : {
+                  "num" : "201801",
+                  "startbln" : acc[i].startbln,
+                  "endbln" : acc[i].endbln,
+                  "debamount" : acc[i].debamount,
+                  "credamount" : acc[i].credamount,
+                  "settlestatus" : "false"
+                }  
+        }},function(err,result){  
+          if (err) return console.error(err);  
+          console.log("yea!");
+    });
+    }
+});
+   /*
+   Account.find({}, function(err,acc){
+    if(err) return next(err);
+    for(var i=0;i<acc.length;i++){
+    Account.update({"_id": acc[i]._id}, 
+            { $pull : { month: {num : "201805" }}},function(err,result){  
+                if (err) return console.error(err);  
+                console.log("pull!!!!"); 
+    });
+    }
+    });
+    */
+});
+
 module.exports = router;

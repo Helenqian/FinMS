@@ -21,13 +21,13 @@ passport.use('local-login', new LocalStrategy({
 }, function(req, email, password, done){
 	User.findOne({ email: email}, function(err,user){
 		if (err) return done(err);
-
+		console.log("in");
 		if(!user) {
-			return done(null, false, req.flash('loginMessage', 'No user has been found'));
+			return done(null, false, req.flash('loginMessage', '用户不存在'));
 		}
 
 		if(!user.comparePassword(password)) {
-			return done(null, false, req.flash('loginMessage', 'Oops! Wrong Password'));
+			return done(null, false, req.flash('loginMessage', 'Oops! 密码错误'));
 		}
 		return done(null, user);
 	});	

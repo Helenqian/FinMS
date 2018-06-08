@@ -8,15 +8,18 @@ var crypto = require('crypto');
 var UserSchema = new mongoose.Schema({
 	email: { type: String, unique: true, lowercase: true},
 	password: String,
-
+	name: { type: String, default: ''},
+	/*
 	profile: {
 		name: { type: String, default: ''},
 		picture: { type: String, default: ''}
 	},
+	*/
 
 	address: String,
 
-	//用户权限：管理员admin，操作员operator，审计员auditor，普通用户viewer
+	//用户权限：
+	//超级管理员admin，操作员operator，审计员auditor，业务员salesman，普通用户viewer
 	usertype: { type: String, default:'普通用户'}
 
 });
@@ -52,4 +55,3 @@ UserSchema.methods.comparePassword = function(password){
 
 
 module.exports = mongoose.model('User', UserSchema);
-

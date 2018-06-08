@@ -1,70 +1,132 @@
-<% layout('style') -%>
-<!DOCTYPE html>
+<%- layout('style') -%>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>layui</title>
-  <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <link rel="stylesheet" href="./lib/layui/css/layui.css"  media="all">
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <link rel="stylesheet" href="./lib/layui/css/layui.css"  media="all">
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+  <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>-->
+
   <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
 </head>
 <body>
-    <!--<div class="x-nav">
+    <div class="x-nav">
         <span class="layui-breadcrumb">
           <a href="">首页</a>
           <a href="">演示</a>
           <a>
             <cite>导航元素</cite></a>
         </span>
-      </div>-->
+    </div>
+    <div class="x-body">
+    <div class="demoTable">
+        <div class="layui-row layui-col-md12 x-so">
+          <!--<form class="layui-form layui-col-md12 x-so">-->
+            <!--<input type="text" name="adnum"  placeholder="请输入凭证号" id="adnum" autocomplete="off" class="layui-input">-->
+            <input type="text" class="layui-input" placeholder="日期范围" id="date" name="date">
+            <!--<input class="layui-input" placeholder="截止日" name="end" id="end">-->
+            <!--<input type="text" name="maker"  placeholder="请输入制单人" id="maker" autocomplete="off" class="layui-input">-->
+            <!--<input type="text" name="headercode"  placeholder="请输入摘要号" autocomplete="off" class="layui-input">
+            <input type="text" name="accountcode"  placeholder="请输入科目号" autocomplete="off" class="layui-input">-->
+            <!--<div class="layui-input-inline">
+              <select name="contrller" id="checkstatus">
+                <option>审核状态</option>
+                <option>true</option>
+                <option>false</option>
+              </select>
+            </div>
+            <div class="layui-input-inline">
+              <select name="contrller" id="poststatus">
+                <option>过账状态</option>
+                <option>true</option>
+                <option>false</option>
+              </select>
+            </div>-->
+            <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
+          <!--</form>-->
+        </div>
+        <!--<xblock>
+          <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+          <button class="layui-btn" onclick="x_admin_show('记账凭证','/addaccdoc')"><i class="layui-icon"></i>添加</button>
+        </xblock>-->
+    </div>
 
-        <div class="x-body">
-            <div class="demoTable">
-                <div class="layui-row">
-                    <form class="layui-form layui-col-md12 x-so">
-                    <input type="text" class="layui-input" placeholder="日期范围" id="date">
-                      <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
-                    </form>
-                  </div>
-                </div>
-
-                <table class="layui-table" lay-data="{url:'/api/glacc', height: 'full-200', cellMinWidth: 80, page: true,
-                limit:100, initSort: {field:'acccode', type:'asc'}}">
-                  <thead>
-                    <tr>
-                      <th lay-data="{field:'acccode', width:100, align:'center', sort: true}">科目代码</th>
-                      <th lay-data="{field:'accname', width:100, align:'center'}">科目名称</th>
-                      <th lay-data="{field:'monthnum', width:100, align:'center'}">会计期间</th>
-                      <th lay-data="{field:'debamount', width:120, align:'center'}">借方发生额</th>
-                      <th lay-data="{field:'credamount', width:120, align:'center'}">贷方发生额</th>
-                      <th lay-data="{field:'blndirect', width:80, align:'center'}">借贷方向</th>
-                      <th lay-data="{field:'endbln', width:120, align:'center'}">余额</th>
-                    </tr>
-                  </thead>
-                </table>
-              </div>
-
-
+    <table class="layui-hide" id="LAY_table_docitem" lay-filter="docitem"></table>
+    </div>
                
           
-<script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+<script src="./lib/layui/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<!--<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>-->
 <script>
 layui.use('laydate', function(){
-      var laydate = layui.laydate;
-      //执行一个laydate实例
-      //日期范围选择
-      laydate.render({ 
-      elem: '#date'
-      ,range: true //或 range: '~' 来自定义分割字符
+    var laydate = layui.laydate;
+    //执行一个laydate实例
+    //年月范围选择
+    laydate.render({ 
+     elem: '#date'
+     ,type: 'month'
+     ,range: true //或 range: '~' 来自定义分割字符
     });
 });
 
 layui.use('table', function(){
   var table = layui.table;
   
+  //方法级渲染
+  table.render({
+    elem: '#LAY_table_docitem'
+    ,url: '/api/glacc'
+    ,cols: [[ //表头
+      {checkbox: true, fixed: true}
+      ,{field:'acccode', title:'科目代码', width:100, align:'center', sort: true}
+      ,{field:'accname', title:'科目名称', width:100, align:'center'}
+      ,{field:'monthnum', title:'会计期间', width:100, align:'center'}
+      ,{field:'debamount', title:'借方发生额', width:120, align:'center'}
+      ,{field:'credamount', title:'贷方发生额', width:120, align:'center'}
+      ,{field:'blndirect', title:'借贷方向', width:80, align:'center'}
+      ,{field:'endbln', title:'余额', width:120, align:'center'}
+    ]]
+    ,id: 'docitemTest'
+    ,page: true
+    ,height: 400
+  });
+
+ var $ = layui.$, active = {
+    reload: function(){
+      var date = $('#date');
+      
+      //执行重载
+      table.reload('docitemTest', {
+        page: {
+          curr: 1 //重新从第 1 页开始
+        }
+        ,where: {
+            date: date.val()
+        }
+      });
+    }
+};
+
+$('.demoTable .layui-btn').on('click', function(){
+    var type = $(this).data('type');
+    active[type] ? active[type].call(this) : '';
+  });
+
+
+table.on('checkbox(docitem', function(obj){
+      console.log(obj)
+        });
+
+
 });
 </script>
 
