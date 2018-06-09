@@ -54,7 +54,7 @@
 <script src="./lib/layui/layui.js" charset="utf-8"></script>
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-xs" lay-event="detail" >查看</a>
-    <a class="layui-btn layui-btn layui-btn-xs" lay-event="edit">修改</a>
+    <!--<a class="layui-btn layui-btn layui-btn-xs" lay-event="edit">修改</a>-->
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script>
@@ -154,11 +154,13 @@ layui.use('table', function(){
   }
   
   else if(layEvent === 'detail'){ //查看
-    if(('<%=usertype%>'!="操作员")&&('<%=usertype%>'!="审计员")&&('<%=usertype%>'!="超级管理员")) {layer.msg('抱歉您没有权限！',{icon:1,time:1000}); }
+    if(('<%=usertype%>'!="操作员")&&('<%=usertype%>'!="审计员")&&('<%=usertype%>'!="超级管理员")) 
+    {layer.msg('抱歉您没有权限！',{icon:2,time:1000}); }
     else {  var url = "/viewaccdoc?num=" + obj.data.num;
       x_admin_show('查看凭证',url); //弹出查看具体凭证的窗口
     }
   }
+
 });
 
 });

@@ -22,7 +22,7 @@
         <div class="layui-inline">
             <div class="layui-input-inline">
               <!--<input type="text" class="layui-input" id="docdate" placeholder="录入日期：" lay-verify="required">-->
-              <label class="layui-form-label" id="docdate" >制单人：<%= maker1 %></label>
+              <label class="layui-form-label" id="maker" >制单人：<%= maker1 %></label>
               
             </div>
         </div>
@@ -31,6 +31,12 @@
                 <!--<input type="text" class="layui-input" id="maker" placeholder="制单人" lay-verify="required">-->
                 <label class="layui-form-label" id="docdate" ><%= docdate1 %></label>
             </div>
+        </div>
+        <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <!--<input type="text" class="layui-input" id="maker" placeholder="制单人" lay-verify="required">-->
+                    <label class="layui-form-label" id="type" ><%= type1 %></label>
+                </div>
         </div>
     </div> 
     <xblock>
@@ -194,7 +200,7 @@ table.on('tool(viewaccdoc)', function(obj){ //注：tool是工具条事件名，
     });
     }
   }
-  else if(layEvent === 'save'){ //添加
+  else if(layEvent === 'save'){ //保存
     //判断是否全部非空
     layer.confirm('保存凭证条目的修改吗？', function(index){
          //向服务端发送保存指令

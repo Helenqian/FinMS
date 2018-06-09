@@ -139,7 +139,17 @@ router.post("/adddocitem", function(req, res, next) {  
             DocumentItem.findOne({ id: req.body.id }, function(err, existingDoc){
                 if(existingDoc){
                 console.log("Document with that id already exists");
-                return res.redirect('/addaccdoc');
+                existingDoc.update({id : docitem.id,
+                    num : docitem.num,
+                    debit : docitem.debit,
+                    credit : docitem.credit,
+                    header : docitem.header,
+                    account : docitem.account,
+                    yearnum : yearnum,
+                    monthnum : monthnum}, function(err){
+                    if(err) return next(err);
+                    console.log('sss ');
+                });
                  } else {
                 var di = new DocumentItem({
                 id : docitem.id,
@@ -441,14 +451,16 @@ router.post('/checkbalance', function(req, res, next){
 
 router.get('/viewaccdoc',function(req,res,next){
     if(!req.user) res.redirect('/login');
-    AccountDocument.findOne({num: req.query.num},'docdate maker checkstatus poststatus', function (err, accdoc) {
+    AccountDocument.findOne({num: req.query.num},'docdate maker checkstatus poststatus type', function (err, accdoc) {
         if(err) return next(err);
         User.findOne({ _id: req.user._id }, function(err, user){
             if (err) return next(err);
+            console.log(accdoc);
             res.render('document/viewaccdoc',
          {
              num1: req.query.num, docdate1: accdoc.docdate, maker1: accdoc.maker
-             ,cs1: accdoc.checkstatus, ps1: accdoc.poststatus, user: user
+             ,cs1: accdoc.checkstatus, ps1: accdoc.poststatus, 
+             type1: accdoc.type, user: user
          });
         });
     });
@@ -485,7 +497,7 @@ router.get('/api/accdoc', function (req, res, next) {
             var e = accdocs[j].docdate;
             var dt = new Date(); 
             dt.setFullYear(e.substring(0,4),e.substring(5,7),e.substring(8,10));
-            console.log("dt"+dt);
+            //console.log("dt"+dt);
             if((dt>mindate || dt==mindate) && (dt<maxdate || dt==maxdate)){
                 var o = {};
                 o.num  = accdocs[j].num;
@@ -531,7 +543,7 @@ router.get('/api/viewaccdoc', function(req, res, next){
          var _page = req.query.page;
          var _limit = req.query.limit;
       for (var j = (_page - 1) * _limit ; j < _page * _limit && (docitem[j] != null); j++){
-            console.log(docitem[j]);
+            //console.log(docitem[j]);
              var o = {};
              o.num = docitem[j].num;
              o.debit = docitem[j].debit;
