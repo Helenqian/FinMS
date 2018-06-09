@@ -154,9 +154,10 @@ layui.use('table', function(){
   }
   
   else if(layEvent === 'detail'){ //查看
-    if(('<%=usertype%>'!="操作员")&&('<%=usertype%>'!="审计员")) {layer.msg('抱歉您没有权限！',{icon:1,time:1000}); }
-    else var url = "/viewaccdoc?num=" + obj.data.num;
-    x_admin_show('查看凭证',url); //弹出查看具体凭证的窗口
+    if(('<%=usertype%>'!="操作员")&&('<%=usertype%>'!="审计员")&&('<%=usertype%>'!="超级管理员")) {layer.msg('抱歉您没有权限！',{icon:1,time:1000}); }
+    else {  var url = "/viewaccdoc?num=" + obj.data.num;
+      x_admin_show('查看凭证',url); //弹出查看具体凭证的窗口
+    }
   }
 });
 

@@ -27,7 +27,7 @@ router.get('/header', function (req, res, next) {
 
 
 router.get('/tablereload', function (req, res, next) {
-	if(!req.user._id) res.redirect('/login');
+	if(!req.user) res.redirect('/login');
 	User.findOne({ _id: req.user._id }, function(err, user){
         if (err) return next(err);
         if((user.usertype != "超级管理员")&&(user.usertype != "操作员")) res.redirect('/noauthority');

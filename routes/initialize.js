@@ -8,7 +8,7 @@ var DocumentItem = require('../models/DocumentItem');
 var Initial = require('../models/Initial');
 
 router.get('/initial', function (req, res, next) {
-    if(!req.user._id) res.redirect('/login');
+    if(!req.user) res.redirect('/login');
 	User.findOne({ _id: req.user._id }, function(err, user){
         if (err) return next(err);
         if(user.usertype != "超级管理员") res.redirect('/noauthority');
@@ -91,7 +91,7 @@ router.get("/iniacc1", function (req, res, next) {
 
 
 router.get('/iniaccount', function (req, res, next) {
-    if(!req.user._id) res.redirect('/login');
+    if(!req.user) res.redirect('/login');
 	User.findOne({ _id: req.user._id }, function(err, user){
         if (err) return next(err);
         if(user.usertype != "超级管理员") res.redirect('/noauthority');

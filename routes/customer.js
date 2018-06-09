@@ -11,7 +11,13 @@ router.get('/page', function (req, res, next) {
 });
 
 router.get('/customer', function (req, res, next) {
-	res.render('customer/customer');
+	if(!req.user) res.redirect('/login');
+	User.findOne({ _id: req.user._id }, function(err, user){
+		if (err) return next(err);
+		if((user.usertype != "业务员")&&(user.usertype != "超级管理员")) res.redirect('/noauthority');
+        else {res.render('customer/customer', 
+        { user: user, usertype: user.usertype});}
+	});
 });
 
 router.get('/addCustomer', function (req, res, next) {

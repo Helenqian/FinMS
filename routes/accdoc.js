@@ -7,7 +7,7 @@ var DocumentItem = require('../models/DocumentItem');
 var Initial = require('../models/Initial');
 
 router.get('/accdoc', function (req, res, next) {
-    if(!req.user._id) res.redirect('/login');
+    if(!req.user) res.redirect('/login');
 	User.findOne({ _id: req.user._id }, function(err, user){
 		if (err) return next(err);
         res.render('document/accdoc', 
@@ -58,12 +58,11 @@ router.get('/api/accdoc', function (req, res, next) {
     */
 
 router.get('/api/addaccdoc', function (req, res, next) {
+    Initial.find({}, function (err, init) {
+        if (err) return next(err);
     AccountDocument.find({},function(err, AD){
         if (err) return next(err);
-        var w =0;
-        if (!AD) w = 1001;
-        else {w = 1000 + AD.length + 1;}
-        DocumentItem.find({ num: w }).populate('account').populate('header').exec(function (err, docitem) {
+        DocumentItem.find({ num: init[0].currnum }).populate('account').populate('header').exec(function (err, docitem) {
           if (err) return next(err);
           var data =[];
           var _page = req.query.page;
@@ -102,6 +101,7 @@ router.get('/api/addaccdoc', function (req, res, next) {
                 data: data
                   } 
                 res.send(responsedata);
+            });
         });  
     });
 });
@@ -440,6 +440,7 @@ router.post('/checkbalance', function(req, res, next){
 });
 
 router.get('/viewaccdoc',function(req,res,next){
+    if(!req.user) res.redirect('/login');
     AccountDocument.findOne({num: req.query.num},'docdate maker checkstatus poststatus', function (err, accdoc) {
         if(err) return next(err);
         User.findOne({ _id: req.user._id }, function(err, user){

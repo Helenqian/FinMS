@@ -4,7 +4,7 @@ var passport = require('passport');
 var passportConf = require('../config/passport');
 
 router.get('/login', function(req, res){
-	if(req.user) return res.redirect('/');
+	if(req.user) return res.redirect('/regime');
 	res.render('accounts/login1', { message: req.flash('loginMessage')});
 });
 
@@ -16,7 +16,7 @@ router.post('/login', passport.authenticate('local-login',{
 
 router.get('/logout', function(req, res, next){
 	req.logout();
-	res.redirect('/');
+	res.redirect('/login');
 });
 
 

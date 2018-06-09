@@ -4,7 +4,13 @@ var passport = require('passport');
 var passportConf = require('../config/passport');
 
 router.get('/manageuser', function (req, res, next) {
-	res.render('users/manageuser');
+	if(!req.user) res.redirect('/login');
+	User.findOne({ _id: req.user._id }, function(err, user){
+		if (err) return next(err);
+		if(user.usertype != "超级管理员") res.redirect('/noauthority');
+        else {res.render('users/manageuser', 
+        { user: user});}
+	});
 });
 
 router.get('/api/user', function (req, res, next) {

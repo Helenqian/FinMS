@@ -10,8 +10,8 @@ router.get('/settleacc', function(req, res){
 	res.render('settle/settleacc');
 });
 
-router.get('/postacc', function(req, res){
-	res.render('settle/postacc');
+router.get('/recordacc', function(req, res){
+	res.render('settle/recordacc');
 });
 
 router.post('/settlepl',function(req, res,next){

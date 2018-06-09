@@ -7,7 +7,12 @@ router.get('/', function(req, res){
 });
 
 router.get('/regime', function(req, res){
-	res.render('document/regime');
+	if(!req.user) res.redirect('/login');
+	User.findOne({ _id: req.user._id }, function(err, user){
+		if (err) return next(err);
+		res.render('document/regime', 
+        { user: user, usertype: user.usertype});
+	});
 });
 
 
