@@ -22,6 +22,7 @@ router.get('/api/blsheet', function(req, res, next){
             for (var j = (_page - 1) * _limit ; j < _page * _limit && (blnitems[j] != null); j++)
             {
                 var o = {};
+
                 o.assproj  = blnitems[j].assproj;
                 o.assnum  = blnitems[j].assnum;
                 o.assendbln  = blnitems[j].assendbln;
@@ -30,6 +31,18 @@ router.get('/api/blsheet', function(req, res, next){
                 o.liabnum  = blnitems[j].liabnum;
                 o.liabendbln  = blnitems[j].liabendbln;
                 o.liabstartbln  = blnitems[j].liabstartbln;
+                if((o.assendbln=="0")||(o.assendbln=="0.00")){
+                    o.assendbln="";
+                }
+                if((o.assstartbln=="0")||(o.assstartbln=="0.00")){
+                    o.assstartbln="";
+                }
+                if((o.liabendbln=="0")||(o.liabendbln=="0.00")){
+                    o.liabendbln="";
+                }
+                if((o.liabstartbln=="0")||(o.liabstartbln=="0.00")){
+                    o.liabstartbln="";
+                }
                 data.push(o);
             }
             console.log(data);
@@ -541,7 +554,7 @@ router.get('/plsheet', function(req, res, next){
 });
 
 router.get('/api/plsheet', function(req, res, next){
-    PlSheet.find({period: "template"},
+    PlSheet.find({period: "201806"},
         function (err, plitems) {
             if (err) return next(err);
             var data =[];
@@ -649,7 +662,7 @@ router.get('/generatepl', function(req, res, next){
         pldata.push(o);
     }
     console.log(pldata);
-    /*
+    
     for(var i=0; i<pldata.length; i++){
         var pl = new PlSheet({
             period: pldata[i].period,
@@ -663,16 +676,16 @@ router.get('/generatepl', function(req, res, next){
             console.log('New plsheetitem has been created   ');
         });
     }
-    */
+    return res.redirect('/');
     });
 });
 });
 
 router.get('/calculatepl', function(req, res, next){
-    var curryear = "2018", currmonth = "201801";
-    PlSheet.find({period: "template"}, function (err, plitems) {
+    var curryear = "2018", currmonth = "201806";
+    PlSheet.find({period: "201806"}, function (err, plitems) {
         for(var i=0;i<plitems.length;i++){
-            if(plitems.plproj == "二、主营业务利润"){
+            if(plitems[i].plproj == "二、主营业务利润"){
                 var sum1 = "0.00"; var sum2 = "0.00";
                 for(var j=0; j<plitems.length; j++){
                     if((plitems[j].plnum>0)&&(plitems[j].plnum<5)){
@@ -696,7 +709,7 @@ router.get('/calculatepl', function(req, res, next){
                     if (error) {  console.error(error);  
                     } else {  console.log("更新主营业务利润成功")  }  });  
                 }
-                else if(plitems.plproj == "三、营业利润"){
+                else if(plitems[i].plproj == "三、营业利润"){
                     var sum1 = "0.00"; var sum2 = "0.00";
                     for(var j=0; j<plitems.length; j++){
                         if((plitems[j].plnum>0)&&(plitems[j].plnum<9)){
@@ -721,7 +734,7 @@ router.get('/calculatepl', function(req, res, next){
                         if (error) {  console.error(error);  
                         } else {  console.log("更新营业利润成功")  }  });  
                 }
-                else if(plitems.plproj == "四、利润总额"){
+                else if(plitems[i].plproj == "四、利润总额"){
                     var sum1 = "0.00"; var sum2 = "0.00";
                     for(var j=0; j<plitems.length; j++){
                         if((plitems[j].plnum>0)&&(plitems[j].plnum<15)){
@@ -748,7 +761,7 @@ router.get('/calculatepl', function(req, res, next){
                         if (error) {  console.error(error);  
                         } else {  console.log("更新利润总额成功")  }  });  
                 }
-                else if(plitems.plproj == "五、净利润"){
+                else if(plitems[i].plproj == "五、净利润"){
                     var sum1 = "0.00"; var sum2 = "0.00";
                     for(var j=0; j<plitems.length; j++){
                         if((plitems[j].plnum>0)&&(plitems[j].plnum<15)){
@@ -776,6 +789,7 @@ router.get('/calculatepl', function(req, res, next){
                         } else {  console.log("更新净利润成功")  }  });  
                 }
         }
+        return res.redirect('/');
     });
 });
 

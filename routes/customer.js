@@ -61,7 +61,10 @@ router.get('/showCustomer', function(req, res, next){
 });*/
 
 router.get('/api/customer', function (req, res, next) {
-    Customer.find({}, function (err, customers) {
+	let option ={};
+	if(req.query.name) {option.name = req.query.name;}
+	if(req.query.salesman) {option.salesman = req.query.salesman;}
+    Customer.find(option, function (err, customers) {
 			    if (err) return next(err);
 			    var data =[];
 				var _page = req.query.page;
@@ -91,5 +94,43 @@ router.get('/api/customer', function (req, res, next) {
 			});
     });
 
+	router.post('/deletecustomer', function(req, res, next){
+		Customer.findOne({email: req.body.email}, function(err, toDeleteCustomer){
+			if(!toDeleteCustomer){
+				console.log("not exist");
+				console.log('delete failed', 'Header does not exist');
+				return res.redirect('/customer');
+			} else {
+				Customer.remove({ _id: toDeleteCustomer._id }, function(err){
+					if(err) return next(err);
+					console.log("already delete");
+					return res.redirect('/customer');
+				});
+			}
+		});
+	});
 
+	router.post('/savecustomer', function(req, res, next){
+		Customer.findOne({email: req.body.email}, function(err, customer){
+			if(err) return next(err);
+			console.log(customer);
+			if(customer){
+				customer.update({
+               phone: req.body.phone
+               ,company: req.body.company
+               ,salesman: req.body.salesman
+               ,address: req.body.address
+               ,tradeinfo: req.body.tradeinfo
+				}, function(err,result){
+					if (err)
+					return next(err);
+					if (result)
+					console.log(result);
+				});
+			}
+		});
+	});
+
+	
+	
 module.exports = router;

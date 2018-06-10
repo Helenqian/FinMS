@@ -27,7 +27,7 @@
 <div class="x-body">   
 <div class="demoTable">
   <div class="layui-inline layui-col-md12 x-so">
-    <input class="layui-input" name="email" placeholder="邮箱" lay-verify="required" id="email" autocomplete="off">
+    <!--<input class="layui-input" name="email" placeholder="邮箱" lay-verify="required" id="email" autocomplete="off">-->
     <input class="layui-input" name="name" placeholder="客户名" id="name" autocomplete="off">
     <input class="layui-input" name="salesman" placeholder="业务员" id="salesman" autocomplete="off">
     <button class="layui-btn" data-type="reload"><i class="layui-icon">&#xe615;</i></button>
@@ -41,13 +41,13 @@
 </div>
 </div>
  
-<table class="layui-hide" id="LAY_table_customer" lay-filter="customer"></table> 
+<table class="layui-hide" id="LAY_table_customer" lay-filter="customerTest"></table> 
                
           
 <script src="./lib/layui/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn layui-btn-xs" lay-event="del">更新</a>
+    <a class="layui-btn layui-btn layui-btn-xs" lay-event="save">保存</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script>
@@ -62,12 +62,12 @@ layui.use('table', function(){
       {checkbox: true, fixed: true}
       ,{field: 'email', title: '邮箱', width:100, sort: true, fixed: 'left'}
       ,{field: 'name', title: '客户名', width:100}
-      ,{field: 'phone', title: '手机号', width:100}
-      ,{field: 'company', title: '公司', width:100}
+      ,{field: 'phone', title: '手机号', edit: 'text', width:100}
+      ,{field: 'company', title: '公司', edit: 'text', width:100}
       ,{field: 'sex', title: '性别', width:60}
-      ,{field: 'salesman', title: '业务员', width:100}
-      ,{field: 'address', title: '地址', width:150}
-      ,{field: 'tradeinfo', title: '交易信息', width:150}
+      ,{field: 'salesman', title: '业务员', edit: 'text', width:100}
+      ,{field: 'address', title: '地址', edit: 'text', width:150}
+      ,{field: 'tradeinfo', title: '交易信息', edit: 'text', width:150}
       ,{field: 'operation', title: '操作', fixed: 'right', width:120, align:'center', toolbar: '#barDemo'}
     ]]
     ,id: 'customerTest'
@@ -75,7 +75,83 @@ layui.use('table', function(){
     ,height: 315
   });
 
+var $ = layui.$, active = {
+    reload: function(){
+      var name = $('#name');
+      var salesman = $("#salesman");
+      
+      //执行重载
+      table.reload('customerTest', {
+        page: {
+          curr: 1 //重新从第 1 页开始
+        }
+        ,where: {
+            name: name.val()
+            ,salesman : salesman.val()
+        }
+      });
+    }
+};
 
+  
+  $('.demoTable .layui-btn').on('click', function(){
+    var type = $(this).data('type');
+    active[type] ? active[type].call(this) : '';
+  });
+
+
+table.on('tool(customerTest)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+  var data = obj.data; //获得当前行数据
+  var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+  var tr = obj.tr; //获得当前行 tr 的DOM对象
+  if(layEvent === 'del'){ //删除
+    layer.confirm('真的删除该客户吗？', function(index){
+         //向服务端发送删除指令
+        $.ajax({
+           type : "post",
+           url: "/deletecustomer",
+           data:{
+              email : obj.data.email
+            },
+           success: function(data) { 
+              //判断是否删除成功
+              $(obj).parents("tr").remove();
+                 layer.msg('已删除!',{icon:1,time:1000});
+                 layer.close(index);//关闭
+           }
+        });
+        obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+        layer.close(index);
+    });
+  }
+  else if(layEvent === 'save'){ //添加
+    //判断是否全部非空
+    layer.confirm('保存该客户的修改吗？', function(index){
+         //向服务端发送保存指令
+        $.ajax({
+           type : "post",
+           url: "/savecustomer",
+           data:{
+               email: obj.data.email
+               ,name: obj.data.name
+               ,phone: obj.data.phone
+               ,company: obj.data.company
+               ,sex: obj.data.sex
+               ,salesman: obj.data.salesman
+               ,address: obj.data.address
+               ,tradeinfo: obj.data.tradeinfo
+            },
+           success: function(data) { 
+              
+           }
+        });
+        //判断是否保存成功
+        $(obj).parents("tr").remove();
+                 layer.msg('已保存!',{icon:1,time:1000});
+                 layer.close(index);//关闭
+    });
+  }
+});
 });
 </script>
 

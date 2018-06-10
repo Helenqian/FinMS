@@ -6,6 +6,7 @@ var AccountDocument = require('../models/AccountDocument');
 var DocumentItem = require('../models/DocumentItem');
 var Initial = require('../models/Initial');
 var BlnSheet = require('../models/BlnSheet');
+var PlSheet = require('../models/PlSheet');
 
 router.get('/settleacc', function(req, res){
 	res.render('settle/settleacc');
@@ -542,7 +543,7 @@ Account.find({}, function(err,acc){
     });
     */
 
-
+    
     BlnSheet.find({period:"201806"}, function(err, todelbln){
         if(err) return next(err);
         for(var i=0;i<todelbln.length;i++){
@@ -552,6 +553,7 @@ Account.find({}, function(err,acc){
             });
         }
     });
+    
     
     
 });
