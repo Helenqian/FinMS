@@ -137,9 +137,10 @@ router.post('/settlepl',function(req, res,next){
 });
 
 // 按年月入账
-router.get('/postaccbyperiod', function(req, res, next){
-    var yearnum = req.body.postyear, month = req.body.postmonth;
+router.post('/recordacc', function(req, res, next){
+    var yearnum = req.body.recordyear, month = req.body.recordmonth;
     var monthnum = yearnum + month;
+    console.log("monthnum"+monthnum);
     //yearnum = "2018"; month = "05"; monthnum = "201805";
     Account.find({'DocumentItem.1': {$exists: true}})
     .populate('DocumentItem')
@@ -166,8 +167,6 @@ router.get('/postaccbyperiod', function(req, res, next){
                 {
                     msbln = acc[i].month[y].startbln;
                     mebln1 = acc[i].month[y].endbln;
-                    console.log("msbln111= "+ msbln);
-                    console.log("mebln111= "+ mebln1);
                     break;
                 }
             }
@@ -182,19 +181,28 @@ router.get('/postaccbyperiod', function(req, res, next){
                 credamt = (parseFloat(credamt) + parseFloat(acc[i].DocumentItem[s].credit))+"";
                 }
             }
+            console.log("debamt"+debamt);
+            console.log("credamt"+credamt);
 
             for(var j =0; j < acc[i].DocumentItem.length; j++)
             {
+                console.log(acc[i].DocumentItem[j]);
                 if(acc[i].DocumentItem[j].monthnum == monthnum){
                 mdebamt = (parseFloat(mdebamt) + parseFloat(acc[i].DocumentItem[j].debit))+"";
                 mcredamt = (parseFloat(mcredamt) + parseFloat(acc[i].DocumentItem[j].credit))+"";
+                //console.log("ooooooooooooooo!!!");
                 }
             }
+            console.log("mdebamt"+mdebamt);
+            console.log("mcredamt"+mcredamt);
+
             if(type == '资产类') {
                 console.log("资!");
                 //资产类: 期末余额=期初余额+本期借方发生额-本期贷方发生额；
                 ebln = (parseFloat(sbln) + parseFloat(debamt) - parseFloat(credamt))+"";
                 mebln = (parseFloat(msbln) + parseFloat(mdebamt) - parseFloat(mcredamt))+"";
+                console.log("ebln"+ebln);
+                console.log("mebln"+mebln);
             }
             else if((type == '负债类')||(type == '所有者权益类')) {
                 console.log("负!");
@@ -238,7 +246,7 @@ router.get('/postaccbyperiod', function(req, res, next){
                             }  
                 }},function(err,result){  
                   if (err) return console.error(err);  
-                  //console.log(result);  
+                  //console.log("y!");  
             });
             
             Account.update(  
@@ -259,10 +267,10 @@ router.get('/postaccbyperiod', function(req, res, next){
                             }  
                 }},function(err,result){  
                   if (err) return console.error(err);  
-                 // console.log(result);
+                 //console.log("~~~~");
             });
            
-        if(i == acc.length -1) return res.redirect('/');
+        if(i == acc.length -1) return res.redirect('/glacc');
         }
     });
 });

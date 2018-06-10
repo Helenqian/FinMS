@@ -39,7 +39,7 @@
                   <span class="x-red">*</span>入账年份
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="settleyear" name="settleyear" placeholder="yyyy" required="" lay-verify="required"
+                  <input type="text" id="recordyear" name="recordyear" placeholder="yyyy" required="" lay-verify="required"
                   autocomplete="off" class="layui-input">
               </div>
           </div>
@@ -48,7 +48,7 @@
                   <span class="x-red">*</span>入账月份
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="settlemonth" name="settlemonth" placeholder="mm" required="" lay-verify="required"
+                  <input type="text" id="recordmonth" name="recordmonth" placeholder="mm" required="" lay-verify="required"
                   autocomplete="off" class="layui-input">
               </div>
           </div>
@@ -83,30 +83,30 @@
           });
 
 
-    /*
+    
     form.on('submit(add)', function(data){
             //console.log(data);
-        var settleyear = $('input[name=settleyear]').val(),
-            settlemonth = $('input[name=settlemonth]').val();
-        layer.confirm('确定结账？', function(index){
+        var recordyear = $('input[name=recordyear]').val(),
+            recordmonth = $('input[name=recordmonth]').val();
+        layer.confirm('确定过账？', function(index){
             $.ajax({
             type: 'post', // 提交方式 get/post
-            url: '/settleacc', // 需要提交的 url
+            url: '/recordacc', // 需要提交的 url
             //dataType: "json",
             data: {
-                'settleyear': settleyear,
-                'settlemonth': settlemonth
+                'recordyear': recordyear,
+                'recordmonth': recordmonth
             },
             success: function(data) {
               }
             });
-            layer.msg('初始化成功!',{icon:1,time:1000});
+            layer.msg('过账成功!',{icon:1,time:1000});
                  layer.close(index);//关闭
             //$(this).resetForm();// 提交后重置表单
             //return false; // 阻止表单自动提交事件
         });
     });
-    */
+    
 });
 </script>
 <!--

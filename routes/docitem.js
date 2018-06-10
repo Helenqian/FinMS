@@ -68,50 +68,63 @@ router.get('/glacc', function (req, res, next) {
 
 router.get('/api/glacc', function (req, res, next) {
     //monthnum = "201805";2018-06%20-%202018-07
-    let option ={}; var mindate = 0; var maxdate = 0;
+    let option ={}; var mindate = 0; var maxdate = 0;var count =0;
     if(req.query.date) {
         mindate = parseFloat(req.query.date.substring(0,4)+req.query.date.substring(5,7));
         maxdate = parseFloat(req.query.date.substring(10,14)+req.query.date.substring(15,17));
     }
     Account.aggregate({ $project: { _id: 1, month: 1 } }).unwind('month').exec(function (err, accbook) {  
-        var data =[];
+        var data =[],data1=[];
         var _page = req.query.page;
         var _limit = req.query.limit;
-          for (var j = (_page - 1) * _limit ; j < _page * _limit && (accbook[j] != null); j++){
+        for(var j =0;j<accbook.length;j++){
             var o = {};
-              o.acccode = accbook[j].code;
-              o.accname = accbook[j].name;
-              o.monthnum = accbook[j].month.num;
-              o.debamount= accbook[j].month.debamount;
-              o.credamount = accbook[j].month.credamount;
-              if (parseFloat(o.debamount)>parseFloat(o.credamount)){ //借方发生额大于贷方发生额
-                  o.blndirect = "借";
-                  o.endbln = (parseFloat(o.debamount)-parseFloat(o.credamount))+"";
+            o.acccode = accbook[j].code;
+            o.accname = accbook[j].name;
+            o.monthnum = accbook[j].month.num;
+            o.debamount= accbook[j].month.debamount;
+            o.credamount = accbook[j].month.credamount;
+            if (parseFloat(o.debamount)>parseFloat(o.credamount)){ //借方发生额大于贷方发生额
+                o.blndirect = "借";
+                o.endbln = (parseFloat(o.debamount)-parseFloat(o.credamount))+"";
+            }
+            else if (parseFloat(o.debamount)<parseFloat(o.credamount)){ //借方发生额小于贷方发生额
+              o.blndirect = "贷";
+              o.endbln = (parseFloat(o.credamount)-parseFloat(o.debamount))+"";
+            }
+            else{ //借方发生额等于贷方发生额
+              o.blndirect = "平";
+              o.endbln = "0.00";
+            }
+          if(req.query.date){
+              var e = accbook[j].month.num;
+              var dt = parseFloat(e);
+              if((dt>mindate || dt==mindate) && (dt<maxdate || dt==maxdate)){
+                  console.log("!");
+                  data.push(o);
+                  //count++;
               }
-              else if (parseFloat(o.debamount)<parseFloat(o.credamount)){ //借方发生额小于贷方发生额
-                o.blndirect = "贷";
-                o.endbln = (parseFloat(o.credamount)-parseFloat(o.debamount))+"";
-              }
-              else{ //借方发生额等于贷方发生额
-                o.blndirect = "平";
-                o.endbln = "0.00";
-              }
-            if(req.query.date){
-                var e = accbook[j].month.num;
-                var dt = parseFloat(e);
-                if((dt>mindate || dt==mindate) && (dt<maxdate || dt==maxdate)){
-                    console.log("!");
-                    data.push(o);
-                }
-            }   else {
-              data.push(o);
-          }
+          }   else {
+            data.push(o);
+            //count=accbook.length;
+        }
+        }
+          for (var i = (_page - 1) * _limit ; i < _page * _limit && (data[i] != null); i++){
+            var o = {};
+            o.acccode = data[i].acccode;
+            o.accname = data[i].accname;
+            o.monthnum = data[i].monthnum;
+            o.debamount= data[i].debamount;
+            o.credamount = data[i].credamount;
+            o.blndirect = data[i].blndirect;
+            o.endbln = data[i].endbln;
+            data1.push(o);
         }
                 var responsedata = {
                 code: 0,
                 msg: "",
-                count: accbook.length,
-                data: data
+                count: data.length,
+                data: data1
                   } 
                 res.send(responsedata);
 
