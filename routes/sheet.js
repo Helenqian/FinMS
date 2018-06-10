@@ -13,7 +13,7 @@ router.get('/balancesheet', function(req, res, next){
 });
 
 router.get('/api/blsheet', function(req, res, next){
-    BlnSheet.find({period: "201805"},
+    BlnSheet.find({period: "201806"},
         function (err, blnitems) {
             if (err) return next(err);
             var data =[];
@@ -45,7 +45,7 @@ router.get('/api/blsheet', function(req, res, next){
 
 //生成资产负债表数据
 router.get('/generatebl', function(req, res, next){
-    var curryear = "2018", currmonth = "201805";                                           //var curryear = "2018", currmonth = "201805";
+    var curryear = "2018", currmonth = "201806";                                           //var curryear = "2018", currmonth = "201805";
     BlnSheet.find({period: "template"}, function (err, blnitems) {
     Account.find({}, function(err, acc){
     var blndata = [];
@@ -186,6 +186,7 @@ router.get('/generatebl', function(req, res, next){
         blndata.push(o);
     }
     console.log(blndata);
+    
     for(var i=0; i<blndata.length; i++){
         var bln = new BlnSheet({
             period: blndata[i].period,
@@ -203,13 +204,14 @@ router.get('/generatebl', function(req, res, next){
             console.log('New blnsheetitem has been created   ');
         });
     }
+    return res.redirect('/');
     });
     });
 });
 
 router.get('/calculatebl', function(req, res, next){
-    var curryear = req.body.blyear, currmonth = req.body.blmonth;                                           //var curryear = "2018", currmonth = "201805";
-    BlnSheet.find({period: "201805"}, function (err, blnitems) {
+    var curryear = "2018", currmonth = "201806";                                           //var curryear = "2018", currmonth = "201805";
+    BlnSheet.find({period: "201806"}, function (err, blnitems) {
         for(var i=0; i< blnitems.length; i++){
             if(blnitems[i].assproj == "流动资产合计"){
                 var sum1 = "0.00"; var sum2 = "0.00";
@@ -505,6 +507,7 @@ router.get('/calculatebl', function(req, res, next){
                     } else {  console.log("更新负债及所有者权益总计成功")  }  });  
             }
         }
+        return res.redirect('/');
     });
 });
 
@@ -588,7 +591,7 @@ router.post('/addplsheet', function(req, res, next) {
 });
 
 router.get('/generatepl', function(req, res, next){
-    var curryear = "2018", currmonth = "201801";                                           //var curryear = "2018", currmonth = "201805";
+    var curryear = "2018", currmonth = "201806";                                           //var curryear = "2018", currmonth = "201805";
     PlSheet.find({period: "template"}, function (err, plitems) {
     Account.find({}, function(err, acc){
     var pldata = [];
@@ -646,6 +649,7 @@ router.get('/generatepl', function(req, res, next){
         pldata.push(o);
     }
     console.log(pldata);
+    /*
     for(var i=0; i<pldata.length; i++){
         var pl = new PlSheet({
             period: pldata[i].period,
@@ -659,6 +663,7 @@ router.get('/generatepl', function(req, res, next){
             console.log('New plsheetitem has been created   ');
         });
     }
+    */
     });
 });
 });

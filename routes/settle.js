@@ -5,6 +5,7 @@ var Account = require('../models/Account');
 var AccountDocument = require('../models/AccountDocument');
 var DocumentItem = require('../models/DocumentItem');
 var Initial = require('../models/Initial');
+var BlnSheet = require('../models/BlnSheet');
 
 router.get('/settleacc', function(req, res){
 	res.render('settle/settleacc');
@@ -140,14 +141,15 @@ router.post('/settlepl',function(req, res,next){
 router.post('/recordacc', function(req, res, next){
     var yearnum = req.body.recordyear, month = req.body.recordmonth;
     var monthnum = yearnum + month;
-    console.log("monthnum"+monthnum);
+    //console.log("monthnum"+monthnum);
     //yearnum = "2018"; month = "05"; monthnum = "201805";
-    Account.find({'DocumentItem.1': {$exists: true}})
+    Account.find({'DocumentItem': {$exists: true}})
     .populate('DocumentItem')
     .exec(function (err, acc){  
         if (err) return next(err);
         for(var i = 0; i < acc.length; i++)
         {
+            console.log(acc[i].name);
             var debamt = "0.00", credamt = "0.00";
             var mdebamt = "0.00", mcredamt = "0.00";
             var sbln = "0.00", ebln1 = "0.00", ebln = "0.00";
@@ -181,48 +183,49 @@ router.post('/recordacc', function(req, res, next){
                 credamt = (parseFloat(credamt) + parseFloat(acc[i].DocumentItem[s].credit))+"";
                 }
             }
-            console.log("debamt"+debamt);
-            console.log("credamt"+credamt);
+            //console.log("debamt"+debamt);
+            //console.log("credamt"+credamt);
 
             for(var j =0; j < acc[i].DocumentItem.length; j++)
             {
-                console.log(acc[i].DocumentItem[j]);
+                //console.log(acc[i].DocumentItem[j]);
                 if(acc[i].DocumentItem[j].monthnum == monthnum){
                 mdebamt = (parseFloat(mdebamt) + parseFloat(acc[i].DocumentItem[j].debit))+"";
                 mcredamt = (parseFloat(mcredamt) + parseFloat(acc[i].DocumentItem[j].credit))+"";
                 //console.log("ooooooooooooooo!!!");
                 }
             }
-            console.log("mdebamt"+mdebamt);
-            console.log("mcredamt"+mcredamt);
+            //console.log("mdebamt"+mdebamt);
+            //console.log("mcredamt"+mcredamt);
 
             if(type == '资产类') {
-                console.log("资!");
+                //console.log("资!");
                 //资产类: 期末余额=期初余额+本期借方发生额-本期贷方发生额；
                 ebln = (parseFloat(sbln) + parseFloat(debamt) - parseFloat(credamt))+"";
                 mebln = (parseFloat(msbln) + parseFloat(mdebamt) - parseFloat(mcredamt))+"";
-                console.log("ebln"+ebln);
-                console.log("mebln"+mebln);
+                
             }
-            else if((type == '负债类')||(type == '所有者权益类')) {
+            else if((type == '负债类')||(type == '所有者权益')) {
                 console.log("负!");
                 //负债类: 期末余额=期初余额+本期贷方发生额-本期借方发生额。
                 ebln = (parseFloat(sbln) + parseFloat(credamt) - parseFloat(debamt))+"";
                 mebln = (parseFloat(msbln) + parseFloat(mcredamt) - parseFloat(mdebamt))+"";
+               console.log("ebln"+ebln);
+                console.log("mebln"+mebln);
             }
             else if(type == '损益类'){
                 //贷方余额
                 //益：期末余额=期初余额+本期贷方发生额-本期借方发生额。
                 if(((acc[i].name.indexOf("收入") != -1)||(acc[i].name.indexOf("益") != -1))
                     &&(acc[i].name != "以前年度损益调整")){
-                    console.log("益!");
+                    //console.log("益!");
                     ebln = (parseFloat(sbln) + parseFloat(credamt) - parseFloat(debamt))+"";
                     mebln = (parseFloat(msbln) + parseFloat(mcredamt) - parseFloat(mdebamt))+"";
                 }
                 //借方余额
                 //损：期末余额=期初余额+本期借方发生额-本期贷方发生额。
                 else{
-                    console.log("损!");
+                    //console.log("损!");
                     ebln = (parseFloat(sbln) + parseFloat(debamt) - parseFloat(credamt))+"";
                     mebln = (parseFloat(msbln) + parseFloat(mdebamt) - parseFloat(mcredamt))+"";
                 }
@@ -270,8 +273,9 @@ router.post('/recordacc', function(req, res, next){
                  //console.log("~~~~");
             });
            
-        if(i == acc.length -1) return res.redirect('/glacc');
+        //if(i == acc.length -1) return res.redirect('/glacc');
         }
+        return res.redirect('/recordacc')
     });
 });
 
@@ -344,7 +348,7 @@ router.post('/settleacc', function(req, res,next){
                 ebln = (parseFloat(sbln) + parseFloat(debamt) - parseFloat(credamt))+"";
                 mebln = (parseFloat(msbln) + parseFloat(mdebamt) - parseFloat(mcredamt))+"";
             }
-            else if((type == '负债类')||(type == '所有者权益类')) {
+            else if((type == '负债类')||(type == '所有者权益')) {
                 console.log("负!");
                 //负债类: 期末余额=期初余额+本期贷方发生额-本期借方发生额。
                 ebln = (parseFloat(sbln) + parseFloat(credamt) - parseFloat(debamt))+"";
@@ -394,7 +398,7 @@ router.post('/settleacc', function(req, res,next){
             var nexty = {};
             nexty.num = nextyearnum;
             nexty.startbln = ebln;
-            nexty.endbln = "0.00";
+            nexty.endbln = ebln;
             nexty.debamount = "0.00";
             nexty.credamount = "0.00";
             nexty.settlestatus = "false";
@@ -445,7 +449,7 @@ router.post('/settleacc', function(req, res,next){
             var nextm = {};
             nextm.num = nextmonthnum;
             nextm.startbln = mebln;
-            nextm.endbln = "0.00";
+            nextm.endbln = mebln;
             nextm.debamount = "0.00";
             nextm.credamount = "0.00";
             nextm.settlestatus = "false";
@@ -505,22 +509,19 @@ router.get('/blndirect', function(req, res, next){
 });
 
 router.get('/updatesth', function(req, res, next){
+/*
 Account.find({}, function(err,acc){
     if(err) return next(err);
     for(var i=0;i<acc.length;i++){
     Account.update(  
         {
              "_id" : acc[i]._id,
-             "month.num" : "000000",
+             "month.num" : "201805",
         },  
         {  
              $set: {  
                   "month.$" : {
-                  "num" : "201801",
-                  "startbln" : acc[i].startbln,
-                  "endbln" : acc[i].endbln,
-                  "debamount" : acc[i].debamount,
-                  "credamount" : acc[i].credamount,
+                 
                   "settlestatus" : "false"
                 }  
         }},function(err,result){  
@@ -529,18 +530,30 @@ Account.find({}, function(err,acc){
     });
     }
 });
+*/
    /*
    Account.find({}, function(err,acc){
     if(err) return next(err);
     for(var i=0;i<acc.length;i++){
-    Account.update({"_id": acc[i]._id}, 
-            { $pull : { month: {num : "201805" }}},function(err,result){  
-                if (err) return console.error(err);  
-                console.log("pull!!!!"); 
-    });
+        Account.update({ "_id" : acc[i]._id}, { $set : { month: []}},function(err,result){  
+            if (err) return console.error(err);
+        });
     }
     });
     */
+
+
+    BlnSheet.find({period:"201806"}, function(err, todelbln){
+        if(err) return next(err);
+        for(var i=0;i<todelbln.length;i++){
+            BlnSheet.remove({_id: todelbln[i]._id}, function(err){
+                if(err) return next(err);
+                console.log("already delete"+i);
+            });
+        }
+    });
+    
+    
 });
 
 module.exports = router;

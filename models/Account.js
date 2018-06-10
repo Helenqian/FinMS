@@ -9,18 +9,19 @@ var AccountSchema = new Schema({
 	//科目
 	month:[{ 
         num: {type: String, default: '000000'},
-		//期初余额
-		startbln: {type: String, default: '0.00'},
-		//期末余额
-		endbln: {type: String, default: '0.00'},
-		//本月借方发生额
-		debamount: {type: String, default: '0.00'},
-		//本月贷方发生额
-		credamount: {type: String, default: '0.00'},
-		//是否已月底结账
-		settlestatus: {type: String, default: 'false'},
-		//余额方向(借/贷)
-		blndirect: {type: String, default:''}
+        //期初余额
+        startbln: {type: String, default: '0.00'},
+        //期末余额
+        endbln: {type: String, default: '0.00'},
+        //本月借方发生额
+        debamount: {type: String, default: '0.00'},
+        //本月贷方发生额
+        credamount: {type: String, default: '0.00'},
+        //是否已月底结账
+        settlestatus: {type: String, default: 'false'},
+        //余额方向(借/贷)
+        blndirect: {type: String, default:''}
+
     }],
     year:[{ 
         num: {type: String, default: '0000'},

@@ -3,7 +3,12 @@ var User = require('../models/user');
 var Customer = require('../models/customer');
 
 router.get('/', function(req, res){
-	res.render('main/home');
+	if(!req.user) res.redirect('/login');
+	User.findOne({ _id: req.user._id }, function(err, user){
+		if (err) return next(err);
+		res.render('main/home', 
+        { user: user, usertype: user.usertype});
+	});
 });
 
 router.get('/regime', function(req, res){

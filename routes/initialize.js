@@ -393,7 +393,7 @@ router.post('/saveiniacc',function(req, res, next){
                       "year.$" : {
                       "num" : req.body.datas[i].yearnum,
                       "startbln" : req.body.datas[i].yearstartbln,
-                      "endbln" : 0.00,
+                      "endbln" : req.body.datas[i].yearstartbln,
                       "debamount" : 0.00,
                       "credamount" : 0.00,
                       "settlestatus" : "false"
@@ -415,7 +415,7 @@ router.post('/saveiniacc',function(req, res, next){
                           "month.$" : {
                           "num" : req.body.datas[i].yearnum + req.body.datas[i].monthnum,      
                           "startbln" : req.body.datas[i].yearstartbln,
-                          "endbln" : 0.00,
+                          "endbln" : req.body.datas[i].yearstartbln,
                           "debamount" : 0.00,
                           "credamount" : 0.00,
                           "settlestatus" : "false"
